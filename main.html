@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LC Date Calculation PRO</title>
+<title>Advanced UI with LC date calculation</title>
 <style>
 /* Your existing CSS styles remain exactly the same */
 :root {
@@ -1164,7 +1164,7 @@ function logout() {
 function showWelcomeMessage() {
     const userName = localStorage.getItem('currentUserName') || 'Guest';
     setTimeout(() => {
-        showNotification(`Welcome ${userName} to LC Date Calculation PRO!`);
+        showNotification(`Welcome ${userName} to LC Date Calculation !`);
     }, 1000);
 }
 
@@ -1485,7 +1485,7 @@ function exportResults() {
   const includeNumberWords = document.getElementById('exportNumberWords').checked;
   const includeInputData = document.getElementById('exportInputData').checked;
   
-  let content = 'LC Date Calculation PRO Results\n';
+  let content = 'Advanced UI with LC date calculation Results\n';
   content += '================================\n\n';
   
   if (includeInputData) {
@@ -1509,7 +1509,7 @@ function exportResults() {
   }
   
   content += `\nGenerated on: ${new Date().toLocaleString()}\n`;
-  content += `Tool: LC Date Calculation PRO by Sethil Yaddehige\n`;
+  content += `Tool: Advanced UI with LC date calculation by Sethil Yaddehige\n`;
   
   if (exportFormat === 'pdf') {
     showNotification('PDF export would be generated here');
