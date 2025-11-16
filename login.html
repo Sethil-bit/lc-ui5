@@ -77,6 +77,16 @@
             background: #5b4cd6;
             transform: translateY(-2px);
         }
+        
+        .debug-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 12px;
+            text-align: left;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -85,14 +95,31 @@
         <p>Enter your name to continue</p>
         <input type="text" id="userName" placeholder="Enter your name">
         <button onclick="login()">Enter Application</button>
+        
+        <div class="debug-info" id="debugInfo">
+            <strong>Debug Info:</strong>
+            <div id="debugContent"></div>
+        </div>
     </div>
 
     <script>
+        // Check if localStorage is available
+        function isLocalStorageAvailable() {
+            try {
+                const test = 'test';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
         function login() {
             const userName = document.getElementById('userName').value.trim();
             
             if (userName) {
-                // User tracking data
+                // Enhanced user tracking data with mobile support
                 const userData = {
                     name: userName,
                     loginTime: new Date().toISOString(),
@@ -101,22 +128,76 @@
                     language: navigator.language,
                     screenResolution: `${screen.width}x${screen.height}`,
                     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    referrer: document.referrer || 'Direct visit'
+                    referrer: document.referrer || 'Direct visit',
+                    deviceType: getDeviceType(),
+                    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                    localStorageSupported: isLocalStorageAvailable()
                 };
                 
-                // Store user info
-                localStorage.setItem('userName', userName);
-                localStorage.setItem('loginTime', userData.loginTime);
-                localStorage.setItem('userData', JSON.stringify(userData));
+                // Debug info
+                showDebugInfo(userData);
                 
-                // Log user access
-                console.log('🔐 USER LOGIN TRACKING:', userData);
-                
-                // Redirect to main app
-                window.location.href = 'main.html';
+                // Store user info with error handling
+                try {
+                    if (isLocalStorageAvailable()) {
+                        localStorage.setItem('userName', userName);
+                        localStorage.setItem('loginTime', userData.loginTime);
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        
+                        // Initialize other tracking arrays if they don't exist
+                        if (!localStorage.getItem('pageViews')) {
+                            localStorage.setItem('pageViews', JSON.stringify([]));
+                        }
+                        if (!localStorage.getItem('userActions')) {
+                            localStorage.setItem('userActions', JSON.stringify([]));
+                        }
+                        
+                        console.log('✅ USER LOGIN SUCCESS:', userData);
+                    } else {
+                        // Fallback: Use sessionStorage or cookies if localStorage not available
+                        sessionStorage.setItem('userName', userName);
+                        sessionStorage.setItem('loginTime', userData.loginTime);
+                        console.log('⚠️ Using sessionStorage (localStorage not available)');
+                    }
+                    
+                    // Redirect to main app
+                    setTimeout(() => {
+                        window.location.href = 'main.html';
+                    }, 100);
+                    
+                } catch (error) {
+                    console.error('❌ STORAGE ERROR:', error);
+                    alert('Login successful! Redirecting...');
+                    window.location.href = 'main.html';
+                }
             } else {
                 alert('Please enter your name');
             }
+        }
+
+        function getDeviceType() {
+            const ua = navigator.userAgent;
+            if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
+                return 'Mobile';
+            } else if (/Tablet|iPad|PlayBook|Silk|Xoom|SCH-I800|GT-P1000|SHW-M180S/.test(ua)) {
+                return 'Tablet';
+            } else {
+                return 'Desktop';
+            }
+        }
+
+        function showDebugInfo(userData) {
+            const debugInfo = document.getElementById('debugInfo');
+            const debugContent = document.getElementById('debugContent');
+            
+            debugContent.innerHTML = `
+                <div>Device: ${userData.deviceType}</div>
+                <div>Mobile: ${userData.isMobile ? 'Yes' : 'No'}</div>
+                <div>LocalStorage: ${userData.localStorageSupported ? 'Supported' : 'Not Supported'}</div>
+                <div>Platform: ${userData.platform}</div>
+                <div>Screen: ${userData.screenResolution}</div>
+            `;
+            debugInfo.style.display = 'block';
         }
         
         document.getElementById('userName').addEventListener('keypress', function(e) {
@@ -127,6 +208,16 @@
         
         window.onload = function() {
             document.getElementById('userName').focus();
+            
+            // Show initial debug info
+            const debugInfo = document.getElementById('debugInfo');
+            const debugContent = document.getElementById('debugContent');
+            
+            debugContent.innerHTML = `
+                <div>LocalStorage: ${isLocalStorageAvailable() ? 'Supported' : 'Not Supported'}</div>
+                <div>User Agent: ${navigator.userAgent.substring(0, 50)}...</div>
+            `;
+            debugInfo.style.display = 'block';
         };
     </script>
 </body>
