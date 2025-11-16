@@ -1149,7 +1149,8 @@ function showWelcomeMessage() {
 }
 
 function showAdmin() {
-    trackUserAction('admin_panel_accessed');
+    trackUserAction('admin_access_attempted');
+    // Only allow access to admin panel - users will need password
     window.location.href = 'admin.html';
 }
 
