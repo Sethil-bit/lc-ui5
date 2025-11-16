@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LC Date Calculation PRO</title>
 <style>
+/* Your existing CSS styles remain exactly the same */
 :root {
   --bg: linear-gradient(135deg, #121212 0%, #1a1a2e 50%, #16213e 100%);
   --text: #f8f9fa;
@@ -1054,9 +1055,77 @@ select {
 </div>
 
 <script>
-// ===== USER MANAGEMENT & TRACKING FUNCTIONS =====
+// ===== ENHANCED USER TRACKING FOR ALL USERS =====
+function getCurrentUser() {
+    return {
+        id: localStorage.getItem('currentUserId') || generateUserId(),
+        name: localStorage.getItem('currentUserName') || 'Unknown',
+        loginTime: localStorage.getItem('currentLoginTime') || new Date().toISOString()
+    };
+}
+
+function generateUserId() {
+    const id = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+    localStorage.setItem('currentUserId', id);
+    return id;
+}
+
+function trackUserAction(action, details = {}) {
+    const currentUser = getCurrentUser();
+    const actionData = {
+        id: generateActionId(),
+        userId: currentUser.id,
+        userName: currentUser.name,
+        action: action,
+        timestamp: new Date().toISOString(),
+        details: details
+    };
+    
+    console.log('🎯 USER ACTION TRACKED:', actionData);
+    
+    // Store action in ALL user actions
+    const allUserActions = JSON.parse(localStorage.getItem('allUserActions') || '[]');
+    allUserActions.push(actionData);
+    localStorage.setItem('allUserActions', JSON.stringify(allUserActions));
+    
+    // Update user's last activity
+    updateUserLastActivity(currentUser.id);
+}
+
+function trackPageView() {
+    const currentUser = getCurrentUser();
+    const pageView = {
+        id: generateActionId(),
+        userId: currentUser.id,
+        userName: currentUser.name,
+        page: 'main.html',
+        timestamp: new Date().toISOString(),
+        referrer: document.referrer || 'Direct visit'
+    };
+    
+    const allPageViews = JSON.parse(localStorage.getItem('allPageViews') || '[]');
+    allPageViews.push(pageView);
+    localStorage.setItem('allPageViews', JSON.stringify(allPageViews));
+    
+    console.log('📈 PAGE VIEW TRACKED for user:', currentUser.name);
+}
+
+function updateUserLastActivity(userId) {
+    const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+    const userIndex = allUsers.findIndex(user => user.id === userId);
+    
+    if (userIndex !== -1) {
+        allUsers[userIndex].lastActivity = new Date().toISOString();
+        localStorage.setItem('allUsers', JSON.stringify(allUsers));
+    }
+}
+
+function generateActionId() {
+    return 'action_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+}
+
 function checkLogin() {
-    const userName = localStorage.getItem('userName');
+    const userName = localStorage.getItem('currentUserName');
     if (!userName) {
         window.location.href = 'login.html';
         return;
@@ -1068,81 +1137,32 @@ function checkLogin() {
 }
 
 function trackUserSession() {
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    const sessionData = {
-        ...userData,
-        pageLoadTime: new Date().toISOString(),
-        sessionId: 'session_' + Math.random().toString(36).substr(2, 9),
-        currentPage: 'main.html'
-    };
-    
-    console.log('📊 USER SESSION TRACKING:', sessionData);
-    
-    // Store session data
-    localStorage.setItem('currentSession', JSON.stringify(sessionData));
-    
-    // Track page views
+    const currentUser = getCurrentUser();
     trackPageView();
-}
-
-function trackPageView() {
-    let pageViews = JSON.parse(localStorage.getItem('pageViews') || '[]');
-    const pageView = {
-        timestamp: new Date().toISOString(),
-        page: 'main.html',
-        user: localStorage.getItem('userName')
-    };
     
-    pageViews.push(pageView);
-    localStorage.setItem('pageViews', JSON.stringify(pageViews));
-    
-    console.log('📈 PAGE VIEW TRACKED:', pageView);
-    console.log('📊 TOTAL PAGE VIEWS:', pageViews.length);
-}
-
-function trackUserAction(action, details = {}) {
-    const userName = localStorage.getItem('userName');
-    const actionData = {
-        user: userName,
-        action: action,
-        timestamp: new Date().toISOString(),
-        details: details
-    };
-    
-    console.log('🎯 USER ACTION TRACKED:', actionData);
-    
-    // Store actions
-    let userActions = JSON.parse(localStorage.getItem('userActions') || '[]');
-    userActions.push(actionData);
-    localStorage.setItem('userActions', JSON.stringify(userActions));
+    console.log('📊 USER SESSION STARTED:', currentUser);
 }
 
 function logout() {
-    const userName = localStorage.getItem('userName');
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const currentUser = getCurrentUser();
     
     // Track logout
-    const logoutData = {
-        user: userName,
-        logoutTime: new Date().toISOString(),
-        totalSessionTime: new Date() - new Date(userData.loginTime),
-        pageViews: JSON.parse(localStorage.getItem('pageViews') || '[]').length,
-        totalActions: JSON.parse(localStorage.getItem('userActions') || '[]').length
-    };
+    trackUserAction('user_logout', {
+        logoutTime: new Date().toISOString()
+    });
     
-    console.log('🚪 USER LOGOUT TRACKING:', logoutData);
+    console.log('🚪 USER LOGOUT:', currentUser.name);
     
-    // Clear user data
-    localStorage.removeItem('userName');
-    localStorage.removeItem('loginTime');
-    localStorage.removeItem('userData');
-    localStorage.removeItem('currentSession');
+    // Clear current session data (keep historical data)
+    localStorage.removeItem('currentUserName');
+    localStorage.removeItem('currentLoginTime');
+    localStorage.removeItem('currentUserId');
     
     window.location.href = 'index.html';
 }
 
 function showWelcomeMessage() {
-    const userName = localStorage.getItem('userName') || 'Guest';
+    const userName = localStorage.getItem('currentUserName') || 'Guest';
     setTimeout(() => {
         showNotification(`Welcome ${userName} to LC Date Calculation PRO!`);
     }, 1000);
@@ -1150,7 +1170,6 @@ function showWelcomeMessage() {
 
 function showAdmin() {
     trackUserAction('admin_access_attempted');
-    // Only allow access to admin panel - users will need password
     window.location.href = 'admin.html';
 }
 
@@ -1493,7 +1512,6 @@ function exportResults() {
   content += `Tool: LC Date Calculation PRO by Sethil Yaddehige\n`;
   
   if (exportFormat === 'pdf') {
-    // In a real implementation, you would use a PDF library like jsPDF
     showNotification('PDF export would be generated here');
     console.log('PDF Content:', content);
   } else if (exportFormat === 'text') {
