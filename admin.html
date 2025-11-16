@@ -23,6 +23,19 @@
             min-height: 100vh;
         }
         
+        .login-container {
+            background: var(--card);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            margin: 100px auto;
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
         .admin-container {
             max-width: 1000px;
             margin: 0 auto;
@@ -32,12 +45,54 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(108, 92, 231, 0.3);
             backdrop-filter: blur(10px);
+            display: none;
         }
         
         h1 {
             color: var(--primary);
             text-align: center;
             margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: 2px solid rgba(108, 92, 231, 0.3);
+            border-radius: 12px;
+            background: rgba(42, 42, 62, 0.7);
+            color: var(--text);
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #5b4cd6;
+            transform: translateY(-2px);
         }
         
         .stats-grid {
@@ -109,10 +164,44 @@
         .btn-accent:hover {
             background: #fc5a9d;
         }
+        
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
-    <div class="admin-container">
+    <!-- Login Section -->
+    <div class="login-container" id="loginContainer">
+        <h2>🔐 Admin Login</h2>
+        <p>Enter admin password to access user tracking data</p>
+        <input type="password" id="adminPassword" placeholder="Enter admin password">
+        <button onclick="loginAdmin()">Login</button>
+        <div class="error-message" id="errorMessage">Invalid password! Try again.</div>
+        <div style="margin-top: 20px;">
+            <button class="btn" onclick="window.location.href='main.html'" style="background: #666;">← Back to App</button>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="admin-container" id="adminContainer">
+        <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+        
         <h1>🔍 User Tracking Dashboard</h1>
         
         <div class="stats-grid" id="statsGrid">
@@ -138,26 +227,63 @@
             <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
             <button class="btn btn-accent" onclick="exportAllData()">📥 Export All Data</button>
             <button class="btn" onclick="clearAllData()">🗑️ Clear Data</button>
-            <button class="btn" onclick="window.location.href='main.html'">← Back to App</button>
         </div>
         
         <div class="data-section">
             <h3>👤 Current User Data</h3>
-            <pre id="currentUserData">Loading...</pre>
+            <pre id="currentUserData">No data available</pre>
         </div>
         
         <div class="data-section">
             <h3>📊 Page Views</h3>
-            <pre id="pageViewsData">Loading...</pre>
+            <pre id="pageViewsData">No data available</pre>
         </div>
         
         <div class="data-section">
             <h3>🎯 User Actions</h3>
-            <pre id="userActionsData">Loading...</pre>
+            <pre id="userActionsData">No data available</pre>
+        </div>
+        
+        <div class="data-section">
+            <h3>📈 User Statistics</h3>
+            <pre id="userStats">No data available</pre>
         </div>
     </div>
 
     <script>
+        // Admin password - CHANGE THIS TO YOUR OWN PASSWORD
+        const ADMIN_PASSWORD = "admin123";
+        
+        function loginAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (password === ADMIN_PASSWORD) {
+                // Successful login
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('adminContainer').style.display = 'block';
+                loadUserData();
+                
+                // Track admin login
+                console.log('🔐 ADMIN LOGIN: Successful admin access at ' + new Date().toISOString());
+            } else {
+                // Failed login
+                errorMessage.style.display = 'block';
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+                
+                // Track failed admin login attempt
+                console.log('🚫 ADMIN LOGIN FAILED: Attempt from ' + navigator.userAgent);
+            }
+        }
+        
+        function logoutAdmin() {
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('adminContainer').style.display = 'none';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        
         function loadUserData() {
             // Current user data
             const userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -176,6 +302,53 @@
             document.getElementById('totalPageViews').textContent = pageViews.length;
             document.getElementById('totalActions').textContent = userActions.length;
             document.getElementById('activeUsers').textContent = userData.name ? 1 : 0;
+            
+            // Calculate user statistics
+            const userStats = calculateUserStats(userActions, pageViews);
+            document.getElementById('userStats').textContent = JSON.stringify(userStats, null, 2);
+        }
+        
+        function calculateUserStats(actions, pageViews) {
+            const stats = {
+                totalSessions: 0,
+                averageSessionDuration: 0,
+                mostUsedFeature: '',
+                popularTimes: {},
+                deviceBreakdown: {}
+            };
+            
+            // Calculate most used feature
+            const actionCounts = {};
+            actions.forEach(action => {
+                actionCounts[action.action] = (actionCounts[action.action] || 0) + 1;
+            });
+            
+            if (Object.keys(actionCounts).length > 0) {
+                stats.mostUsedFeature = Object.keys(actionCounts).reduce((a, b) => 
+                    actionCounts[a] > actionCounts[b] ? a : b
+                );
+            }
+            
+            // Calculate popular times
+            actions.forEach(action => {
+                const hour = new Date(action.timestamp).getHours();
+                stats.popularTimes[hour] = (stats.popularTimes[hour] || 0) + 1;
+            });
+            
+            // Device breakdown (from user data)
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            if (userData.platform) {
+                stats.deviceBreakdown.platform = userData.platform;
+            }
+            if (userData.userAgent) {
+                if (userData.userAgent.includes('Mobile')) {
+                    stats.deviceBreakdown.deviceType = 'Mobile';
+                } else {
+                    stats.deviceBreakdown.deviceType = 'Desktop';
+                }
+            }
+            
+            return stats;
         }
         
         function refreshData() {
@@ -188,7 +361,8 @@
                 userData: JSON.parse(localStorage.getItem('userData') || '{}'),
                 pageViews: JSON.parse(localStorage.getItem('pageViews') || '[]'),
                 userActions: JSON.parse(localStorage.getItem('userActions') || '[]'),
-                exportTime: new Date().toISOString()
+                exportTime: new Date().toISOString(),
+                exportedBy: 'Admin'
             };
             
             const dataStr = JSON.stringify(allData, null, 2);
@@ -206,7 +380,7 @@
         }
         
         function clearAllData() {
-            if (confirm('Are you sure you want to clear all tracking data?')) {
+            if (confirm('Are you sure you want to clear all tracking data? This cannot be undone!')) {
                 localStorage.removeItem('userData');
                 localStorage.removeItem('pageViews');
                 localStorage.removeItem('userActions');
@@ -216,8 +390,17 @@
             }
         }
         
-        // Load data when page loads
-        window.onload = loadUserData;
+        // Enter key support for login
+        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginAdmin();
+            }
+        });
+        
+        // Focus on password input when page loads
+        window.onload = function() {
+            document.getElementById('adminPassword').focus();
+        };
     </script>
 </body>
 </html>
