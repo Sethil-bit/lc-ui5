@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - User Tracking</title>
+    <style>
+        :root {
+            --bg: linear-gradient(135deg, #121212 0%, #1a1a2e 50%, #16213e 100%);
+            --text: #f8f9fa;
+            --card: rgba(30, 30, 46, 0.85);
+            --primary: #6c5ce7;
+            --secondary: #00cec9;
+            --accent: #fd79a8;
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .admin-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(42, 42, 62, 0.7);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .data-section {
+            margin-bottom: 30px;
+        }
+        
+        .data-section h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        
+        pre {
+            background: rgba(42, 42, 62, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #5b4cd6;
+            transform: translateY(-2px);
+        }
+        
+        .btn-accent {
+            background: var(--accent);
+        }
+        
+        .btn-accent:hover {
+            background: #fc5a9d;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>🔍 User Tracking Dashboard</h1>
+        
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalPageViews">0</div>
+                <div class="stat-label">Page Views</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalActions">0</div>
+                <div class="stat-label">User Actions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeUsers">0</div>
+                <div class="stat-label">Active Now</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
+            <button class="btn btn-accent" onclick="exportAllData()">📥 Export All Data</button>
+            <button class="btn" onclick="clearAllData()">🗑️ Clear Data</button>
+            <button class="btn" onclick="window.location.href='main.html'">← Back to App</button>
+        </div>
+        
+        <div class="data-section">
+            <h3>👤 Current User Data</h3>
+            <pre id="currentUserData">Loading...</pre>
+        </div>
+        
+        <div class="data-section">
+            <h3>📊 Page Views</h3>
+            <pre id="pageViewsData">Loading...</pre>
+        </div>
+        
+        <div class="data-section">
+            <h3>🎯 User Actions</h3>
+            <pre id="userActionsData">Loading...</pre>
+        </div>
+    </div>
+
+    <script>
+        function loadUserData() {
+            // Current user data
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            document.getElementById('currentUserData').textContent = JSON.stringify(userData, null, 2);
+            
+            // Page views
+            const pageViews = JSON.parse(localStorage.getItem('pageViews') || '[]');
+            document.getElementById('pageViewsData').textContent = JSON.stringify(pageViews, null, 2);
+            
+            // User actions
+            const userActions = JSON.parse(localStorage.getItem('userActions') || '[]');
+            document.getElementById('userActionsData').textContent = JSON.stringify(userActions, null, 2);
+            
+            // Update stats
+            document.getElementById('totalUsers').textContent = userData.name ? 1 : 0;
+            document.getElementById('totalPageViews').textContent = pageViews.length;
+            document.getElementById('totalActions').textContent = userActions.length;
+            document.getElementById('activeUsers').textContent = userData.name ? 1 : 0;
+        }
+        
+        function refreshData() {
+            loadUserData();
+            alert('Data refreshed!');
+        }
+        
+        function exportAllData() {
+            const allData = {
+                userData: JSON.parse(localStorage.getItem('userData') || '{}'),
+                pageViews: JSON.parse(localStorage.getItem('pageViews') || '[]'),
+                userActions: JSON.parse(localStorage.getItem('userActions') || '[]'),
+                exportTime: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(allData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `user-tracking-export-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('All user data exported!');
+        }
+        
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all tracking data?')) {
+                localStorage.removeItem('userData');
+                localStorage.removeItem('pageViews');
+                localStorage.removeItem('userActions');
+                localStorage.removeItem('currentSession');
+                loadUserData();
+                alert('All data cleared!');
+            }
+        }
+        
+        // Load data when page loads
+        window.onload = loadUserData;
+    </script>
+</body>
+</html>

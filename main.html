@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LC Date Calculation PRO</title>
+<style>
+:root {
+  --bg: linear-gradient(135deg, #121212 0%, #1a1a2e 50%, #16213e 100%);
+  --text: #f8f9fa;
+  --card: rgba(30, 30, 46, 0.85);
+  --primary: #6c5ce7;
+  --secondary: #00cec9;
+  --accent: #fd79a8;
+  --border: rgba(109, 92, 231, 0.3);
+  --input-bg: rgba(42, 42, 62, 0.7);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  --glow: 0 0 20px rgba(108, 92, 231, 0.5);
+}
+
+.light-mode {
+  --bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+  --text: #212529;
+  --card: rgba(255, 255, 255, 0.9);
+  --primary: #6c5ce7;
+  --secondary: #00cec9;
+  --accent: #fd79a8;
+  --border: rgba(108, 92, 231, 0.2);
+  --input-bg: rgba(248, 249, 250, 0.7);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  --glow: 0 0 20px rgba(108, 92, 231, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.1) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(0, 206, 201, 0.1) 0%, transparent 20%),
+    radial-gradient(circle at 50% 50%, rgba(253, 121, 168, 0.05) 0%, transparent 30%);
+  z-index: -1;
+  animation: float 20s infinite linear;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, -30px) rotate(120deg); }
+  66% { transform: translate(-20px, 20px) rotate(240deg); }
+  100% { transform: translate(0, 0) rotate(360deg); }
+}
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  background: var(--card);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  transform: translateY(0);
+  opacity: 1;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              opacity 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+  animation: shimmer 3s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.container.hidden {
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+h1 {
+  text-align: center;
+  margin: 0 0 25px;
+  color: var(--primary);
+  animation: titleGlow 2s ease-in-out infinite alternate;
+  font-weight: 700;
+  font-size: 2.2rem;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  border-radius: 3px;
+}
+
+@keyframes titleGlow {
+  from { text-shadow: 0 0 5px rgba(108, 92, 231, 0.5); }
+  to { text-shadow: 0 0 15px rgba(108, 92, 231, 0.8), 0 0 25px rgba(108, 92, 231, 0.4); }
+}
+
+.input-group {
+  margin-bottom: 25px;
+  animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.input-group:nth-child(1) { animation-delay: 0.1s; }
+.input-group:nth-child(2) { animation-delay: 0.2s; }
+.input-group:nth-child(3) { animation-delay: 0.3s; }
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--text);
+  transition: all 0.3s ease;
+  position: relative;
+  padding-left: 15px;
+}
+
+label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: var(--primary);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(108, 92, 231, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
+}
+
+input, select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-sizing: border-box;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.number-converter input[type="number"] {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+input:focus, select:focus {
+  border-color: var(--primary);
+  outline: none;
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1), var(--glow);
+}
+
+.result-card {
+  background: var(--card);
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 15px;
+  border-left: 4px solid var(--primary);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: scale(1);
+  opacity: 1;
+  animation: cardAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+}
+
+.result-card:hover::before {
+  animation: shine 1.5s ease;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes cardAppear {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.result-card.secondary {
+  border-left-color: var(--secondary);
+}
+
+.result-card.accent {
+  border-left-color: var(--accent);
+}
+
+.result-card.hidden {
+  transform: scale(0.95);
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              height 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              padding 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              margin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.result-value {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-top: 8px;
+  transition: color 0.3s ease;
+  animation: textPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  color: var(--primary);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes textPop {
+  from { opacity: 0; transform: translateY(10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.words-result {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 100;
+  animation: rotateIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+}
+
+.theme-toggle:hover {
+  transform: rotate(180deg) scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), var(--glow);
+}
+
+.game-toggle {
+  position: fixed;
+  top: 85px;
+  right: 20px;
+  background: var(--secondary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 100;
+  animation: rotateIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.2s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+}
+
+.game-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 206, 201, 0.5);
+}
+
+.export-toggle {
+  position: fixed;
+  top: 150px;
+  right: 20px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 100;
+  animation: rotateIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+}
+
+.export-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(253, 121, 168, 0.5);
+}
+
+.admin-toggle {
+  position: fixed;
+  top: 215px;
+  right: 20px;
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 100;
+  animation: rotateIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.4s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+}
+
+.admin-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 107, 107, 0.5);
+}
+
+@keyframes rotateIn {
+  from { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+  to { opacity: 1; transform: rotate(0) scale(1); }
+}
+
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 0.9em;
+  color: var(--text);
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  position: relative;
+  animation: fadeIn 1s ease forwards;
+}
+
+.creator-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  padding: 12px 30px;
+  border-radius: 30px;
+  cursor: pointer;
+  transform: scale(1);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  animation: bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  z-index: 1;
+}
+
+.creator-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--accent), var(--primary));
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: -1;
+}
+
+.creator-badge:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(253, 121, 168, 0.5);
+}
+
+.creator-badge:hover::before {
+  opacity: 1;
+}
+
+.creator-badge:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.creator-badge.hidden {
+  transform: scale(0);
+  opacity: 0;
+}
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+  50% { opacity: 1; transform: scale(1.1) rotate(5deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+.number-converter {
+  margin-top: 35px;
+  padding-top: 25px;
+  border-top: 1px solid var(--border);
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.number-converter .result-card {
+  margin-top: 20px;
+}
+
+.currency-selector {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.currency-option {
+  flex: 1;
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 1em;
+  padding-right: 45px;
+}
+
+/* Snake Game Styles */
+.game-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.game-container.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.game-window {
+  background: var(--card);
+  padding: 25px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 450px;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 30px rgba(108, 92, 231, 0.7);
+  backdrop-filter: blur(10px);
+  animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.close-game {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 24px;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-game:hover {
+  background: rgba(108, 92, 231, 0.2);
+  transform: rotate(90deg);
+}
+
+.snake-game {
+  text-align: center;
+}
+
+.snake-game h2 {
+  color: var(--primary);
+  margin-bottom: 20px;
+  animation: titleGlow 2s infinite alternate;
+}
+
+.game-canvas-container {
+  position: relative;
+  margin: 0 auto;
+  width: 320px;
+  height: 320px;
+  background: var(--input-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+#gameCanvas {
+  width: 100%;
+  height: 100%;
+}
+
+.game-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  padding: 15px;
+  background: var(--input-bg);
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.game-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-stat-value {
+  font-weight: bold;
+  font-size: 1.5em;
+  color: var(--primary);
+}
+
+.game-stat-label {
+  font-size: 0.8em;
+  opacity: 0.8;
+}
+
+.game-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  z-index: 20;
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.game-overlay h3 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  color: var(--primary);
+  text-shadow: 0 0 15px rgba(108, 92, 231, 0.9);
+  animation: pulse 2s infinite;
+}
+
+.restart-btn {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.restart-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.game-controls {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.game-btn {
+  padding: 10px 25px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.game-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Export Panel Styles */
+.export-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.export-container.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.export-window {
+  background: var(--card);
+  padding: 25px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 30px rgba(253, 121, 168, 0.7);
+  backdrop-filter: blur(10px);
+  animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.export-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.export-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  background: var(--input-bg);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.export-option:hover {
+  background: rgba(108, 92, 231, 0.1);
+  transform: translateX(5px);
+}
+
+.export-option input {
+  width: auto;
+}
+
+.export-option label {
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  cursor: pointer;
+}
+
+.export-option label::before {
+  display: none;
+}
+
+.export-btn {
+  padding: 12px 25px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  margin-top: 15px;
+}
+
+.export-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Sound Toggle */
+.sound-toggle {
+  position: fixed;
+  top: 280px;
+  right: 20px;
+  background: var(--secondary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 100;
+  animation: rotateIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.4s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+}
+
+.sound-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 206, 201, 0.5);
+}
+
+.sound-toggle.muted {
+  background: #666;
+}
+
+/* Floating particles animation */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: 0.1;
+  animation: floatParticle 15s infinite linear;
+}
+
+@keyframes floatParticle {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.1;
+  }
+  90% {
+    opacity: 0.1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  .theme-toggle, .game-toggle, .export-toggle, .admin-toggle, .sound-toggle {
+    width: 45px;
+    height: 45px;
+    top: 15px;
+    right: 15px;
+  }
+  
+  .game-toggle {
+    top: 70px;
+  }
+  
+  .export-toggle {
+    top: 125px;
+  }
+  
+  .admin-toggle {
+    top: 180px;
+  }
+  
+  .sound-toggle {
+    top: 235px;
+  }
+  
+  .game-window, .export-window {
+    padding: 20px;
+  }
+  
+  .game-canvas-container {
+    width: 280px;
+    height: 280px;
+  }
+}
+
+/* Notification */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--card);
+  color: var(--text);
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-left: 4px solid var(--secondary);
+  transform: translateX(150%);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.notification.show {
+  transform: translateX(0);
+}
+</style>
+</head>
+<body>
+<!-- User Info Display -->
+<div id="userInfo" style="position: fixed; top: 15px; left: 15px; background: rgba(30, 30, 46, 0.9); color: white; padding: 10px 20px; border-radius: 25px; font-size: 14px; z-index: 1000; backdrop-filter: blur(10px); border: 1px solid var(--primary); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+    👤 <span id="currentUser">Guest</span>
+    <button onclick="logout()" style="margin-left: 12px; padding: 5px 12px; background: var(--accent); border: none; border-radius: 12px; color: white; cursor: pointer; font-size: 12px; transition: all 0.3s ease;">Logout</button>
+</div>
+
+<div class="particles" id="particles"></div>
+
+<button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+<button class="game-toggle" onclick="showGame()">🐍</button>
+<button class="export-toggle" onclick="showExport()">📤</button>
+<button class="admin-toggle" onclick="showAdmin()">👁️</button>
+<button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
+
+<div class="container" id="mainContainer">
+  <h1>LC Date Calculation PRO</h1>
+  
+  <div class="input-group">
+    <label>LC Issuance Date:</label>
+    <input type="date" id="inputDate" onchange="calculateAll()">
+  </div>
+  
+  <div class="input-group">
+    <label>Days to Subtract:</label>
+    <input type="number" id="subDays" placeholder="e.g., 21" oninput="calculateAll()">
+  </div>
+  
+  <div class="result-card hidden" id="date90Card">
+    <div>[90-Day] Expiry Date:</div>
+    <div class="result-value" id="date90">--/--/----</div>
+  </div>
+  
+  <div class="result-card secondary hidden" id="finalDateCard">
+    <div>Latest date of shipment:</div>
+    <div class="result-value" id="finalDate">--/--/----</div>
+  </div>
+
+  <div class="number-converter">
+    <div class="input-group">
+      <label>Number to Words Converter:</label>
+      <input type="number" id="numberInput" placeholder="Enter a number (e.g., 6521.11)" step="0.01" oninput="convertNumberToWords()">
+      
+      <div class="currency-selector">
+        <div class="currency-option">
+          <select id="currencySelect" onchange="convertNumberToWords()">
+            <option value="USD">USD (Dollars/Cents)</option>
+            <option value="GBP">GBP (Pounds/Pence)</option>
+            <option value="AUD">AUD (Dollars/Cents)</option>
+            <option value="EUR">EUR (Euros/Cents)</option>
+            <option value="CAD">CAD (Dollars/Cents)</option>
+            <option value="THB">THB (Baht/Satang)</option>
+            <option value="JPY">JPY (Yen)</option>
+            <option value="CNY">CNY (Yuan/Fen)</option>
+            <option value="INR">INR (Rupees/Paise)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div class="result-card accent hidden" id="wordsOutputCard">
+      <div>In Words:</div>
+      <div class="result-value words-result" id="wordsOutput">--</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="creator-badge" id="creatorBadge" onclick="animateCreatorBadge()">Created by Sethil</div>
+</div>
+
+<!-- Snake Game Container -->
+<div class="game-container" id="gameContainer">
+  <div class="game-window">
+    <button class="close-game" onclick="hideGame()">×</button>
+    <div class="snake-game">
+      <h2>Snake Game</h2>
+      <div class="game-stats">
+        <div class="game-stat">
+          <div class="game-stat-value" id="scoreValue">0</div>
+          <div class="game-stat-label">SCORE</div>
+        </div>
+        <div class="game-stat">
+          <div class="game-stat-value" id="highScoreValue">0</div>
+          <div class="game-stat-label">HIGH SCORE</div>
+        </div>
+      </div>
+      <div class="game-canvas-container">
+        <canvas id="gameCanvas" width="300" height="300"></canvas>
+        <div class="game-overlay" id="gameOverlay">
+          <h3 id="gameOverText">SNAKE GAME</h3>
+          <p>Use arrow keys to play</p>
+          <button class="restart-btn" onclick="startGame()">START GAME</button>
+        </div>
+      </div>
+      <div class="game-controls">
+        <button class="game-btn" onclick="pauseGame()">PAUSE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Export Panel -->
+<div class="export-container" id="exportContainer">
+  <div class="export-window">
+    <button class="close-game" onclick="hideExport()">×</button>
+    <h2>Export Calculation Results</h2>
+    <div class="export-options">
+      <div class="export-option">
+        <input type="checkbox" id="exportDate90" checked>
+        <label for="exportDate90">90-Day Expiry Date</label>
+      </div>
+      <div class="export-option">
+        <input type="checkbox" id="exportFinalDate" checked>
+        <label for="exportFinalDate">Latest Shipment Date</label>
+      </div>
+      <div class="export-option">
+        <input type="checkbox" id="exportNumberWords" checked>
+        <label for="exportNumberWords">Number to Words Conversion</label>
+      </div>
+      <div class="export-option">
+        <input type="checkbox" id="exportInputData" checked>
+        <label for="exportInputData">Input Data</label>
+      </div>
+    </div>
+    <div class="export-options">
+      <div class="export-option">
+        <input type="radio" id="exportPDF" name="exportFormat" value="pdf" checked>
+        <label for="exportPDF">Export as PDF ⚠️</label>
+      </div>
+      <div class="export-option">
+        <input type="radio" id="exportText" name="exportFormat" value="text">
+        <label for="exportText">Export as Text File ✅</label>
+      </div>
+      <div class="export-option">
+        <input type="radio" id="exportPrint" name="exportFormat" value="print">
+        <label for="exportPrint">Print ⚠️</label>
+      </div>
+    </div>
+    <button class="export-btn" onclick="exportResults()">Export Now</button>
+  </div>
+</div>
+
+<!-- Notification -->
+<div class="notification" id="notification">
+  <div id="notificationText">Operation completed successfully!</div>
+</div>
+
+<script>
+// ===== USER MANAGEMENT & TRACKING FUNCTIONS =====
+function checkLogin() {
+    const userName = localStorage.getItem('userName');
+    if (!userName) {
+        window.location.href = 'login.html';
+        return;
+    }
+    document.getElementById('currentUser').textContent = userName;
+    
+    // Track user session
+    trackUserSession();
+}
+
+function trackUserSession() {
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const sessionData = {
+        ...userData,
+        pageLoadTime: new Date().toISOString(),
+        sessionId: 'session_' + Math.random().toString(36).substr(2, 9),
+        currentPage: 'main.html'
+    };
+    
+    console.log('📊 USER SESSION TRACKING:', sessionData);
+    
+    // Store session data
+    localStorage.setItem('currentSession', JSON.stringify(sessionData));
+    
+    // Track page views
+    trackPageView();
+}
+
+function trackPageView() {
+    let pageViews = JSON.parse(localStorage.getItem('pageViews') || '[]');
+    const pageView = {
+        timestamp: new Date().toISOString(),
+        page: 'main.html',
+        user: localStorage.getItem('userName')
+    };
+    
+    pageViews.push(pageView);
+    localStorage.setItem('pageViews', JSON.stringify(pageViews));
+    
+    console.log('📈 PAGE VIEW TRACKED:', pageView);
+    console.log('📊 TOTAL PAGE VIEWS:', pageViews.length);
+}
+
+function trackUserAction(action, details = {}) {
+    const userName = localStorage.getItem('userName');
+    const actionData = {
+        user: userName,
+        action: action,
+        timestamp: new Date().toISOString(),
+        details: details
+    };
+    
+    console.log('🎯 USER ACTION TRACKED:', actionData);
+    
+    // Store actions
+    let userActions = JSON.parse(localStorage.getItem('userActions') || '[]');
+    userActions.push(actionData);
+    localStorage.setItem('userActions', JSON.stringify(userActions));
+}
+
+function logout() {
+    const userName = localStorage.getItem('userName');
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    
+    // Track logout
+    const logoutData = {
+        user: userName,
+        logoutTime: new Date().toISOString(),
+        totalSessionTime: new Date() - new Date(userData.loginTime),
+        pageViews: JSON.parse(localStorage.getItem('pageViews') || '[]').length,
+        totalActions: JSON.parse(localStorage.getItem('userActions') || '[]').length
+    };
+    
+    console.log('🚪 USER LOGOUT TRACKING:', logoutData);
+    
+    // Clear user data
+    localStorage.removeItem('userName');
+    localStorage.removeItem('loginTime');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('currentSession');
+    
+    window.location.href = 'index.html';
+}
+
+function showWelcomeMessage() {
+    const userName = localStorage.getItem('userName') || 'Guest';
+    setTimeout(() => {
+        showNotification(`Welcome ${userName} to LC Date Calculation PRO!`);
+    }, 1000);
+}
+
+function showAdmin() {
+    trackUserAction('admin_panel_accessed');
+    window.location.href = 'admin.html';
+}
+
+// Create floating particles
+function createParticles() {
+  const particlesContainer = document.getElementById('particles');
+  const particleCount = 30;
+  
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    
+    // Random size between 3px and 8px
+    const size = Math.random() * 5 + 3;
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    
+    // Random position
+    particle.style.left = `${Math.random() * 100}vw`;
+    
+    // Random color from theme
+    const colors = ['var(--primary)', 'var(--secondary)', 'var(--accent)'];
+    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+    
+    // Random animation duration and delay
+    const duration = Math.random() * 20 + 10;
+    const delay = Math.random() * 10;
+    particle.style.animationDuration = `${duration}s`;
+    particle.style.animationDelay = `${delay}s`;
+    
+    particlesContainer.appendChild(particle);
+  }
+}
+
+// Sound system
+let soundEnabled = true;
+const sounds = {
+  click: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='),
+  success: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='),
+  error: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==')
+};
+
+function playSound(soundName) {
+  if (soundEnabled && sounds[soundName]) {
+    sounds[soundName].play().catch(e => console.log('Audio play failed:', e));
+  }
+}
+
+function toggleSound() {
+  trackUserAction('sound_toggled', { soundEnabled: !soundEnabled });
+  soundEnabled = !soundEnabled;
+  const soundToggle = document.getElementById('soundToggle');
+  soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+  soundToggle.classList.toggle('muted', !soundEnabled);
+  playSound('click');
+  showNotification(soundEnabled ? 'Sound enabled' : 'Sound muted');
+}
+
+// Notification system
+function showNotification(message) {
+  const notification = document.getElementById('notification');
+  const notificationText = document.getElementById('notificationText');
+  
+  notificationText.textContent = message;
+  notification.classList.add('show');
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 3000);
+}
+
+// Theme toggle with auto-detection
+function toggleTheme() {
+  trackUserAction('theme_toggled', { 
+    currentTheme: document.body.classList.contains('light-mode') ? 'light' : 'dark' 
+  });
+  playSound('click');
+  document.body.classList.toggle('light-mode');
+  const btn = document.querySelector('.theme-toggle');
+  btn.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+  
+  // Save theme preference
+  localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+  
+  btn.style.animation = 'none';
+  setTimeout(() => {
+    btn.style.animation = 'rotateIn 0.6s ease';
+  }, 10);
+}
+
+// Auto-detect system theme
+function detectSystemTheme() {
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.body.classList.add('light-mode');
+    document.querySelector('.theme-toggle').textContent = '☀️';
+  }
+  
+  // Check for saved theme preference
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') {
+    document.body.classList.add('light-mode');
+    document.querySelector('.theme-toggle').textContent = '☀️';
+  } else if (savedTheme === 'dark') {
+    document.body.classList.remove('light-mode');
+    document.querySelector('.theme-toggle').textContent = '🌙';
+  }
+}
+
+// Creator badge animation
+function animateCreatorBadge() {
+  trackUserAction('creator_badge_clicked');
+  playSound('click');
+  const badge = document.getElementById('creatorBadge');
+  badge.style.animation = 'none';
+  setTimeout(() => {
+    badge.style.animation = 'bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+  }, 10);
+}
+
+// Animation functions
+function showElement(element) {
+  element.classList.remove('hidden');
+  element.style.animation = 'none';
+  setTimeout(() => {
+    element.style.animation = 'cardAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+  }, 10);
+}
+
+function hideElement(element) {
+  element.classList.add('hidden');
+}
+
+// Main calculation function
+function calculateAll() {
+  trackUserAction('date_calculation', {
+    inputDate: document.getElementById('inputDate').value,
+    daysToSubtract: document.getElementById('subDays').value
+  });
+  
+  const inputDate = document.getElementById('inputDate').value;
+  const daysToSubtract = parseInt(document.getElementById('subDays').value) || 0;
+  
+  const date90Card = document.getElementById('date90Card');
+  const finalDateCard = document.getElementById('finalDateCard');
+  
+  if (inputDate) {
+    const parts = inputDate.split('-');
+    const date90 = new Date(parts[0], parts[1]-1, parts[2]);
+    date90.setDate(date90.getDate() + 90);
+    document.getElementById('date90').textContent = formatDate(date90);
+    showElement(date90Card);
+    
+    if (!isNaN(daysToSubtract) && daysToSubtract > 0) {
+      const finalDate = new Date(date90);
+      finalDate.setDate(finalDate.getDate() - daysToSubtract);
+      document.getElementById('finalDate').textContent = formatDate(finalDate);
+      showElement(finalDateCard);
+    } else {
+      hideElement(finalDateCard);
+    }
+  } else {
+    hideElement(date90Card);
+    hideElement(finalDateCard);
+  }
+}
+
+// Format date as DD/MM/YYYY
+function formatDate(date) {
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth()+1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+// Number to words converter function
+function convertNumberToWords() {
+  trackUserAction('number_conversion', {
+    number: document.getElementById('numberInput').value,
+    currency: document.getElementById('currencySelect').value
+  });
+  
+  const numberStr = document.getElementById('numberInput').value;
+  const currency = document.getElementById('currencySelect').value;
+  const wordsOutputCard = document.getElementById('wordsOutputCard');
+  
+  if (!numberStr) {
+    hideElement(wordsOutputCard);
+    return;
+  }
+  
+  const words = numberToWords(numberStr, currency);
+  document.getElementById('wordsOutput').textContent = words || 'ZERO';
+  
+  const resultText = document.getElementById('wordsOutput');
+  resultText.style.animation = 'none';
+  setTimeout(() => {
+    resultText.style.animation = 'textPop 0.4s ease forwards';
+  }, 10);
+  
+  showElement(wordsOutputCard);
+}
+
+function numberToWords(numberStr, currency) {
+  if (!numberStr) return '';
+  
+  const currencyUnits = getCurrencyUnits(currency);
+  
+  const parts = numberStr.toString().split('.');
+  let wholePart = parts[0];
+  let decimalPart = parts.length > 1 ? parts[1] : '';
+  
+  if (currency === 'JPY') {
+    decimalPart = '';
+  }
+  
+  let words = convertWholeNumber(wholePart);
+  
+  if (words) {
+    words += ' ' + (parseInt(wholePart) === 1 ? currencyUnits.whole.singular : currencyUnits.whole.plural);
+  } else {
+    words = 'ZERO ' + currencyUnits.whole.plural;
+  }
+  
+  if (decimalPart && decimalPart.length > 0 && currency !== 'JPY') {
+    if (decimalPart.length === 1) decimalPart += '0';
+    decimalPart = decimalPart.substring(0, 2);
+    
+    const decimalValue = parseInt(decimalPart);
+    if (decimalValue > 0) {
+      const decimalWords = convertWholeNumber(decimalPart);
+      if (decimalWords) {
+        words += ' AND ' + decimalWords;
+        words += ' ' + (decimalValue === 1 ? currencyUnits.fraction.singular : currencyUnits.fraction.plural);
+      }
+    }
+  }
+  
+  return words;
+}
+
+function getCurrencyUnits(currency) {
+  const currencies = {
+    USD: { whole: { singular: 'DOLLAR', plural: 'DOLLARS' }, fraction: { singular: 'CENT', plural: 'CENTS' } },
+    GBP: { whole: { singular: 'POUND', plural: 'POUNDS' }, fraction: { singular: 'PENCE', plural: 'PENCE' } },
+    AUD: { whole: { singular: 'DOLLAR', plural: 'DOLLARS' }, fraction: { singular: 'CENT', plural: 'CENTS' } },
+    EUR: { whole: { singular: 'EURO', plural: 'EUROS' }, fraction: { singular: 'CENT', plural: 'CENTS' } },
+    CAD: { whole: { singular: 'DOLLAR', plural: 'DOLLARS' }, fraction: { singular: 'CENT', plural: 'CENTS' } },
+    THB: { whole: { singular: 'BAHT', plural: 'BAHT' }, fraction: { singular: 'SATANG', plural: 'SATANG' } },
+    JPY: { whole: { singular: 'YEN', plural: 'YEN' }, fraction: { singular: '', plural: '' } },
+    CNY: { whole: { singular: 'YUAN', plural: 'YUAN' }, fraction: { singular: 'FEN', plural: 'FEN' } },
+    INR: { whole: { singular: 'RUPEE', plural: 'RUPEE' }, fraction: { singular: 'PAISE', plural: 'PAISE' } }
+  };
+  return currencies[currency] || currencies.USD;
+}
+
+function convertWholeNumber(numStr) {
+  const num = parseInt(numStr);
+  if (isNaN(num)) return '';
+  if (num === 0) return '';
+  
+  const units = ['', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'];
+  const teens = ['TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN', 'FIFTEEN', 'SIXTEEN', 'SEVENTEEN', 'EIGHTEEN', 'NINETEEN'];
+  const tens = ['', '', 'TWENTY', 'THIRTY', 'FORTY', 'FIFTY', 'SIXTY', 'SEVENTY', 'EIGHTY', 'NINETY'];
+  const scales = ['', 'THOUSAND', 'MILLION', 'BILLION'];
+  
+  if (num < 10) return units[num];
+  if (num < 20) return teens[num - 10];
+  if (num < 100) {
+    const ten = Math.floor(num / 10);
+    const unit = num % 10;
+    return tens[ten] + (unit ? '-' + units[unit] : '');
+  }
+  
+  if (num < 1000) {
+    const hundred = Math.floor(num / 100);
+    const remainder = num % 100;
+    return units[hundred] + ' HUNDRED' + (remainder ? ' AND ' + convertWholeNumber(remainder.toString()) : '');
+  }
+  
+  for (let i = 0; i < scales.length; i++) {
+    const scaleValue = Math.pow(1000, i+1);
+    if (num < scaleValue) {
+      const scale = Math.floor(num / Math.pow(1000, i));
+      const remainder = num % Math.pow(1000, i);
+      return convertWholeNumber(scale.toString()) + ' ' + scales[i] + (remainder ? ' ' + convertWholeNumber(remainder.toString()) : '');
+    }
+  }
+  
+  return '';
+}
+
+// Export functionality
+function showExport() {
+  trackUserAction('export_panel_opened');
+  playSound('click');
+  document.getElementById('exportContainer').classList.add('show');
+}
+
+function hideExport() {
+  playSound('click');
+  document.getElementById('exportContainer').classList.remove('show');
+}
+
+function exportResults() {
+  trackUserAction('results_exported', {
+    format: document.querySelector('input[name="exportFormat"]:checked').value
+  });
+  playSound('success');
+  
+  const exportFormat = document.querySelector('input[name="exportFormat"]:checked').value;
+  const includeDate90 = document.getElementById('exportDate90').checked;
+  const includeFinalDate = document.getElementById('exportFinalDate').checked;
+  const includeNumberWords = document.getElementById('exportNumberWords').checked;
+  const includeInputData = document.getElementById('exportInputData').checked;
+  
+  let content = 'LC Date Calculation PRO Results\n';
+  content += '================================\n\n';
+  
+  if (includeInputData) {
+    content += `Input Data:\n`;
+    content += `- LC Issuance Date: ${document.getElementById('inputDate').value || 'Not set'}\n`;
+    content += `- Days to Subtract: ${document.getElementById('subDays').value || '0'}\n`;
+    content += `- Number to Convert: ${document.getElementById('numberInput').value || 'Not set'}\n`;
+    content += `- Currency: ${document.getElementById('currencySelect').value}\n\n`;
+  }
+  
+  if (includeDate90 && !document.getElementById('date90Card').classList.contains('hidden')) {
+    content += `90-Day Expiry Date: ${document.getElementById('date90').textContent}\n`;
+  }
+  
+  if (includeFinalDate && !document.getElementById('finalDateCard').classList.contains('hidden')) {
+    content += `Latest Shipment Date: ${document.getElementById('finalDate').textContent}\n`;
+  }
+  
+  if (includeNumberWords && !document.getElementById('wordsOutputCard').classList.contains('hidden')) {
+    content += `Number in Words: ${document.getElementById('wordsOutput').textContent}\n`;
+  }
+  
+  content += `\nGenerated on: ${new Date().toLocaleString()}\n`;
+  content += `Tool: LC Date Calculation PRO by Sethil Yaddehige\n`;
+  
+  if (exportFormat === 'pdf') {
+    // In a real implementation, you would use a PDF library like jsPDF
+    showNotification('PDF export would be generated here');
+    console.log('PDF Content:', content);
+  } else if (exportFormat === 'text') {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lc-calculation-results.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showNotification('Results exported as text file');
+  } else if (exportFormat === 'print') {
+    window.print();
+    showNotification('Printing results...');
+  }
+  
+  hideExport();
+}
+
+// Snake Game Implementation
+let canvas, ctx;
+let snake = [];
+let food = {};
+let gridSize = 20;
+let direction = 'right';
+let nextDirection = 'right';
+let score = 0;
+let highScore = 0;
+let gameInterval;
+let gameRunning = false;
+let gamePaused = false;
+
+function showGame() {
+  trackUserAction('game_opened');
+  playSound('click');
+  const gameContainer = document.getElementById('gameContainer');
+  gameContainer.classList.add('show');
+  initializeGame();
+}
+
+function hideGame() {
+  playSound('click');
+  const gameContainer = document.getElementById('gameContainer');
+  gameContainer.classList.remove('show');
+  stopGame();
+}
+
+function initializeGame() {
+  canvas = document.getElementById('gameCanvas');
+  ctx = canvas.getContext('2d');
+  
+  const gameOverlay = document.getElementById('gameOverlay');
+  gameOverlay.style.display = 'flex';
+  document.getElementById('gameOverText').textContent = 'SNAKE GAME';
+  
+  document.addEventListener('keydown', handleKeyPress);
+}
+
+function startGame() {
+  trackUserAction('game_started');
+  playSound('click');
+  const gameOverlay = document.getElementById('gameOverlay');
+  gameOverlay.style.display = 'none';
+  
+  // Reset game state
+  snake = [
+    {x: 5, y: 10},
+    {x: 4, y: 10},
+    {x: 3, y: 10}
+  ];
+  
+  direction = 'right';
+  nextDirection = 'right';
+  score = 0;
+  updateScore();
+  
+  generateFood();
+  gameRunning = true;
+  gamePaused = false;
+  
+  if (gameInterval) clearInterval(gameInterval);
+  gameInterval = setInterval(gameLoop, 150);
+}
+
+function pauseGame() {
+  trackUserAction('game_paused', { paused: !gamePaused });
+  playSound('click');
+  if (!gameRunning) return;
+  
+  gamePaused = !gamePaused;
+  
+  const gameOverlay = document.getElementById('gameOverlay');
+  if (gamePaused) {
+    gameOverlay.style.display = 'flex';
+    document.getElementById('gameOverText').textContent = 'GAME PAUSED';
+  } else {
+    gameOverlay.style.display = 'none';
+  }
+}
+
+function stopGame() {
+  gameRunning = false;
+  gamePaused = false;
+  if (gameInterval) {
+    clearInterval(gameInterval);
+    gameInterval = null;
+  }
+}
+
+function gameLoop() {
+  if (!gameRunning || gamePaused) return;
+  
+  direction = nextDirection;
+  moveSnake();
+  
+  if (checkCollision()) {
+    gameOver();
+    return;
+  }
+  
+  if (checkFoodCollision()) {
+    eatFood();
+    generateFood();
+  }
+  
+  drawGame();
+}
+
+function moveSnake() {
+  const head = {x: snake[0].x, y: snake[0].y};
+  
+  switch (direction) {
+    case 'up': head.y--; break;
+    case 'down': head.y++; break;
+    case 'left': head.x--; break;
+    case 'right': head.x++; break;
+  }
+  
+  snake.unshift(head);
+  
+  // Remove tail if no food eaten
+  if (!food.eaten) {
+    snake.pop();
+  } else {
+    food.eaten = false;
+  }
+}
+
+function checkCollision() {
+  const head = snake[0];
+  
+  // Wall collision
+  if (head.x < 0 || head.x >= canvas.width/gridSize || 
+      head.y < 0 || head.y >= canvas.height/gridSize) {
+    return true;
+  }
+  
+  // Self collision
+  for (let i = 1; i < snake.length; i++) {
+    if (head.x === snake[i].x && head.y === snake[i].y) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+function checkFoodCollision() {
+  const head = snake[0];
+  return head.x === food.x && head.y === food.y;
+}
+
+function eatFood() {
+  trackUserAction('game_food_eaten', { score: score + 10 });
+  playSound('success');
+  food.eaten = true;
+  score += 10;
+  updateScore();
+}
+
+function generateFood() {
+  food = {
+    x: Math.floor(Math.random() * (canvas.width/gridSize)),
+    y: Math.floor(Math.random() * (canvas.height/gridSize)),
+    eaten: false
+  };
+  
+  // Make sure food doesn't appear on snake
+  for (let segment of snake) {
+    if (food.x === segment.x && food.y === segment.y) {
+      generateFood();
+      break;
+    }
+  }
+}
+
+function drawGame() {
+  // Clear canvas
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--input-bg');
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw snake
+  snake.forEach((segment, index) => {
+    if (index === 0) {
+      // Head
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary');
+    } else {
+      // Body
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--secondary');
+    }
+    ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 1, gridSize - 1);
+  });
+  
+  // Draw food
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent');
+  ctx.beginPath();
+  ctx.arc(
+    food.x * gridSize + gridSize/2,
+    food.y * gridSize + gridSize/2,
+    gridSize/2 - 1,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+}
+
+function handleKeyPress(e) {
+  if (!gameRunning) return;
+  
+  switch(e.key) {
+    case 'ArrowUp':
+      if (direction !== 'down') nextDirection = 'up';
+      break;
+    case 'ArrowDown':
+      if (direction !== 'up') nextDirection = 'down';
+      break;
+    case 'ArrowLeft':
+      if (direction !== 'right') nextDirection = 'left';
+      break;
+    case 'ArrowRight':
+      if (direction !== 'left') nextDirection = 'right';
+      break;
+  }
+}
+
+function gameOver() {
+  trackUserAction('game_over', { finalScore: score, highScore: Math.max(score, highScore) });
+  playSound('error');
+  stopGame();
+  
+  const gameOverlay = document.getElementById('gameOverlay');
+  gameOverlay.style.display = 'flex';
+  document.getElementById('gameOverText').textContent = 'GAME OVER';
+  
+  if (score > highScore) {
+    highScore = score;
+    document.getElementById('highScoreValue').textContent = highScore;
+  }
+}
+
+function updateScore() {
+  document.getElementById('scoreValue').textContent = score;
+}
+
+// Initialize the application
+window.onload = function() {
+    checkLogin();
+    createParticles();
+    detectSystemTheme();
+    
+    const today = new Date();
+    const formattedDate = today.toISOString().substring(0, 10);
+    document.getElementById('inputDate').value = formattedDate;
+    
+    initializeGame();
+    updateScore();
+    document.getElementById('highScoreValue').textContent = highScore;
+    
+    showWelcomeMessage();
+};
+</script>
+</body>
+</html>
