@@ -60,11 +60,14 @@
             color: var(--text);
             font-size: 14px;
             box-sizing: border-box;
+            transition: all 0.3s ease;
         }
         
         input:focus {
             border-color: var(--primary);
             outline: none;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
         }
         
         button {
@@ -78,10 +81,18 @@
             font-size: 14px;
             font-weight: 600;
             margin-top: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         
         button:hover {
             background: #5b4cd6;
+            transform: translateY(-1px);
+        }
+        
+        button:active {
+            transform: translateY(0);
         }
         
         .error {
@@ -89,6 +100,91 @@
             font-size: 12px;
             margin-top: 5px;
             display: none;
+        }
+        
+        /* Loading Bar Styles */
+        .loading-container {
+            display: none;
+            margin-top: 15px;
+        }
+        
+        .loading-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(42, 42, 62, 0.5);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loading-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+        
+        .loading-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .loading-text {
+            font-size: 12px;
+            margin-top: 8px;
+            color: var(--secondary);
+            opacity: 0;
+            animation: fadeInOut 2s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        /* Success Checkmark */
+        .success-check {
+            display: none;
+            color: var(--secondary);
+            font-size: 20px;
+            margin-top: 10px;
+            animation: bounceIn 0.6s ease;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Button States */
+        .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-loading {
+            background: #5b4cd6 !important;
+            pointer-events: none;
+        }
+        
+        .btn-success {
+            background: var(--secondary) !important;
         }
     </style>
 </head>
@@ -98,15 +194,47 @@
         <p>Enter your name to continue</p>
         <input type="text" id="userName" placeholder="Enter your name">
         <div class="error" id="errorMessage">Please enter your name</div>
-        <button onclick="login()">Enter Application</button>
+        <button onclick="login()" id="loginBtn">
+            <div class="btn-content">
+                <span>Enter Application</span>
+            </div>
+        </button>
+        
+        <!-- Loading Bar -->
+        <div class="loading-container" id="loadingContainer">
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+            <div class="loading-text" id="loadingText">Loading application...</div>
+        </div>
+        
+        <!-- Success Checkmark -->
+        <div class="success-check" id="successCheck">✅</div>
     </div>
 
     <script>
-        function login() {
+        async function login() {
             const userName = document.getElementById('userName').value.trim();
             const errorMessage = document.getElementById('errorMessage');
+            const loginBtn = document.getElementById('loginBtn');
+            const loadingContainer = document.getElementById('loadingContainer');
+            const loadingProgress = document.getElementById('loadingProgress');
+            const loadingText = document.getElementById('loadingText');
+            const successCheck = document.getElementById('successCheck');
+            const btnContent = loginBtn.querySelector('.btn-content');
             
             if (userName) {
+                // Hide error message
+                errorMessage.style.display = 'none';
+                
+                // Show loading state
+                loginBtn.classList.add('btn-loading');
+                btnContent.innerHTML = '<span>Loading...</span>';
+                loadingContainer.style.display = 'block';
+                
+                // Simulate loading progress
+                await simulateLoading(loadingProgress, loadingText);
+                
                 // User tracking data
                 const userData = {
                     id: generateUserId(),
@@ -128,13 +256,57 @@
                 
                 console.log('✅ USER LOGIN:', userData);
                 
-                // Redirect to main app
-                window.location.href = 'main.html';
+                // Show success state
+                loginBtn.classList.remove('btn-loading');
+                loginBtn.classList.add('btn-success');
+                btnContent.innerHTML = '<span>Success!</span>';
+                loadingContainer.style.display = 'none';
+                successCheck.style.display = 'block';
+                
+                // Wait a moment then redirect
+                setTimeout(() => {
+                    window.location.href = 'main.html';
+                }, 800);
                 
             } else {
                 errorMessage.style.display = 'block';
+                
+                // Add shake animation to input
+                const userNameInput = document.getElementById('userName');
+                userNameInput.style.animation = 'shake 0.5s ease';
+                setTimeout(() => {
+                    userNameInput.style.animation = '';
+                }, 500);
             }
         }
+
+        // Simulate loading progress
+        async function simulateLoading(progressBar, loadingText) {
+            const steps = [
+                { progress: 20, text: "Initializing..." },
+                { progress: 40, text: "Loading modules..." },
+                { progress: 60, text: "Setting up interface..." },
+                { progress: 80, text: "Almost ready..." },
+                { progress: 100, text: "Complete!" }
+            ];
+            
+            for (let step of steps) {
+                progressBar.style.width = step.progress + '%';
+                loadingText.textContent = step.text;
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+        }
+
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
 
         function generateUserId() {
             return 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
