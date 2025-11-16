@@ -8,91 +8,566 @@
         :root {
             --bg: linear-gradient(135deg, #121212 0%, #1a1a2e 50%, #16213e 100%);
             --text: #f8f9fa;
-            --card: rgba(30, 30, 46, 0.85);
+            --card: rgba(30, 30, 46, 0.95);
             --primary: #6c5ce7;
             --secondary: #00cec9;
             --accent: #fd79a8;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --error: #e17055;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
             background: var(--bg);
             color: var(--text);
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
+            position: relative;
         }
         
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+        
+        .bg-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--primary);
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+        
+        /* Glass Morphism Container */
         .login-container {
             background: var(--card);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 50px 40px;
+            border-radius: 25px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
             text-align: center;
             width: 90%;
-            max-width: 400px;
-            border: 1px solid rgba(108, 92, 231, 0.3);
+            max-width: 450px;
+            border: 1px solid rgba(108, 92, 231, 0.2);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transition: 0.5s;
+        }
+        
+        .login-container:hover::before {
+            left: 100%;
+        }
+        
+        /* Header Styles */
+        .app-header {
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4);
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        .app-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        
+        .app-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        
+        /* Input Group Styles */
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+            position: relative;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .input-label i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 18px 20px 18px 50px;
+            border: 2px solid rgba(108, 92, 231, 0.2);
+            border-radius: 15px;
+            background: rgba(42, 42, 62, 0.6);
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(10px);
         }
         
-        h2 {
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-        
-        input {
-            width: 100%;
-            padding: 15px;
-            margin: 15px 0;
-            border: 2px solid rgba(108, 92, 231, 0.3);
-            border-radius: 12px;
-            background: rgba(42, 42, 62, 0.7);
-            color: var(--text);
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        
-        input:focus {
+        .input-field:focus {
             border-color: var(--primary);
             outline: none;
+            transform: translateY(-2px);
+            box-shadow: 
+                0 10px 30px rgba(108, 92, 231, 0.3),
+                0 0 0 3px rgba(108, 92, 231, 0.1);
         }
         
-        button {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1.2rem;
             transition: all 0.3s ease;
         }
         
-        button:hover {
-            background: #5b4cd6;
-            transform: translateY(-2px);
+        .input-field:focus + .input-icon {
+            color: var(--accent);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        /* Button Styles */
+        .login-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4);
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 15px 40px rgba(108, 92, 231, 0.6),
+                0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+        
+        .login-btn:hover::before {
+            left: 100%;
+        }
+        
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        /* Features List */
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(42, 42, 62, 0.4);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .feature i {
+            color: var(--success);
+            font-size: 1rem;
+        }
+        
+        /* Footer */
+        .login-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 184, 148, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 184, 148, 0.3);
+            margin-top: 10px;
+        }
+        
+        .security-badge i {
+            color: var(--success);
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Error Message */
+        .error-message {
+            background: rgba(225, 112, 85, 0.1);
+            border: 1px solid rgba(225, 112, 85, 0.3);
+            color: var(--error);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Success Animation */
+        .success-check {
+            display: none;
+            width: 50px;
+            height: 50px;
+            margin: 0 auto;
+            color: var(--success);
+            animation: bounceIn 0.6s ease;
+        }
+        
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 25px;
+                margin: 20px;
+            }
+            
+            .app-title {
+                font-size: 2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-field {
+                padding: 15px 15px 15px 45px;
+            }
+        }
+        
+        /* Dark/Light mode toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(180deg);
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Particle count badge */
+        .particle-count {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--card);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="animated-bg" id="animatedBg"></div>
+    
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    
+    <!-- Particle Count -->
+    <div class="particle-count" id="particleCount">Particles: 0</div>
+    
+    <!-- Main Login Container -->
     <div class="login-container">
-        <h2>LC Date Calculation PRO</h2>
-        <p>Enter your name to continue</p>
-        <input type="text" id="userName" placeholder="Enter your name">
-        <button onclick="login()">Enter Application</button>
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="app-icon">📊</div>
+            <h1 class="app-title">LC Date Calculation PRO</h1>
+            <p class="app-subtitle">Professional Date & Number Tools</p>
+        </div>
+        
+        <!-- Login Form -->
+        <div class="input-group">
+            <label class="input-label">
+                <i>👤</i> Enter Your Name
+            </label>
+            <div class="input-wrapper">
+                <input type="text" id="userName" class="input-field" placeholder="Type your name here..." autocomplete="name">
+                <div class="input-icon">💼</div>
+            </div>
+        </div>
+        
+        <!-- Features -->
+        <div class="features">
+            <div class="feature">
+                <i>✅</i> Date Calculations
+            </div>
+            <div class="feature">
+                <i>✅</i> Number to Words
+            </div>
+            <div class="feature">
+                <i>✅</i> Multi-Currency
+            </div>
+            <div class="feature">
+                <i>✅</i> Export Results
+            </div>
+        </div>
+        
+        <!-- Login Button -->
+        <button class="login-btn" onclick="login()" id="loginBtn">
+            <i class="btn-icon">🚀</i>
+            <span id="btnText">Enter Application</span>
+            <div class="loading-spinner" id="loadingSpinner"></div>
+        </button>
+        
+        <!-- Success Check -->
+        <div class="success-check" id="successCheck">✅</div>
+        
+        <!-- Error Message -->
+        <div class="error-message" id="errorMessage">
+            <i>⚠️</i>
+            <span id="errorText">Please enter your name to continue</span>
+        </div>
+        
+        <!-- Footer -->
+        <div class="login-footer">
+            <p>Secure • Fast • Professional</p>
+            <div class="security-badge">
+                <i>🔒</i>
+                <span>Your data is secure and private</span>
+            </div>
+        </div>
     </div>
 
     <script>
-        function login() {
+        // Create animated background particles
+        function createParticles() {
+            const bgContainer = document.getElementById('animatedBg');
+            const particleCount = 15;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('bg-particle');
+                
+                // Random size between 5px and 15px
+                const size = Math.random() * 10 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}vw`;
+                
+                // Random color from theme
+                const colors = ['var(--primary)', 'var(--secondary)', 'var(--accent)', 'var(--success)'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Random animation duration and delay
+                const duration = Math.random() * 20 + 15;
+                const delay = Math.random() * 5;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                bgContainer.appendChild(particle);
+            }
+            
+            // Update particle count display
+            document.getElementById('particleCount').textContent = `Particles: ${particleCount}`;
+        }
+        
+        // Enhanced login function with animations
+        async function login() {
             const userName = document.getElementById('userName').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const errorMessage = document.getElementById('errorMessage');
+            const successCheck = document.getElementById('successCheck');
+            
+            // Hide error message initially
+            errorMessage.style.display = 'none';
             
             if (userName) {
-                // Enhanced user tracking data for ALL users
+                // Show loading state
+                btnText.style.display = 'none';
+                loadingSpinner.style.display = 'block';
+                loginBtn.disabled = true;
+                
+                // Simulate processing delay for better UX
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Enhanced user tracking data
                 const userData = {
                     id: generateUserId(),
                     name: userName,
@@ -105,32 +580,57 @@
                     referrer: document.referrer || 'Direct visit',
                     deviceType: getDeviceType(),
                     isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
-                    ipAddress: 'Unknown' // Note: IP can only be获取 with server-side code
+                    loginMethod: 'advanced_ui'
                 };
                 
                 // Store user info for current session
                 localStorage.setItem('currentUserName', userName);
                 localStorage.setItem('currentLoginTime', userData.loginTime);
+                localStorage.setItem('currentUserId', userData.id);
                 
                 // Add to ALL users database
                 addUserToDatabase(userData);
                 
-                console.log('✅ USER LOGIN:', userData);
+                console.log('✅ USER LOGIN SUCCESS:', userData);
+                
+                // Show success animation
+                loadingSpinner.style.display = 'none';
+                successCheck.style.display = 'block';
+                loginBtn.style.background = 'linear-gradient(135deg, var(--success), var(--secondary))';
+                
+                // Wait for success animation to complete
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 // Redirect to main app
-                setTimeout(() => {
-                    window.location.href = 'main.html';
-                }, 100);
+                window.location.href = 'main.html';
                 
             } else {
-                alert('Please enter your name');
+                // Show error message
+                errorMessage.style.display = 'flex';
+                loginBtn.style.animation = 'shake 0.5s ease';
+                
+                // Remove shake animation after it completes
+                setTimeout(() => {
+                    loginBtn.style.animation = '';
+                }, 500);
             }
         }
-
+        
+        // Add shake animation for error state
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
         function generateUserId() {
             return 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
         }
-
+        
         function getDeviceType() {
             const ua = navigator.userAgent;
             if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
@@ -141,7 +641,7 @@
                 return 'Desktop';
             }
         }
-
+        
         function addUserToDatabase(userData) {
             // Get existing users or initialize empty array
             const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
@@ -157,7 +657,8 @@
                     ...allUsers[existingUserIndex],
                     loginTime: userData.loginTime,
                     loginCount: (allUsers[existingUserIndex].loginCount || 1) + 1,
-                    lastActivity: userData.loginTime
+                    lastActivity: userData.loginTime,
+                    loginMethod: userData.loginMethod
                 };
             } else {
                 // Add new user
@@ -175,7 +676,7 @@
             
             console.log(`📊 USERS DATABASE: ${allUsers.length} total users`);
         }
-
+        
         function initializeUserTracking(userId) {
             // Initialize page views array if not exists
             if (!localStorage.getItem('allPageViews')) {
@@ -189,35 +690,91 @@
             
             // Add initial page view for login
             const pageView = {
-                id: generateId(),
+                id: generateActionId(),
                 userId: userId,
                 userName: localStorage.getItem('currentUserName'),
                 page: 'login.html',
                 timestamp: new Date().toISOString(),
-                referrer: document.referrer || 'Direct visit'
+                referrer: document.referrer || 'Direct visit',
+                uiType: 'advanced'
             };
             
             addPageView(pageView);
         }
-
+        
         function addPageView(pageView) {
             const allPageViews = JSON.parse(localStorage.getItem('allPageViews') || '[]');
             allPageViews.push(pageView);
             localStorage.setItem('allPageViews', JSON.stringify(allPageViews));
         }
-
-        function generateId() {
-            return 'id_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        
+        function generateActionId() {
+            return 'action_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
         }
         
+        // Theme toggle functionality
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const btn = document.querySelector('.theme-toggle');
+            btn.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+            
+            // Save theme preference
+            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        }
+        
+        // Auto-detect system theme
+        function detectSystemTheme() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.body.classList.add('light-mode');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            } else if (savedTheme === 'dark') {
+                document.body.classList.remove('light-mode');
+                document.querySelector('.theme-toggle').textContent = '🌙';
+            }
+        }
+        
+        // Enter key support
         document.getElementById('userName').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 login();
             }
         });
         
+        // Input field focus effects
+        document.getElementById('userName').addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+        });
+        
+        document.getElementById('userName').addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+        
+        // Auto-focus on input when page loads
         window.onload = function() {
-            document.getElementById('userName').focus();
+            createParticles();
+            detectSystemTheme();
+            
+            setTimeout(() => {
+                document.getElementById('userName').focus();
+            }, 500);
+            
+            // Add some interactive effects
+            const loginContainer = document.querySelector('.login-container');
+            loginContainer.style.opacity = '0';
+            loginContainer.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                loginContainer.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                loginContainer.style.opacity = '1';
+                loginContainer.style.transform = 'translateY(0)';
+            }, 300);
         };
     </script>
 </body>
