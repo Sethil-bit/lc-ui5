@@ -37,7 +37,7 @@
         }
         
         .admin-container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             background: var(--card);
             padding: 30px;
@@ -78,7 +78,6 @@
         }
         
         button {
-            width: 100%;
             padding: 15px;
             background: var(--primary);
             color: white;
@@ -88,11 +87,16 @@
             font-size: 16px;
             font-weight: 600;
             transition: all 0.3s ease;
+            margin: 5px;
         }
         
         button:hover {
             background: #5b4cd6;
             transform: translateY(-2px);
+        }
+        
+        .full-width {
+            width: 100%;
         }
         
         .stats-grid {
@@ -123,11 +127,16 @@
         
         .data-section {
             margin-bottom: 30px;
+            background: rgba(42, 42, 62, 0.3);
+            padding: 20px;
+            border-radius: 12px;
         }
         
         .data-section h3 {
             color: var(--secondary);
             margin-bottom: 15px;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 5px;
         }
         
         pre {
@@ -136,8 +145,10 @@
             border-radius: 8px;
             overflow-x: auto;
             font-size: 0.9em;
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
         
         .btn {
@@ -182,6 +193,55 @@
             border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
+            z-index: 1000;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(42, 42, 62, 0.3);
+            border-radius: 12px;
+        }
+        
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .user-table th, .user-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .user-table th {
+            background: rgba(108, 92, 231, 0.3);
+            color: var(--primary);
+        }
+        
+        .device-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            margin: 2px;
+        }
+        
+        .mobile-badge {
+            background: #00cec9;
+            color: white;
+        }
+        
+        .desktop-badge {
+            background: #6c5ce7;
+            color: white;
+        }
+        
+        .tablet-badge {
+            background: #fd79a8;
+            color: white;
         }
     </style>
 </head>
@@ -191,62 +251,68 @@
         <h2>🔐 Admin Login</h2>
         <p>Enter admin password to access user tracking data</p>
         <input type="password" id="adminPassword" placeholder="Enter admin password">
-        <button onclick="loginAdmin()">Login</button>
+        <button class="full-width" onclick="loginAdmin()">Login</button>
         <div class="error-message" id="errorMessage">Invalid password! Try again.</div>
         <div style="margin-top: 20px;">
-            <button class="btn" onclick="window.location.href='main.html'" style="background: #666;">← Back to App</button>
+            <button class="btn full-width" onclick="window.location.href='main.html'" style="background: #666;">← Back to App</button>
         </div>
     </div>
 
     <!-- Admin Dashboard -->
     <div class="admin-container" id="adminContainer">
-        <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+        <button class="logout-btn" onclick="logoutAdmin()">🚪 Logout</button>
         
         <h1>🔍 User Tracking Dashboard</h1>
         
         <div class="stats-grid" id="statsGrid">
             <div class="stat-card">
                 <div class="stat-value" id="totalUsers">0</div>
-                <div class="stat-label">Total Users</div>
+                <div class="stat-label">Total Unique Users</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="totalPageViews">0</div>
-                <div class="stat-label">Page Views</div>
+                <div class="stat-label">Total Page Views</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="totalActions">0</div>
                 <div class="stat-label">User Actions</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="activeUsers">0</div>
-                <div class="stat-label">Active Now</div>
+                <div class="stat-value" id="mobileUsers">0</div>
+                <div class="stat-label">Mobile Users</div>
             </div>
         </div>
         
-        <div style="text-align: center; margin-bottom: 30px;">
+        <div class="controls">
             <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
             <button class="btn btn-accent" onclick="exportAllData()">📥 Export All Data</button>
             <button class="btn" onclick="clearAllData()">🗑️ Clear Data</button>
+            <button class="btn" onclick="showRawData()">📋 Show Raw Data</button>
         </div>
         
         <div class="data-section">
-            <h3>👤 Current User Data</h3>
-            <pre id="currentUserData">No data available</pre>
+            <h3>👥 All Users List</h3>
+            <div id="usersTable">Loading users...</div>
         </div>
         
         <div class="data-section">
-            <h3>📊 Page Views</h3>
-            <pre id="pageViewsData">No data available</pre>
+            <h3>📊 Recent Page Views (Last 10)</h3>
+            <pre id="recentPageViews">Loading...</pre>
         </div>
         
         <div class="data-section">
-            <h3>🎯 User Actions</h3>
-            <pre id="userActionsData">No data available</pre>
+            <h3>🎯 Recent User Actions (Last 15)</h3>
+            <pre id="recentUserActions">Loading...</pre>
         </div>
         
         <div class="data-section">
             <h3>📈 User Statistics</h3>
-            <pre id="userStats">No data available</pre>
+            <pre id="userStats">Loading statistics...</pre>
+        </div>
+
+        <div class="data-section">
+            <h3>🔧 System Info</h3>
+            <pre id="systemInfo">Loading system info...</pre>
         </div>
     </div>
 
@@ -259,20 +325,14 @@
             const errorMessage = document.getElementById('errorMessage');
             
             if (password === ADMIN_PASSWORD) {
-                // Successful login
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('adminContainer').style.display = 'block';
-                loadUserData();
-                
-                // Track admin login
+                loadAllData();
                 console.log('🔐 ADMIN LOGIN: Successful admin access at ' + new Date().toISOString());
             } else {
-                // Failed login
                 errorMessage.style.display = 'block';
                 document.getElementById('adminPassword').value = '';
                 document.getElementById('adminPassword').focus();
-                
-                // Track failed admin login attempt
                 console.log('🚫 ADMIN LOGIN FAILED: Attempt from ' + navigator.userAgent);
             }
         }
@@ -284,76 +344,167 @@
             document.getElementById('errorMessage').style.display = 'none';
         }
         
-        function loadUserData() {
-            // Current user data
+        function loadAllData() {
+            loadUsersTable();
+            loadRecentData();
+            loadStatistics();
+            loadSystemInfo();
+        }
+        
+        function loadUsersTable() {
+            // Get all user data from localStorage
             const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-            document.getElementById('currentUserData').textContent = JSON.stringify(userData, null, 2);
-            
-            // Page views
             const pageViews = JSON.parse(localStorage.getItem('pageViews') || '[]');
-            document.getElementById('pageViewsData').textContent = JSON.stringify(pageViews, null, 2);
-            
-            // User actions
             const userActions = JSON.parse(localStorage.getItem('userActions') || '[]');
-            document.getElementById('userActionsData').textContent = JSON.stringify(userActions, null, 2);
+            
+            let tableHTML = '';
+            
+            if (userData.name) {
+                // Single user (current implementation)
+                const deviceType = userData.deviceType || 'Unknown';
+                const deviceBadge = getDeviceBadge(deviceType);
+                
+                tableHTML = `
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Device</th>
+                                <th>Login Time</th>
+                                <th>Page Views</th>
+                                <th>Actions</th>
+                                <th>Platform</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>${userData.name}</strong></td>
+                                <td>${deviceBadge}</td>
+                                <td>${new Date(userData.loginTime).toLocaleString()}</td>
+                                <td>${pageViews.length}</td>
+                                <td>${userActions.length}</td>
+                                <td>${userData.platform || 'Unknown'}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+            } else {
+                tableHTML = '<p>No user data found in localStorage.</p>';
+            }
+            
+            document.getElementById('usersTable').innerHTML = tableHTML;
             
             // Update stats
             document.getElementById('totalUsers').textContent = userData.name ? 1 : 0;
             document.getElementById('totalPageViews').textContent = pageViews.length;
             document.getElementById('totalActions').textContent = userActions.length;
-            document.getElementById('activeUsers').textContent = userData.name ? 1 : 0;
-            
-            // Calculate user statistics
-            const userStats = calculateUserStats(userActions, pageViews);
-            document.getElementById('userStats').textContent = JSON.stringify(userStats, null, 2);
+            document.getElementById('mobileUsers').textContent = (userData.isMobile) ? 1 : 0;
         }
         
-        function calculateUserStats(actions, pageViews) {
+        function loadRecentData() {
+            const pageViews = JSON.parse(localStorage.getItem('pageViews') || '[]');
+            const userActions = JSON.parse(localStorage.getItem('userActions') || '[]');
+            
+            // Show recent page views (last 10)
+            const recentPageViews = pageViews.slice(-10).reverse();
+            document.getElementById('recentPageViews').textContent = 
+                JSON.stringify(recentPageViews, null, 2) || 'No page views recorded';
+            
+            // Show recent user actions (last 15)
+            const recentUserActions = userActions.slice(-15).reverse();
+            document.getElementById('recentUserActions').textContent = 
+                JSON.stringify(recentUserActions, null, 2) || 'No user actions recorded';
+        }
+        
+        function loadStatistics() {
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            const pageViews = JSON.parse(localStorage.getItem('pageViews') || '[]');
+            const userActions = JSON.parse(localStorage.getItem('userActions') || '[]');
+            
             const stats = {
-                totalSessions: 0,
-                averageSessionDuration: 0,
-                mostUsedFeature: '',
-                popularTimes: {},
-                deviceBreakdown: {}
+                userInfo: {
+                    name: userData.name || 'No user',
+                    device: userData.deviceType || 'Unknown',
+                    platform: userData.platform || 'Unknown',
+                    screen: userData.screenResolution || 'Unknown',
+                    language: userData.language || 'Unknown'
+                },
+                usage: {
+                    totalPageViews: pageViews.length,
+                    totalActions: userActions.length,
+                    firstActivity: pageViews.length > 0 ? pageViews[0].timestamp : 'No activity',
+                    lastActivity: pageViews.length > 0 ? pageViews[pageViews.length-1].timestamp : 'No activity'
+                },
+                popularActions: calculatePopularActions(userActions),
+                deviceInfo: {
+                    isMobile: userData.isMobile || false,
+                    userAgent: userData.userAgent ? userData.userAgent.substring(0, 100) + '...' : 'Unknown'
+                }
             };
             
-            // Calculate most used feature
+            document.getElementById('userStats').textContent = JSON.stringify(stats, null, 2);
+        }
+        
+        function loadSystemInfo() {
+            const systemInfo = {
+                localStorageSupported: (function() {
+                    try {
+                        localStorage.setItem('test', 'test');
+                        localStorage.removeItem('test');
+                        return true;
+                    } catch (e) {
+                        return false;
+                    }
+                })(),
+                totalStorage: (function() {
+                    let total = 0;
+                    for (let key in localStorage) {
+                        if (localStorage.hasOwnProperty(key)) {
+                            total += localStorage[key].length;
+                        }
+                    }
+                    return total + ' characters';
+                })(),
+                keysInStorage: Object.keys(localStorage),
+                currentTime: new Date().toISOString(),
+                adminAccessTime: new Date().toLocaleString()
+            };
+            
+            document.getElementById('systemInfo').textContent = JSON.stringify(systemInfo, null, 2);
+        }
+        
+        function calculatePopularActions(actions) {
             const actionCounts = {};
             actions.forEach(action => {
                 actionCounts[action.action] = (actionCounts[action.action] || 0) + 1;
             });
             
-            if (Object.keys(actionCounts).length > 0) {
-                stats.mostUsedFeature = Object.keys(actionCounts).reduce((a, b) => 
-                    actionCounts[a] > actionCounts[b] ? a : b
-                );
-            }
+            // Convert to array and sort
+            const popular = Object.entries(actionCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .reduce((obj, [key, value]) => {
+                    obj[key] = value;
+                    return obj;
+                }, {});
             
-            // Calculate popular times
-            actions.forEach(action => {
-                const hour = new Date(action.timestamp).getHours();
-                stats.popularTimes[hour] = (stats.popularTimes[hour] || 0) + 1;
-            });
-            
-            // Device breakdown (from user data)
-            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-            if (userData.platform) {
-                stats.deviceBreakdown.platform = userData.platform;
+            return popular;
+        }
+        
+        function getDeviceBadge(deviceType) {
+            const type = deviceType.toLowerCase();
+            if (type.includes('mobile')) {
+                return '<span class="device-badge mobile-badge">📱 Mobile</span>';
+            } else if (type.includes('tablet')) {
+                return '<span class="device-badge tablet-badge">📟 Tablet</span>';
+            } else {
+                return '<span class="device-badge desktop-badge">💻 Desktop</span>';
             }
-            if (userData.userAgent) {
-                if (userData.userAgent.includes('Mobile')) {
-                    stats.deviceBreakdown.deviceType = 'Mobile';
-                } else {
-                    stats.deviceBreakdown.deviceType = 'Desktop';
-                }
-            }
-            
-            return stats;
         }
         
         function refreshData() {
-            loadUserData();
-            alert('Data refreshed!');
+            loadAllData();
+            showNotification('Data refreshed successfully!');
         }
         
         function exportAllData() {
@@ -370,24 +521,40 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `user-tracking-export-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `user-tracking-${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            alert('All user data exported!');
+            showNotification('All user data exported!');
         }
         
         function clearAllData() {
-            if (confirm('Are you sure you want to clear all tracking data? This cannot be undone!')) {
+            if (confirm('⚠️ Are you sure you want to clear ALL tracking data? This cannot be undone!')) {
                 localStorage.removeItem('userData');
                 localStorage.removeItem('pageViews');
                 localStorage.removeItem('userActions');
                 localStorage.removeItem('currentSession');
-                loadUserData();
-                alert('All data cleared!');
+                loadAllData();
+                showNotification('All data cleared successfully!');
             }
+        }
+        
+        function showRawData() {
+            const allData = {
+                userData: JSON.parse(localStorage.getItem('userData') || '{}'),
+                pageViews: JSON.parse(localStorage.getItem('pageViews') || '[]'),
+                userActions: JSON.parse(localStorage.getItem('userActions') || '[]')
+            };
+            
+            alert('Check browser console for raw data (F12)');
+            console.log('📋 RAW USER DATA:', allData);
+        }
+        
+        function showNotification(message) {
+            // Simple notification
+            alert(message);
         }
         
         // Enter key support for login
