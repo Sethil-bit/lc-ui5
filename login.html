@@ -3,204 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Advanced UI with LC date calculation</title>
+    <title>Login - Real-Time Advanced UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: linear-gradient(135deg, #121212 0%, #1a1a2e 50%, #16213e 100%);
-            --text: #f8f9fa;
-            --card: rgba(30, 30, 46, 0.85);
-            --primary: #6c5ce7;
-            --secondary: #00cec9;
-            --accent: #fd79a8;
+            --bg: linear-gradient(135deg, #0f0f1c 0%, #1e1e3f 50%, #2a2a5a 100%); 
+            --text: #e0e0f0; 
+            --card: rgba(30, 30, 50, 0.95); 
+            --primary: #4e73f8; 
+            --secondary: #00e8b1; 
+            --accent: #ff4785; 
+            --shadow-light: 0 8px 25px rgba(0, 0, 0, 0.4);
+            --shadow-glow: 0 0 15px rgba(78, 115, 248, 0.5);
         }
         
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif; 
             margin: 0;
             padding: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden; 
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(78, 115, 248, 0.1) 0%, transparent 40%);
+            animation: background-pulse 10s infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes background-pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.1); opacity: 0.7; }
         }
         
         .login-container {
             background: var(--card);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: var(--shadow-light);
             text-align: center;
             width: 90%;
-            max-width: 350px;
-            border: 1px solid rgba(108, 92, 231, 0.3);
-            backdrop-filter: blur(10px);
+            max-width: 400px; 
+            border: 2px solid rgba(78, 115, 248, 0.5); 
+            backdrop-filter: blur(15px); 
+            transition: all 0.5s ease;
+        }
+
+        .login-container:hover {
+            box-shadow: var(--shadow-light), var(--shadow-glow);
+        }
+
+        /* --- New: Real-Time Clock Styles --- */
+        #rtc-display {
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(0, 232, 177, 0.5);
+        }
+
+        #rtc-time {
+            font-size: 2.2rem;
+            font-weight: 700;
+            display: block;
+            line-height: 1;
         }
         
         h2 {
             color: var(--primary);
             margin-bottom: 5px;
-            font-size: 1.5rem;
+            font-size: 1.8rem; 
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
         
         p {
-            margin-bottom: 20px;
-            opacity: 0.8;
-            font-size: 0.9rem;
+            margin-bottom: 30px; 
+            opacity: 0.9;
+            font-size: 1rem;
+            color: var(--secondary); 
         }
         
+        .input-group {
+            position: relative;
+            margin: 12px 0;
+        }
+
         input {
             width: 100%;
-            padding: 12px 15px;
-            margin: 10px 0;
-            border: 2px solid rgba(108, 92, 231, 0.3);
-            border-radius: 8px;
-            background: rgba(42, 42, 62, 0.7);
+            padding: 15px 20px; 
+            border: 2px solid rgba(78, 115, 248, 0.3); /* Base border style */
+            border-radius: 10px; 
+            background: rgba(40, 40, 70, 0.8); 
             color: var(--text);
-            font-size: 14px;
+            font-size: 16px;
             box-sizing: border-box;
             transition: all 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         
+        input::placeholder {
+            color: rgba(224, 224, 240, 0.5);
+        }
+
         input:focus {
             border-color: var(--primary);
             outline: none;
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+            transform: translateY(-2px); 
+            box-shadow: 0 0 10px rgba(78, 115, 248, 0.6);
+        }
+
+        /* --- Modified Error Style --- */
+        .input-error input {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 10px rgba(255, 71, 133, 0.8) !important;
+        }
+
+        .error {
+            color: var(--accent);
+            font-size: 13px;
+            margin-top: 5px;
+            font-weight: 500;
+            display: none;
+            text-align: left;
+            padding-left: 5px;
+        }
+
+        /* --- New: Button Idle Pulse Animation --- */
+        @keyframes button-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(78, 115, 248, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(78, 115, 248, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(78, 115, 248, 0); }
         }
         
         button {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
-            margin-top: 10px;
+            margin-top: 20px; 
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.8px;
+            animation: button-pulse 2s infinite; /* Applied pulse animation */
         }
         
         button:hover {
-            background: #5b4cd6;
-            transform: translateY(-1px);
+            background: #3c65e8; 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            animation: none; /* Disable pulse on hover */
         }
         
         button:active {
             transform: translateY(0);
-        }
-        
-        .error {
-            color: #ff6b6b;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-        
-        /* Loading Bar Styles */
-        .loading-container {
-            display: none;
-            margin-top: 15px;
-        }
-        
-        .loading-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(42, 42, 62, 0.5);
-            border-radius: 2px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .loading-progress {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            border-radius: 2px;
-            transition: width 0.3s ease;
-            position: relative;
-        }
-        
-        .loading-progress::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer 1.5s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        .loading-text {
-            font-size: 12px;
-            margin-top: 8px;
-            color: var(--secondary);
-            opacity: 0;
-            animation: fadeInOut 2s infinite;
-        }
-        
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-        
-        /* Success Checkmark */
-        .success-check {
-            display: none;
-            color: var(--secondary);
-            font-size: 20px;
-            margin-top: 10px;
-            animation: bounceIn 0.6s ease;
-        }
-        
-        @keyframes bounceIn {
-            0% { transform: scale(0); opacity: 0; }
-            60% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        /* Button States */
-        .btn-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
         
         .btn-loading {
-            background: #5b4cd6 !important;
+            background: #3c65e8 !important; 
             pointer-events: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+            transform: none !important;
+            animation: none !important; /* Disable pulse when loading */
         }
         
         .btn-success {
             background: var(--secondary) !important;
+            box-shadow: 0 5px 15px rgba(0, 232, 177, 0.4) !important; 
         }
+
+        .icon-enter::before {
+            content: '🚀'; 
+            margin-right: 5px;
+            font-size: 1.2em;
+            display: inline-block;
+        }
+
+        /* --- Modified Shake Animation --- */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
     </style>
 </head>
 <body>
     <div class="login-container">
-        <h2>Advanced UI with LC date calculation</h2>
-        <p>Enter your name to continue</p>
-        <input type="text" id="userName" placeholder="Enter your name">
-        <div class="error" id="errorMessage">Please enter your name</div>
+        <div id="rtc-display">
+            <span id="rtc-date"></span><br>
+            <span id="rtc-time"></span>
+        </div>
+        
+        <h2>System Access</h2> 
+        <p>Authenticate with your Name</p> 
+        
+        <div class="input-group" id="userNameGroup">
+            <input type="text" id="userName" placeholder="Full Name or Alias">
+            <div class="error" id="errorMessage">⚠️ Please provide your name to proceed.</div>
+        </div>
+        
         <button onclick="login()" id="loginBtn">
-            <div class="btn-content">
-                <span>Enter Application</span>
+            <div class="btn-content icon-enter">
+                <span>Access Terminal</span> 
             </div>
         </button>
         
-        <!-- Loading Bar -->
         <div class="loading-container" id="loadingContainer">
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
@@ -208,13 +236,28 @@
             <div class="loading-text" id="loadingText">Loading application...</div>
         </div>
         
-        <!-- Success Checkmark -->
-        <div class="success-check" id="successCheck">Success</div>
+        <div class="success-check" id="successCheck">✅ Access Granted</div>
     </div>
 
     <script>
+        // --- New: Real-Time Clock Function ---
+        function updateRealTimeClock() {
+            const now = new Date();
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+
+            document.getElementById('rtc-time').textContent = now.toLocaleTimeString('en-US', timeOptions);
+            document.getElementById('rtc-date').textContent = now.toLocaleDateString('en-US', dateOptions).toUpperCase();
+        }
+
+        // Initialize and update the clock every second
+        updateRealTimeClock();
+        setInterval(updateRealTimeClock, 1000);
+
         async function login() {
-            const userName = document.getElementById('userName').value.trim();
+            const userNameInput = document.getElementById('userName');
+            const userNameGroup = document.getElementById('userNameGroup');
+            const userName = userNameInput.value.trim();
             const errorMessage = document.getElementById('errorMessage');
             const loginBtn = document.getElementById('loginBtn');
             const loadingContainer = document.getElementById('loadingContainer');
@@ -223,19 +266,24 @@
             const successCheck = document.getElementById('successCheck');
             const btnContent = loginBtn.querySelector('.btn-content');
             
+            // Clear any previous success/error states
+            loginBtn.classList.remove('btn-success');
+            successCheck.style.display = 'none';
+
             if (userName) {
-                // Hide error message
+                // Remove error state classes
                 errorMessage.style.display = 'none';
+                userNameGroup.classList.remove('input-error');
                 
                 // Show loading state
                 loginBtn.classList.add('btn-loading');
-                btnContent.innerHTML = '<span>Loading...</span>';
+                btnContent.innerHTML = '<span>Processing...</span>';
                 loadingContainer.style.display = 'block';
                 
                 // Simulate loading progress
                 await simulateLoading(loadingProgress, loadingText);
                 
-                // User tracking data
+                // User tracking data and database operations (Unchanged logic)
                 const userData = {
                     id: generateUserId(),
                     name: userName,
@@ -246,20 +294,16 @@
                     isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
                 };
                 
-                // Store user info
                 localStorage.setItem('currentUserName', userName);
                 localStorage.setItem('currentLoginTime', userData.loginTime);
                 localStorage.setItem('currentUserId', userData.id);
-                
-                // Add to ALL users database
                 addUserToDatabase(userData);
-                
                 console.log('USER LOGIN:', userData);
                 
                 // Show success state
                 loginBtn.classList.remove('btn-loading');
                 loginBtn.classList.add('btn-success');
-                btnContent.innerHTML = '<span>Success!</span>';
+                btnContent.innerHTML = '<span>Redirecting...</span>';
                 loadingContainer.style.display = 'none';
                 successCheck.style.display = 'block';
                 
@@ -269,10 +313,11 @@
                 }, 800);
                 
             } else {
+                // Show error state
                 errorMessage.style.display = 'block';
+                userNameGroup.classList.add('input-error'); // Apply visual error state
                 
                 // Add shake animation to input
-                const userNameInput = document.getElementById('userName');
                 userNameInput.style.animation = 'shake 0.5s ease';
                 setTimeout(() => {
                     userNameInput.style.animation = '';
@@ -280,14 +325,14 @@
             }
         }
 
-        // Simulate loading progress
+        // Simulate loading progress (Unchanged logic)
         async function simulateLoading(progressBar, loadingText) {
             const steps = [
-                { progress: 20, text: "Initializing..." },
-                { progress: 40, text: "Loading modules..." },
-                { progress: 60, text: "Setting up interface..." },
-                { progress: 80, text: "Almost ready..." },
-                { progress: 100, text: "Complete!" }
+                { progress: 20, text: "Authenticating..." },
+                { progress: 40, text: "Retrieving user data..." },
+                { progress: 60, text: "Establishing secure connection..." },
+                { progress: 80, text: "Finalizing access protocols..." },
+                { progress: 100, text: "Access complete." }
             ];
             
             for (let step of steps) {
@@ -297,17 +342,7 @@
             }
         }
 
-        // Add shake animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-5px); }
-                75% { transform: translateX(5px); }
-            }
-        `;
-        document.head.appendChild(style);
-
+        // --- Utility functions (Unchanged) ---
         function generateUserId() {
             return 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
         }
@@ -387,6 +422,7 @@
         
         document.getElementById('userName').addEventListener('input', function() {
             document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('userNameGroup').classList.remove('input-error');
         });
         
         window.onload = function() {
