@@ -494,7 +494,7 @@ select {
   padding-right: 45px;
 }
 
-/* Ship Game Styles */
+/* SHIP GAME Styles */
 .game-container {
   position: fixed;
   top: 0;
@@ -977,12 +977,12 @@ select {
   <div class="creator-badge" id="creatorBadge" onclick="animateCreatorBadge()">Created by Sethil</div>
 </div>
 
-<!-- Ship Game Container -->
+<!-- SHIP GAME Container -->
 <div class="game-container" id="gameContainer">
   <div class="game-window">
     <button class="close-game" onclick="hideGame()">×</button>
     <div class="Ship-game">
-      <h2>Ship Game</h2>
+      <h2>SHIP GAME</h2>
       <div class="game-stats">
         <div class="game-stat">
           <div class="game-stat-value" id="scoreValue">0</div>
@@ -1533,7 +1533,7 @@ function exportResults() {
   hideExport();
 }
 
-// Ship Game Implementation
+// SHIP GAME Implementation
 let canvas, ctx;
 let Ship = [];
 let food = {};
@@ -1567,7 +1567,7 @@ function initializeGame() {
   
   const gameOverlay = document.getElementById('gameOverlay');
   gameOverlay.style.display = 'flex';
-  document.getElementById('gameOverText').textContent = 'Ship GAME';
+  document.getElementById('gameOverText').textContent = 'SHIP GAME';
   
   document.addEventListener('keydown', handleKeyPress);
 }
