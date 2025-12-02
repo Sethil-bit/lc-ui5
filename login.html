@@ -2,472 +2,327 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Login | Advanced Dashboard</title>
     <style>
-        :root {
-            --bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            --card-bg: rgba(18, 18, 30, 0.95);
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --secondary: #06b6d4;
-            --accent: #f59e0b;
-            --text: #f8fafc;
-            --text-secondary: #94a3b8;
-            --success: #10b981;
-            --error: #ef4444;
-            --input-bg: rgba(30, 41, 59, 0.7);
-            --border: rgba(99, 102, 241, 0.3);
-            --shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            --glow: 0 0 40px rgba(99, 102, 241, 0.4);
-        }
-        
+        /* Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html {
+            font-size: 16px;
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #f8fafc;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            min-height: -webkit-fill-available;
             padding: 20px;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         
-        /* Animated Background Particles */
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-        
-        .particle {
-            position: absolute;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: float 15s infinite linear;
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(0) translateX(0) rotate(0deg);
-                opacity: 0.2;
+        /* Mobile-first adjustments */
+        @media (max-width: 768px) {
+            html {
+                font-size: 14px;
             }
-            25% {
-                opacity: 0.4;
-            }
-            50% {
-                transform: translateY(-100px) translateX(100px) rotate(180deg);
-                opacity: 0.2;
-            }
-            75% {
-                opacity: 0.4;
-            }
-            100% {
-                transform: translateY(0) translateX(0) rotate(360deg);
-                opacity: 0.2;
+            
+            body {
+                padding: 15px;
+                padding-top: 60px; /* Space for time display */
+                padding-bottom: 20px;
             }
         }
         
-        /* Animated Wave Background */
-        .waves {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.1;
+        @media (max-width: 480px) {
+            html {
+                font-size: 13px;
+            }
+            
+            body {
+                padding: 10px;
+                padding-top: 70px;
+            }
         }
         
-        .wave {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 200%;
-            height: 100px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-            animation: wave 20s infinite linear;
-            opacity: 0.1;
-            transform-origin: center;
-        }
-        
-        .wave:nth-child(2) {
-            animation-delay: -5s;
-            opacity: 0.15;
-            height: 120px;
-        }
-        
-        .wave:nth-child(3) {
-            animation-delay: -10s;
-            opacity: 0.1;
-            height: 80px;
-        }
-        
-        @keyframes wave {
-            0% { transform: translateX(0) rotate(0deg); }
-            100% { transform: translateX(-50%) rotate(0deg); }
-        }
-        
-        /* Real-time Clock Container */
+        /* Real-time Clock - Mobile Optimized */
         .time-container {
-            position: absolute;
-            top: 30px;
-            right: 30px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
             text-align: right;
-            z-index: 10;
-            animation: slideInRight 1s ease-out;
+            z-index: 100;
+            background: rgba(18, 18, 30, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            min-width: 180px;
+        }
+        
+        @media (max-width: 768px) {
+            .time-container {
+                position: fixed;
+                top: 10px;
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 300px;
+                text-align: center;
+                padding: 10px 15px;
+            }
         }
         
         .time {
-            font-size: 48px;
+            font-size: clamp(24px, 4vw, 36px);
             font-weight: 700;
-            background: linear-gradient(135deg, var(--text), var(--secondary));
+            background: linear-gradient(135deg, #f8fafc, #06b6d4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             font-variant-numeric: tabular-nums;
+            line-height: 1.2;
         }
         
         .date {
-            font-size: 18px;
-            color: var(--text-secondary);
-            margin-top: 5px;
+            font-size: clamp(12px, 2.5vw, 14px);
+            color: #94a3b8;
+            margin-top: 4px;
             font-weight: 500;
+            line-height: 1.3;
         }
         
         .weekday {
-            color: var(--accent);
+            color: #f59e0b;
             font-weight: 600;
         }
         
-        /* Login Container with Enhanced Animations */
+        /* Login Container - Mobile Responsive */
         .login-container {
-            background: var(--card-bg);
-            backdrop-filter: blur(25px);
-            border-radius: 28px;
-            padding: 50px 45px;
+            background: rgba(18, 18, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: clamp(30px, 5vw, 40px);
             width: 100%;
-            max-width: 480px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow), var(--glow);
+            max-width: 400px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            margin: 0 auto;
             position: relative;
             z-index: 2;
-            overflow: hidden;
-            transform-style: preserve-3d;
-            animation: containerFloat 6s ease-in-out infinite;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
-        .login-container:hover {
-            transform: translateY(-5px) rotateX(2deg) rotateY(-1deg);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 60px rgba(99, 102, 241, 0.5);
-        }
-        
-        @keyframes containerFloat {
-            0%, 100% {
-                transform: translateY(0) rotateX(0) rotateY(0);
-            }
-            50% {
-                transform: translateY(-10px) rotateX(1deg) rotateY(0.5deg);
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 25px 20px;
+                border-radius: 16px;
+                max-width: 100%;
+                margin-top: 20px;
             }
         }
         
-        /* Glowing Top Border Animation */
         .login-container::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, 
-                var(--primary), 
-                var(--secondary), 
-                var(--accent), 
-                var(--primary));
-            background-size: 300% 100%;
-            border-radius: 28px 28px 0 0;
-            animation: borderGlow 3s infinite linear;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #06b6d4);
+            border-radius: 20px 20px 0 0;
         }
         
-        @keyframes borderGlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        /* Logo Animation */
+        /* Logo Section */
         .logo-section {
             text-align: center;
-            margin-bottom: 45px;
-            position: relative;
+            margin-bottom: 30px;
         }
         
         .logo {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #6366f1, #06b6d4);
+            border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 25px;
-            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
-            transform-style: preserve-3d;
-            animation: logoFloat 8s ease-in-out infinite;
-            cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        .logo:hover {
-            transform: scale(1.1) rotateY(180deg);
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.6);
-        }
-        
-        @keyframes logoFloat {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            33% {
-                transform: translateY(-8px) rotate(-2deg);
-            }
-            66% {
-                transform: translateY(-8px) rotate(2deg);
-            }
+            margin: 0 auto 15px;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
         }
         
         .logo-inner {
-            font-weight: 800;
-            font-size: 28px;
+            font-weight: 700;
+            font-size: 24px;
             color: white;
         }
         
         .logo-section h1 {
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 12px;
-            letter-spacing: -0.5px;
-            animation: textGlow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes textGlow {
-            from {
-                filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.3));
-            }
-            to {
-                filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.6));
-            }
+            font-size: clamp(20px, 4vw, 24px);
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #f8fafc;
         }
         
         .logo-section p {
-            color: var(--text-secondary);
-            font-size: 16px;
-            line-height: 1.6;
-            max-width: 300px;
-            margin: 0 auto;
+            color: #94a3b8;
+            font-size: clamp(13px, 2.5vw, 14px);
+            line-height: 1.5;
         }
         
-        /* Enhanced Input Animation */
+        /* Input Group - Fixed for Mobile */
         .input-group {
-            margin-bottom: 32px;
-            position: relative;
-            animation: fadeInUp 0.8s ease-out;
-            animation-fill-mode: both;
+            margin-bottom: 20px;
         }
         
-        .input-group:nth-child(1) { animation-delay: 0.1s; }
-        .input-group:nth-child(2) { animation-delay: 0.2s; }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
         }
         
         .input-wrapper {
             position: relative;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(6, 182, 212, 0.1));
-            border-radius: 16px;
-            padding: 3px;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        .input-wrapper:focus-within {
-            transform: translateY(-3px);
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(6, 182, 212, 0.3));
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-        }
-        
-        .input-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 16px;
-            padding: 3px;
-            background: linear-gradient(135deg, var(--primary), transparent, var(--secondary));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        
-        .input-wrapper:focus-within::after {
-            opacity: 1;
-            animation: inputGlow 2s infinite linear;
-        }
-        
-        @keyframes inputGlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        input {
+        #userName {
             width: 100%;
-            padding: 18px 24px;
-            background: var(--input-bg);
-            border: none;
-            border-radius: 14px;
-            color: var(--text);
+            padding: 16px 20px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            color: #f8fafc;
             font-size: 16px;
             transition: all 0.3s ease;
             outline: none;
+            -webkit-appearance: none;
+            appearance: none;
         }
         
-        input:focus {
-            background: rgba(30, 41, 59, 0.9);
-            transform: translateY(-1px);
+        #userName:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        #userName::placeholder {
+            color: #64748b;
+        }
+        
+        /* Fix for iOS input zoom */
+        @media screen and (max-width: 768px) {
+            #userName {
+                font-size: 16px !important; /* Prevent iOS zoom */
+            }
         }
         
         .input-icon {
             position: absolute;
-            right: 24px;
+            right: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-secondary);
-            font-size: 20px;
-            transition: all 0.3s ease;
-            animation: iconFloat 3s ease-in-out infinite;
+            color: #64748b;
         }
         
-        @keyframes iconFloat {
-            0%, 100% { transform: translateY(-50%) rotate(0deg); }
-            50% { transform: translateY(-50%) translateX(-5px) rotate(5deg); }
+        /* Error Message */
+        .error-message {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            min-height: 20px;
         }
         
-        .input-wrapper:focus-within .input-icon {
-            color: var(--primary);
-            animation: iconPulse 0.5s ease;
+        .error-message.show {
+            opacity: 1;
         }
         
-        @keyframes iconPulse {
-            0% { transform: translateY(-50%) scale(1); }
-            50% { transform: translateY(-50%) scale(1.2); }
-            100% { transform: translateY(-50%) scale(1); }
-        }
-        
-        /* Enhanced Button Animation */
-        .login-btn {
+        /* Login Button - Mobile Optimized */
+        #loginBtn {
             width: 100%;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            padding: 18px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: white;
             border: none;
-            border-radius: 16px;
-            font-size: 17px;
-            font-weight: 700;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             margin-top: 10px;
-            animation: fadeInUp 0.8s ease-out 0.3s both;
+            touch-action: manipulation;
+            user-select: none;
         }
         
-        .login-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s ease;
+        #loginBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
         }
         
-        .login-btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.5);
+        #loginBtn:active {
+            transform: translateY(0);
         }
         
-        .login-btn:hover::before {
-            left: 100%;
-        }
-        
-        .login-btn:active {
-            transform: translateY(0) scale(0.98);
-            transition: all 0.1s ease;
-        }
-        
-        .login-btn.loading {
-            background: linear-gradient(135deg, var(--primary-hover), var(--primary-hover));
+        #loginBtn.loading {
+            opacity: 0.8;
             pointer-events: none;
         }
         
-        .login-btn.success {
-            background: var(--success);
+        #loginBtn.success {
+            background: #10b981;
+        }
+        
+        .btn-text {
+            transition: opacity 0.3s ease;
         }
         
         .loading-spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
-            animation: spin 0.8s linear infinite, pulse 1.5s ease-in-out infinite;
-            position: absolute;
+            animation: spin 0.8s linear infinite;
             opacity: 0;
         }
         
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-            50% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+        #loginBtn.loading .btn-text {
+            opacity: 0;
         }
         
-        /* Animated Loading Bar */
+        #loginBtn.loading .loading-spinner {
+            opacity: 1;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Loading Container */
         .loading-container {
-            margin-top: 30px;
+            margin-top: 20px;
             display: none;
-            animation: fadeIn 0.5s ease;
         }
         
         .loading-container.active {
@@ -477,108 +332,55 @@
         .loading-stages {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 13px;
-            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #94a3b8;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .stage {
-            position: relative;
-            padding: 0 10px;
+            flex: 1;
+            text-align: center;
+            min-width: 70px;
         }
         
         .stage.active {
-            color: var(--primary);
+            color: #6366f1;
             font-weight: 600;
-            animation: stagePulse 1s infinite alternate;
-        }
-        
-        @keyframes stagePulse {
-            from { opacity: 0.7; }
-            to { opacity: 1; }
         }
         
         .loading-bar {
-            height: 6px;
+            height: 4px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            border-radius: 2px;
             overflow: hidden;
-            position: relative;
         }
         
         .loading-progress {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
-            border-radius: 3px;
-            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            background-size: 200% 100%;
-            animation: progressGradient 2s infinite linear;
+            background: linear-gradient(90deg, #6366f1, #06b6d4);
+            border-radius: 2px;
+            transition: width 0.3s ease;
         }
         
-        @keyframes progressGradient {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-        
-        /* Enhanced Success Animation */
+        /* Success Check */
         .success-check {
             text-align: center;
-            margin-top: 25px;
-            color: var(--success);
-            font-weight: 700;
-            font-size: 16px;
+            margin-top: 20px;
+            color: #10b981;
+            font-weight: 600;
+            font-size: 14px;
             display: none;
-            animation: successCelebrate 1s ease-out;
+            animation: slideIn 0.5s ease;
         }
         
         .success-check.show {
             display: block;
         }
         
-        @keyframes successCelebrate {
-            0% {
-                opacity: 0;
-                transform: scale(0.5) translateY(20px);
-            }
-            70% {
-                transform: scale(1.1);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        /* Animated Stats */
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
-            animation: fadeIn 1s ease-out 0.5s both;
-        }
-        
-        .stat-item {
-            text-align: center;
-            flex: 1;
-            position: relative;
-            padding: 0 15px;
-        }
-        
-        .stat-value {
-            display: block;
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 6px;
-            font-variant-numeric: tabular-nums;
-            animation: countUp 1.5s ease-out;
-        }
-        
-        @keyframes countUp {
+        @keyframes slideIn {
             from {
                 opacity: 0;
                 transform: translateY(10px);
@@ -589,99 +391,125 @@
             }
         }
         
-        /* Pulse Animation for Online Indicator */
-        .online-indicator {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 12px;
-            height: 12px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulseOnline 2s infinite;
-        }
-        
-        @keyframes pulseOnline {
-            0%, 100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-                transform: scale(1);
-            }
-            50% {
-                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
-                transform: scale(1.1);
-            }
-        }
-        
-        /* Animated Footer */
-        .footer {
-            text-align: center;
-            margin-top: 35px;
-            font-size: 13px;
-            color: var(--text-secondary);
-            animation: fadeIn 1s ease-out 0.7s both;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .time-container {
-                position: relative;
-                top: 0;
-                right: 0;
-                text-align: center;
-                margin-bottom: 30px;
-            }
-            
-            .time {
-                font-size: 36px;
-            }
-            
-            .login-container {
-                padding: 40px 30px;
-            }
+        /* Stats - Mobile Responsive */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         @media (max-width: 480px) {
-            .login-container {
-                padding: 30px 20px;
-                border-radius: 20px;
-            }
-            
-            .time {
-                font-size: 28px;
-            }
-            
             .stats {
-                flex-direction: column;
-                gap: 20px;
+                grid-template-columns: 1fr;
+                gap: 10px;
             }
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .stat-value {
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 12px;
+            color: #64748b;
+        }
+        
+        /* Background Animation */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            background: linear-gradient(135deg, #6366f1, #06b6d4);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0.05;
+            }
+            50% {
+                opacity: 0.15;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100vw) rotate(360deg);
+                opacity: 0.05;
+            }
+        }
+        
+        /* Keyboard adjustments for mobile */
+        @media screen and (max-width: 768px) {
+            /* Prevent fixed elements from causing issues */
+            .time-container {
+                position: fixed;
+                z-index: 1000;
+            }
+            
+            /* Ensure login container is scrollable if needed */
+            body {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Adjust for virtual keyboard */
+            .login-container {
+                margin-bottom: env(safe-area-inset-bottom, 20px);
+            }
+        }
+        
+        /* Safe area support for iOS */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+                padding-top: max(70px, env(safe-area-inset-top));
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+        
+        /* Shake animation for error */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease;
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background Elements -->
-    <div class="particles" id="particles"></div>
-    <div class="waves">
-        <div class="wave"></div>
-        <div class="wave"></div>
-        <div class="wave"></div>
-    </div>
-    
     <!-- Real-Time Clock -->
     <div class="time-container">
         <div class="time" id="currentTime">00:00:00</div>
@@ -691,29 +519,32 @@
         </div>
     </div>
     
+    <!-- Background Animation -->
+    <div class="background-animation" id="backgroundAnimation"></div>
+    
     <!-- Login Container -->
     <div class="login-container">
         <div class="logo-section">
-            <div class="logo" onclick="animateLogo()">
+            <div class="logo">
                 <div class="logo-inner">LC</div>
             </div>
             <h1>Welcome Back</h1>
-            <p>Enter your credentials to access the advanced dashboard</p>
+            <p>Enter your name to access the dashboard</p>
         </div>
         
         <div class="input-group">
             <label for="userName">Your Name</label>
             <div class="input-wrapper">
-                <input type="text" id="userName" placeholder="Enter your full name" autocomplete="name">
+                <input type="text" id="userName" placeholder="Enter your name here" autocomplete="name" inputmode="text">
                 <div class="input-icon">👤</div>
             </div>
             <div class="error-message" id="errorMessage">
                 <span>⚠️</span>
-                <span>Please enter your name to continue</span>
+                <span>Please enter a valid name</span>
             </div>
         </div>
         
-        <button class="login-btn" onclick="login()" id="loginBtn">
+        <button id="loginBtn" onclick="handleLogin()">
             <span class="btn-text">Enter Dashboard</span>
             <div class="loading-spinner"></div>
         </button>
@@ -724,57 +555,88 @@
                 <div class="stage" id="stage1">Initializing</div>
                 <div class="stage" id="stage2">Loading</div>
                 <div class="stage" id="stage3">Authenticating</div>
-                <div class="stage" id="stage4">Redirecting</div>
             </div>
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
             </div>
         </div>
         
-        <!-- Success Animation -->
+        <!-- Success Message -->
         <div class="success-check" id="successCheck">
             ✓ Login successful! Redirecting...
         </div>
         
-        <!-- Animated Stats -->
+        <!-- Stats -->
         <div class="stats">
             <div class="stat-item">
-                <div class="online-indicator"></div>
                 <span class="stat-value" id="totalUsers">0</span>
-                <span>Total Users</span>
+                <span class="stat-label">Total Users</span>
             </div>
             <div class="stat-item">
                 <span class="stat-value" id="todayLogins">0</span>
-                <span>Today's Logins</span>
+                <span class="stat-label">Today</span>
             </div>
             <div class="stat-item">
                 <span class="stat-value" id="activeUsers">0</span>
-                <span>Active Now</span>
+                <span class="stat-label">Active</span>
             </div>
         </div>
         
-        <!-- Animated Footer -->
+        <!-- Footer -->
         <div class="footer">
-            <p>Advanced Dashboard System v2.1 | Real-Time Monitoring</p>
+            <p>Advanced Dashboard System | Secure Login</p>
         </div>
     </div>
 
     <script>
-        // Create animated particles
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 30;
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded - initializing login page');
+            
+            // Initialize background particles
+            createBackgroundAnimation();
+            
+            // Update time immediately and start interval
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            // Initialize stats
+            updateStats();
+            
+            // Auto-focus input (with delay for mobile)
+            setTimeout(() => {
+                const input = document.getElementById('userName');
+                if (input) {
+                    input.focus();
+                    // Add focus effect
+                    input.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        input.style.transform = 'scale(1)';
+                    }, 200);
+                }
+            }, 500);
+            
+            // Add event listeners
+            setupEventListeners();
+            
+            // Add viewport meta tag dynamically for iOS
+            addViewportMeta();
+        });
+        
+        // Create background particles
+        function createBackgroundAnimation() {
+            const container = document.getElementById('backgroundAnimation');
+            const particleCount = Math.min(20, window.innerWidth / 20); // Adjust based on screen size
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 
-                // Random properties
-                const size = Math.random() * 8 + 2;
+                const size = Math.random() * 4 + 2;
                 const posX = Math.random() * 100;
                 const posY = Math.random() * 100;
                 const delay = Math.random() * 15;
-                const duration = Math.random() * 10 + 15;
+                const duration = Math.random() * 10 + 20;
                 
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
@@ -782,135 +644,194 @@
                 particle.style.top = `${posY}%`;
                 particle.style.animationDelay = `${delay}s`;
                 particle.style.animationDuration = `${duration}s`;
-                particle.style.opacity = Math.random() * 0.4 + 0.1;
+                particle.style.opacity = Math.random() * 0.2 + 0.05;
                 
-                particlesContainer.appendChild(particle);
+                container.appendChild(particle);
             }
         }
         
-        // Real-time clock and date
+        // Update real-time clock
         function updateDateTime() {
-            const now = new Date();
-            
-            // Format time
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
-            const timeString = `${hours}:${minutes}:${seconds}`;
-            
-            // Format date
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dateString = now.toLocaleDateString('en-US', options);
-            const weekday = now.toLocaleDateString('en-US', { weekday: 'long' });
-            
-            // Update DOM
-            document.getElementById('currentTime').textContent = timeString;
-            document.getElementById('currentDate').textContent = dateString;
-            document.getElementById('weekday').textContent = weekday;
-            
-            // Add pulsing effect for seconds
-            const timeElement = document.getElementById('currentTime');
-            if (seconds === '00') {
-                timeElement.style.transform = 'scale(1.05)';
-                setTimeout(() => {
-                    timeElement.style.transform = 'scale(1)';
-                }, 300);
+            try {
+                const now = new Date();
+                
+                // Format time
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                
+                // Format date
+                const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                
+                const weekday = weekdays[now.getDay()];
+                const month = months[now.getMonth()];
+                const date = now.getDate();
+                const year = now.getFullYear();
+                
+                // Update DOM
+                const timeElement = document.getElementById('currentTime');
+                const dateElement = document.getElementById('currentDate');
+                const weekdayElement = document.getElementById('weekday');
+                
+                if (timeElement) timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+                if (dateElement) dateElement.textContent = `${month} ${date}, ${year}`;
+                if (weekdayElement) weekdayElement.textContent = weekday;
+                
+            } catch (error) {
+                console.error('Error updating datetime:', error);
             }
         }
         
-        // Initialize stats with animation
+        // Update statistics
         function updateStats() {
-            const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-            const today = new Date().toDateString();
-            
-            // Calculate today's logins
-            const todayLogins = allUsers.filter(user => {
-                const loginDate = new Date(user.loginTime).toDateString();
-                return loginDate === today;
-            }).length;
-            
-            // Simulate active users (random for demo)
-            const activeUsers = Math.floor(Math.random() * 50) + 20;
-            
-            // Animate numbers counting up
-            animateCounter('totalUsers', allUsers.length);
-            animateCounter('todayLogins', todayLogins);
-            animateCounter('activeUsers', activeUsers);
+            try {
+                const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+                const today = new Date().toDateString();
+                
+                // Calculate today's logins
+                const todayLogins = allUsers.filter(user => {
+                    const loginDate = new Date(user.loginTime).toDateString();
+                    return loginDate === today;
+                }).length;
+                
+                // Update DOM elements
+                const totalUsersElement = document.getElementById('totalUsers');
+                const todayLoginsElement = document.getElementById('todayLogins');
+                const activeUsersElement = document.getElementById('activeUsers');
+                
+                if (totalUsersElement) totalUsersElement.textContent = allUsers.length;
+                if (todayLoginsElement) todayLoginsElement.textContent = todayLogins;
+                if (activeUsersElement) activeUsersElement.textContent = Math.floor(Math.random() * 20) + 5;
+                
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
         }
         
-        // Animated number counter
-        function animateCounter(elementId, targetValue) {
-            const element = document.getElementById(elementId);
-            const currentValue = parseInt(element.textContent) || 0;
-            const duration = 1500;
-            const steps = 60;
-            const increment = (targetValue - currentValue) / steps;
-            let step = 0;
-            
-            function updateCounter() {
-                if (step < steps) {
-                    const value = Math.floor(currentValue + (increment * step));
-                    element.textContent = value;
-                    step++;
-                    requestAnimationFrame(updateCounter);
-                } else {
-                    element.textContent = targetValue;
-                }
+        // Setup event listeners
+        function setupEventListeners() {
+            // Login button click
+            const loginBtn = document.getElementById('loginBtn');
+            if (loginBtn) {
+                loginBtn.addEventListener('click', handleLogin);
             }
             
-            updateCounter();
+            // Enter key in input field
+            const userNameInput = document.getElementById('userName');
+            if (userNameInput) {
+                userNameInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleLogin();
+                    }
+                });
+                
+                // Clear error on input
+                userNameInput.addEventListener('input', function() {
+                    const errorMessage = document.getElementById('errorMessage');
+                    if (errorMessage) {
+                        errorMessage.classList.remove('show');
+                    }
+                });
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                // Recreate background particles on resize
+                const container = document.getElementById('backgroundAnimation');
+                if (container) {
+                    container.innerHTML = '';
+                    createBackgroundAnimation();
+                }
+            });
         }
         
-        // Enhanced login function with animations
-        async function login() {
+        // Handle login process
+        async function handleLogin() {
+            console.log('Login button clicked');
+            
             const userName = document.getElementById('userName').value.trim();
             const errorMessage = document.getElementById('errorMessage');
             const loginBtn = document.getElementById('loginBtn');
-            const btnText = loginBtn.querySelector('.btn-text');
             const loadingContainer = document.getElementById('loadingContainer');
             const loadingProgress = document.getElementById('loadingProgress');
             const successCheck = document.getElementById('successCheck');
-            const stages = document.querySelectorAll('.stage');
+            const userNameInput = document.getElementById('userName');
             
-            if (userName) {
-                // Hide error message with animation
-                errorMessage.style.opacity = '0';
-                errorMessage.style.transform = 'translateY(-10px)';
+            // Validate input
+            if (!userName || userName.length < 2) {
+                console.log('Invalid name entered:', userName);
                 
-                // Show loading state with animation
+                // Show error
+                if (errorMessage) {
+                    errorMessage.classList.add('show');
+                }
+                
+                // Shake input
+                if (userNameInput) {
+                    userNameInput.classList.add('shake');
+                    setTimeout(() => {
+                        userNameInput.classList.remove('shake');
+                    }, 500);
+                }
+                
+                // Focus input
+                if (userNameInput) {
+                    userNameInput.focus();
+                }
+                
+                return;
+            }
+            
+            console.log('Valid name entered:', userName);
+            
+            // Hide error message
+            if (errorMessage) {
+                errorMessage.classList.remove('show');
+            }
+            
+            // Show loading state
+            if (loginBtn) {
                 loginBtn.classList.add('loading');
-                btnText.textContent = 'Processing...';
+            }
+            
+            if (loadingContainer) {
                 loadingContainer.classList.add('active');
-                
-                // Animate loading stages
-                let stageIndex = 0;
-                const stageInterval = setInterval(() => {
-                    if (stageIndex > 0) {
-                        stages[stageIndex - 1].classList.remove('active');
-                    }
-                    if (stageIndex < stages.length) {
-                        stages[stageIndex].classList.add('active');
-                        stageIndex++;
-                    } else {
-                        clearInterval(stageInterval);
-                    }
-                }, 800);
-                
-                // Simulate loading progress with smooth animation
+            }
+            
+            // Animate loading stages
+            const stages = document.querySelectorAll('.stage');
+            if (stages.length > 0) {
+                stages.forEach((stage, index) => {
+                    setTimeout(() => {
+                        stage.classList.add('active');
+                    }, index * 800);
+                });
+            }
+            
+            // Simulate loading progress
+            try {
                 await simulateLoading(loadingProgress);
-                
-                // Generate user data
-                const userData = {
-                    id: generateUserId(),
-                    name: userName,
-                    loginTime: new Date().toISOString(),
-                    userAgent: navigator.userAgent,
-                    platform: navigator.platform,
-                    deviceType: getDeviceType(),
-                    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-                };
-                
-                // Store user info
+            } catch (error) {
+                console.error('Loading simulation error:', error);
+            }
+            
+            // Create user data
+            const userData = {
+                id: generateUserId(),
+                name: userName,
+                loginTime: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                deviceType: getDeviceType(),
+                isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+            };
+            
+            console.log('User data created:', userData);
+            
+            // Store user info
+            try {
                 localStorage.setItem('currentUserName', userName);
                 localStorage.setItem('currentLoginTime', userData.loginTime);
                 localStorage.setItem('currentUserId', userData.id);
@@ -918,47 +839,54 @@
                 // Add to database
                 addUserToDatabase(userData);
                 
-                // Show success animation
-                loginBtn.classList.remove('loading');
-                loginBtn.classList.add('success');
-                loadingContainer.classList.remove('active');
-                successCheck.classList.add('show');
-                
-                // Update stats with animation
+                // Update stats
                 updateStats();
                 
-                // Add confetti effect
-                createConfetti();
+                // Show success state
+                if (loginBtn) {
+                    loginBtn.classList.remove('loading');
+                    loginBtn.classList.add('success');
+                }
                 
-                // Redirect after animation completes
+                if (loadingContainer) {
+                    loadingContainer.classList.remove('active');
+                }
+                
+                if (successCheck) {
+                    successCheck.classList.add('show');
+                }
+                
+                // Reset stages
+                if (stages.length > 0) {
+                    stages.forEach(stage => {
+                        stage.classList.remove('active');
+                    });
+                }
+                
+                // Redirect after delay
                 setTimeout(() => {
+                    console.log('Redirecting to main page...');
                     window.location.href = 'main.html';
                 }, 1500);
                 
-            } else {
-                // Show error with animation
-                errorMessage.style.opacity = '1';
-                errorMessage.style.transform = 'translateY(0)';
-                
-                // Shake input animation
-                const userNameInput = document.getElementById('userName');
-                userNameInput.classList.add('shake');
+            } catch (error) {
+                console.error('Storage error:', error);
+                // Fallback: just redirect
                 setTimeout(() => {
-                    userNameInput.classList.remove('shake');
+                    window.location.href = 'main.html';
                 }, 500);
-                
-                // Focus on input
-                userNameInput.focus();
             }
         }
         
-        // Simulate loading with stages
-        async function simulateLoading(progressBar) {
-            return new Promise(resolve => {
+        // Simulate loading progress
+        function simulateLoading(progressBar) {
+            return new Promise((resolve) => {
                 let progress = 0;
                 const interval = setInterval(() => {
                     progress += 2;
-                    progressBar.style.width = `${progress}%`;
+                    if (progressBar) {
+                        progressBar.style.width = `${progress}%`;
+                    }
                     
                     if (progress >= 100) {
                         clearInterval(interval);
@@ -970,9 +898,7 @@
         
         // Generate user ID
         function generateUserId() {
-            const timestamp = Date.now().toString(36);
-            const random = Math.random().toString(36).substr(2, 9);
-            return `usr_${timestamp}_${random}`;
+            return 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
         }
         
         // Get device type
@@ -989,136 +915,65 @@
         
         // Add user to database
         function addUserToDatabase(userData) {
-            const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-            
-            const existingUserIndex = allUsers.findIndex(user => 
-                user.name.toLowerCase() === userData.name.toLowerCase() && 
-                user.deviceType === userData.deviceType
-            );
-            
-            if (existingUserIndex !== -1) {
-                allUsers[existingUserIndex] = {
-                    ...allUsers[existingUserIndex],
-                    loginTime: userData.loginTime,
-                    loginCount: (allUsers[existingUserIndex].loginCount || 1) + 1,
-                    lastActivity: userData.loginTime
-                };
-            } else {
-                userData.loginCount = 1;
-                userData.firstSeen = userData.loginTime;
-                userData.lastActivity = userData.loginTime;
-                allUsers.push(userData);
-            }
-            
-            localStorage.setItem('allUsers', JSON.stringify(allUsers));
-            initializeUserTracking(userData.id);
-        }
-        
-        // Initialize user tracking
-        function initializeUserTracking(userId) {
-            if (!localStorage.getItem('allPageViews')) {
-                localStorage.setItem('allPageViews', JSON.stringify([]));
-            }
-            if (!localStorage.getItem('allUserActions')) {
-                localStorage.setItem('allUserActions', JSON.stringify([]));
-            }
-            
-            const pageView = {
-                id: generateActionId(),
-                userId: userId,
-                userName: localStorage.getItem('currentUserName'),
-                page: 'login.html',
-                timestamp: new Date().toISOString()
-            };
-            
-            addPageView(pageView);
-        }
-        
-        // Add page view
-        function addPageView(pageView) {
-            const allPageViews = JSON.parse(localStorage.getItem('allPageViews') || '[]');
-            allPageViews.push(pageView);
-            localStorage.setItem('allPageViews', JSON.stringify(allPageViews));
-        }
-        
-        // Generate action ID
-        function generateActionId() {
-            return `act_${Date.now().toString(36)}_${Math.random().toString(36).substr(2, 9)}`;
-        }
-        
-        // Logo click animation
-        function animateLogo() {
-            const logo = document.querySelector('.logo');
-            logo.style.animation = 'none';
-            void logo.offsetWidth; // Trigger reflow
-            logo.style.animation = 'logoFloat 8s ease-in-out infinite';
-        }
-        
-        // Create confetti effect
-        function createConfetti() {
-            const colors = ['#6366f1', '#06b6d4', '#f59e0b', '#10b981', '#8b5cf6'];
-            
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.style.position = 'fixed';
-                confetti.style.width = '10px';
-                confetti.style.height = '10px';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.top = '-20px';
-                confetti.style.opacity = '0.8';
-                confetti.style.zIndex = '9999';
-                confetti.style.pointerEvents = 'none';
+            try {
+                const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
                 
-                // Animation
-                const animation = confetti.animate([
-                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
-                    { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
-                ], {
-                    duration: Math.random() * 2000 + 1000,
-                    easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
-                });
+                const existingUserIndex = allUsers.findIndex(user => 
+                    user.name.toLowerCase() === userData.name.toLowerCase()
+                );
                 
-                document.body.appendChild(confetti);
-                animation.onfinish = () => confetti.remove();
-            }
-        }
-        
-        // Initialize everything when page loads
-        window.onload = function() {
-            createParticles();
-            updateDateTime();
-            updateStats();
-            
-            // Update time every second
-            setInterval(updateDateTime, 1000);
-            
-            // Update stats every 10 seconds
-            setInterval(updateStats, 10000);
-            
-            // Auto-focus input with animation
-            setTimeout(() => {
-                const input = document.getElementById('userName');
-                input.focus();
-                input.style.transform = 'scale(1.02)';
-                setTimeout(() => {
-                    input.style.transform = 'scale(1)';
-                }, 200);
-            }, 500);
-            
-            // Add keyboard listener for Enter key
-            document.getElementById('userName').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    login();
+                if (existingUserIndex !== -1) {
+                    allUsers[existingUserIndex] = {
+                        ...allUsers[existingUserIndex],
+                        loginTime: userData.loginTime,
+                        loginCount: (allUsers[existingUserIndex].loginCount || 1) + 1,
+                        lastActivity: userData.loginTime
+                    };
+                } else {
+                    userData.loginCount = 1;
+                    userData.firstSeen = userData.loginTime;
+                    userData.lastActivity = userData.loginTime;
+                    allUsers.push(userData);
                 }
-            });
+                
+                localStorage.setItem('allUsers', JSON.stringify(allUsers));
+                console.log('User added to database. Total users:', allUsers.length);
+                
+            } catch (error) {
+                console.error('Error adding user to database:', error);
+            }
+        }
+        
+        // Add viewport meta for iOS
+        function addViewportMeta() {
+            // Check if viewport meta exists
+            let viewport = document.querySelector('meta[name="viewport"]');
             
-            // Clear error on input
-            document.getElementById('userName').addEventListener('input', function() {
-                document.getElementById('errorMessage').style.opacity = '0';
-            });
-        };
+            if (!viewport) {
+                viewport = document.createElement('meta');
+                viewport.name = 'viewport';
+                document.head.appendChild(viewport);
+            }
+            
+            // Set viewport content
+            viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+        }
+        
+        // Prevent form submission on enter in entire page
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+            }
+        });
+        
+        // Handle page visibility change
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // Page became visible again, update time
+                updateDateTime();
+                updateStats();
+            }
+        });
     </script>
 </body>
 </html>
