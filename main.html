@@ -494,7 +494,7 @@ select {
   padding-right: 45px;
 }
 
-/* Snake Game Styles */
+/* Ship Game Styles */
 .game-container {
   position: fixed;
   top: 0;
@@ -559,11 +559,11 @@ select {
   transform: rotate(90deg);
 }
 
-.snake-game {
+.Ship-game {
   text-align: center;
 }
 
-.snake-game h2 {
+.Ship-game h2 {
   color: var(--primary);
   margin-bottom: 20px;
   animation: titleGlow 2s infinite alternate;
@@ -916,9 +916,9 @@ select {
 <div class="particles" id="particles"></div>
 
 <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-<button class="game-toggle" onclick="showGame()">🐍</button>
+<button class="game-toggle" onclick="showGame()">⛴️</button>
 <button class="export-toggle" onclick="showExport()">📤</button>
-<button class="admin-toggle" onclick="showAdmin()">👁️</button>
+<button class="admin-toggle" onclick="showAdmin()">🔒</button>
 <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
 
 <div class="container" id="mainContainer">
@@ -977,12 +977,12 @@ select {
   <div class="creator-badge" id="creatorBadge" onclick="animateCreatorBadge()">Created by Sethil</div>
 </div>
 
-<!-- Snake Game Container -->
+<!-- Ship Game Container -->
 <div class="game-container" id="gameContainer">
   <div class="game-window">
     <button class="close-game" onclick="hideGame()">×</button>
-    <div class="snake-game">
-      <h2>Snake Game</h2>
+    <div class="Ship-game">
+      <h2>Ship Game</h2>
       <div class="game-stats">
         <div class="game-stat">
           <div class="game-stat-value" id="scoreValue">0</div>
@@ -996,7 +996,7 @@ select {
       <div class="game-canvas-container">
         <canvas id="gameCanvas" width="300" height="300"></canvas>
         <div class="game-overlay" id="gameOverlay">
-          <h3 id="gameOverText">SNAKE GAME</h3>
+          <h3 id="gameOverText">Ship GAME</h3>
           <p>Use arrow keys to play</p>
           <button class="restart-btn" onclick="startGame()">START GAME</button>
         </div>
@@ -1533,9 +1533,9 @@ function exportResults() {
   hideExport();
 }
 
-// Snake Game Implementation
+// Ship Game Implementation
 let canvas, ctx;
-let snake = [];
+let Ship = [];
 let food = {};
 let gridSize = 20;
 let direction = 'right';
@@ -1567,7 +1567,7 @@ function initializeGame() {
   
   const gameOverlay = document.getElementById('gameOverlay');
   gameOverlay.style.display = 'flex';
-  document.getElementById('gameOverText').textContent = 'SNAKE GAME';
+  document.getElementById('gameOverText').textContent = 'Ship GAME';
   
   document.addEventListener('keydown', handleKeyPress);
 }
@@ -1579,7 +1579,7 @@ function startGame() {
   gameOverlay.style.display = 'none';
   
   // Reset game state
-  snake = [
+  Ship = [
     {x: 5, y: 10},
     {x: 4, y: 10},
     {x: 3, y: 10}
@@ -1627,7 +1627,7 @@ function gameLoop() {
   if (!gameRunning || gamePaused) return;
   
   direction = nextDirection;
-  moveSnake();
+  moveShip();
   
   if (checkCollision()) {
     gameOver();
@@ -1642,8 +1642,8 @@ function gameLoop() {
   drawGame();
 }
 
-function moveSnake() {
-  const head = {x: snake[0].x, y: snake[0].y};
+function moveShip() {
+  const head = {x: Ship[0].x, y: Ship[0].y};
   
   switch (direction) {
     case 'up': head.y--; break;
@@ -1652,18 +1652,18 @@ function moveSnake() {
     case 'right': head.x++; break;
   }
   
-  snake.unshift(head);
+  Ship.unshift(head);
   
   // Remove tail if no food eaten
   if (!food.eaten) {
-    snake.pop();
+    Ship.pop();
   } else {
     food.eaten = false;
   }
 }
 
 function checkCollision() {
-  const head = snake[0];
+  const head = Ship[0];
   
   // Wall collision
   if (head.x < 0 || head.x >= canvas.width/gridSize || 
@@ -1672,8 +1672,8 @@ function checkCollision() {
   }
   
   // Self collision
-  for (let i = 1; i < snake.length; i++) {
-    if (head.x === snake[i].x && head.y === snake[i].y) {
+  for (let i = 1; i < Ship.length; i++) {
+    if (head.x === Ship[i].x && head.y === Ship[i].y) {
       return true;
     }
   }
@@ -1682,7 +1682,7 @@ function checkCollision() {
 }
 
 function checkFoodCollision() {
-  const head = snake[0];
+  const head = Ship[0];
   return head.x === food.x && head.y === food.y;
 }
 
@@ -1701,8 +1701,8 @@ function generateFood() {
     eaten: false
   };
   
-  // Make sure food doesn't appear on snake
-  for (let segment of snake) {
+  // Make sure food doesn't appear on Ship
+  for (let segment of Ship) {
     if (food.x === segment.x && food.y === segment.y) {
       generateFood();
       break;
@@ -1715,8 +1715,8 @@ function drawGame() {
   ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--input-bg');
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-  // Draw snake
-  snake.forEach((segment, index) => {
+  // Draw Ship
+  Ship.forEach((segment, index) => {
     if (index === 0) {
       // Head
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary');
