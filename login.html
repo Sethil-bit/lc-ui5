@@ -3,287 +3,903 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Real-Time Advanced UI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Login | Advanced Dashboard</title>
     <style>
         :root {
-            --bg: linear-gradient(135deg, #0f0f1c 0%, #1e1e3f 50%, #2a2a5a 100%); 
-            --text: #e0e0f0; 
-            --card: rgba(30, 30, 50, 0.95); 
-            --primary: #4e73f8; 
-            --secondary: #00e8b1; 
-            --accent: #ff4785; 
-            --shadow-light: 0 8px 25px rgba(0, 0, 0, 0.4);
-            --shadow-glow: 0 0 15px rgba(78, 115, 248, 0.5);
+            --bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --card-bg: rgba(18, 18, 30, 0.95);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --text: #f8fafc;
+            --text-secondary: #94a3b8;
+            --success: #10b981;
+            --error: #ef4444;
+            --input-bg: rgba(30, 41, 59, 0.7);
+            --border: rgba(99, 102, 241, 0.3);
+            --shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            --glow: 0 0 40px rgba(99, 102, 241, 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            background: var(--bg);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
             color: var(--text);
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif; 
-            margin: 0;
-            padding: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; 
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at center, rgba(78, 115, 248, 0.1) 0%, transparent 40%);
-            animation: background-pulse 10s infinite alternate;
-            pointer-events: none;
-        }
-
-        @keyframes background-pulse {
-            0% { transform: scale(1); opacity: 0.5; }
-            100% { transform: scale(1.1); opacity: 0.7; }
-        }
-        
-        .login-container {
-            background: var(--card);
-            padding: 40px; 
-            border-radius: 20px; 
-            box-shadow: var(--shadow-light);
-            text-align: center;
-            width: 90%;
-            max-width: 400px; 
-            border: 2px solid rgba(78, 115, 248, 0.5); 
-            backdrop-filter: blur(15px); 
-            transition: all 0.5s ease;
-        }
-
-        .login-container:hover {
-            box-shadow: var(--shadow-light), var(--shadow-glow);
-        }
-
-        /* --- New: Real-Time Clock Styles --- */
-        #rtc-display {
-            color: var(--secondary);
-            font-weight: 600;
-            margin-bottom: 25px;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-            text-shadow: 0 0 5px rgba(0, 232, 177, 0.5);
-        }
-
-        #rtc-time {
-            font-size: 2.2rem;
-            font-weight: 700;
-            display: block;
-            line-height: 1;
-        }
-        
-        h2 {
-            color: var(--primary);
-            margin-bottom: 5px;
-            font-size: 1.8rem; 
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        
-        p {
-            margin-bottom: 30px; 
-            opacity: 0.9;
-            font-size: 1rem;
-            color: var(--secondary); 
-        }
-        
-        .input-group {
-            position: relative;
-            margin: 12px 0;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px 20px; 
-            border: 2px solid rgba(78, 115, 248, 0.3); /* Base border style */
-            border-radius: 10px; 
-            background: rgba(40, 40, 70, 0.8); 
-            color: var(--text);
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        
-        input::placeholder {
-            color: rgba(224, 224, 240, 0.5);
-        }
-
-        input:focus {
-            border-color: var(--primary);
-            outline: none;
-            transform: translateY(-2px); 
-            box-shadow: 0 0 10px rgba(78, 115, 248, 0.6);
-        }
-
-        /* --- Modified Error Style --- */
-        .input-error input {
-            border-color: var(--accent) !important;
-            box-shadow: 0 0 10px rgba(255, 71, 133, 0.8) !important;
-        }
-
-        .error {
-            color: var(--accent);
-            font-size: 13px;
-            margin-top: 5px;
-            font-weight: 500;
-            display: none;
-            text-align: left;
-            padding-left: 5px;
-        }
-
-        /* --- New: Button Idle Pulse Animation --- */
-        @keyframes button-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(78, 115, 248, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(78, 115, 248, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(78, 115, 248, 0); }
-        }
-        
-        button {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            margin-top: 20px; 
-            transition: all 0.3s ease;
+            padding: 20px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            letter-spacing: 0.8px;
-            animation: button-pulse 2s infinite; /* Applied pulse animation */
         }
         
-        button:hover {
-            background: #3c65e8; 
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            animation: none; /* Disable pulse on hover */
-        }
-        
-        button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .btn-loading {
-            background: #3c65e8 !important; 
+        /* Animated Background Particles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
-            transform: none !important;
-            animation: none !important; /* Disable pulse when loading */
         }
         
-        .btn-success {
-            background: var(--secondary) !important;
-            box-shadow: 0 5px 15px rgba(0, 232, 177, 0.4) !important; 
+        .particle {
+            position: absolute;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite linear;
         }
-
-        .icon-enter::before {
-            content: '🚀'; 
-            margin-right: 5px;
-            font-size: 1.2em;
-            display: inline-block;
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0.2;
+            }
+            25% {
+                opacity: 0.4;
+            }
+            50% {
+                transform: translateY(-100px) translateX(100px) rotate(180deg);
+                opacity: 0.2;
+            }
+            75% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(0) translateX(0) rotate(360deg);
+                opacity: 0.2;
+            }
         }
-
-        /* --- Modified Shake Animation --- */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+        
+        /* Animated Wave Background */
+        .waves {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
         }
-
+        
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: wave 20s infinite linear;
+            opacity: 0.1;
+            transform-origin: center;
+        }
+        
+        .wave:nth-child(2) {
+            animation-delay: -5s;
+            opacity: 0.15;
+            height: 120px;
+        }
+        
+        .wave:nth-child(3) {
+            animation-delay: -10s;
+            opacity: 0.1;
+            height: 80px;
+        }
+        
+        @keyframes wave {
+            0% { transform: translateX(0) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(0deg); }
+        }
+        
+        /* Real-time Clock Container */
+        .time-container {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            text-align: right;
+            z-index: 10;
+            animation: slideInRight 1s ease-out;
+        }
+        
+        .time {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+            letter-spacing: 2px;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .date {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        
+        .weekday {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        /* Login Container with Enhanced Animations */
+        .login-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            border-radius: 28px;
+            padding: 50px 45px;
+            width: 100%;
+            max-width: 480px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow), var(--glow);
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            animation: containerFloat 6s ease-in-out infinite;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .login-container:hover {
+            transform: translateY(-5px) rotateX(2deg) rotateY(-1deg);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 60px rgba(99, 102, 241, 0.5);
+        }
+        
+        @keyframes containerFloat {
+            0%, 100% {
+                transform: translateY(0) rotateX(0) rotateY(0);
+            }
+            50% {
+                transform: translateY(-10px) rotateX(1deg) rotateY(0.5deg);
+            }
+        }
+        
+        /* Glowing Top Border Animation */
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, 
+                var(--primary), 
+                var(--secondary), 
+                var(--accent), 
+                var(--primary));
+            background-size: 300% 100%;
+            border-radius: 28px 28px 0 0;
+            animation: borderGlow 3s infinite linear;
+        }
+        
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Logo Animation */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 45px;
+            position: relative;
+        }
+        
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+            transform-style: preserve-3d;
+            animation: logoFloat 8s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .logo:hover {
+            transform: scale(1.1) rotateY(180deg);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.6);
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-8px) rotate(-2deg);
+            }
+            66% {
+                transform: translateY(-8px) rotate(2deg);
+            }
+        }
+        
+        .logo-inner {
+            font-weight: 800;
+            font-size: 28px;
+            color: white;
+        }
+        
+        .logo-section h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            from {
+                filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.3));
+            }
+            to {
+                filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.6));
+            }
+        }
+        
+        .logo-section p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        /* Enhanced Input Animation */
+        .input-group {
+            margin-bottom: 32px;
+            position: relative;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .input-group:nth-child(1) { animation-delay: 0.1s; }
+        .input-group:nth-child(2) { animation-delay: 0.2s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .input-wrapper {
+            position: relative;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(6, 182, 212, 0.1));
+            border-radius: 16px;
+            padding: 3px;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .input-wrapper:focus-within {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(6, 182, 212, 0.3));
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+        
+        .input-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            padding: 3px;
+            background: linear-gradient(135deg, var(--primary), transparent, var(--secondary));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .input-wrapper:focus-within::after {
+            opacity: 1;
+            animation: inputGlow 2s infinite linear;
+        }
+        
+        @keyframes inputGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        input {
+            width: 100%;
+            padding: 18px 24px;
+            background: var(--input-bg);
+            border: none;
+            border-radius: 14px;
+            color: var(--text);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        input:focus {
+            background: rgba(30, 41, 59, 0.9);
+            transform: translateY(-1px);
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 20px;
+            transition: all 0.3s ease;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(-50%) rotate(0deg); }
+            50% { transform: translateY(-50%) translateX(-5px) rotate(5deg); }
+        }
+        
+        .input-wrapper:focus-within .input-icon {
+            color: var(--primary);
+            animation: iconPulse 0.5s ease;
+        }
+        
+        @keyframes iconPulse {
+            0% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.2); }
+            100% { transform: translateY(-50%) scale(1); }
+        }
+        
+        /* Enhanced Button Animation */
+        .login-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.5);
+        }
+        
+        .login-btn:hover::before {
+            left: 100%;
+        }
+        
+        .login-btn:active {
+            transform: translateY(0) scale(0.98);
+            transition: all 0.1s ease;
+        }
+        
+        .login-btn.loading {
+            background: linear-gradient(135deg, var(--primary-hover), var(--primary-hover));
+            pointer-events: none;
+        }
+        
+        .login-btn.success {
+            background: var(--success);
+        }
+        
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite, pulse 1.5s ease-in-out infinite;
+            position: absolute;
+            opacity: 0;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+        }
+        
+        /* Animated Loading Bar */
+        .loading-container {
+            margin-top: 30px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .loading-container.active {
+            display: block;
+        }
+        
+        .loading-stages {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .stage {
+            position: relative;
+            padding: 0 10px;
+        }
+        
+        .stage.active {
+            color: var(--primary);
+            font-weight: 600;
+            animation: stagePulse 1s infinite alternate;
+        }
+        
+        @keyframes stagePulse {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+        
+        .loading-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            border-radius: 3px;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            background-size: 200% 100%;
+            animation: progressGradient 2s infinite linear;
+        }
+        
+        @keyframes progressGradient {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        
+        /* Enhanced Success Animation */
+        .success-check {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--success);
+            font-weight: 700;
+            font-size: 16px;
+            display: none;
+            animation: successCelebrate 1s ease-out;
+        }
+        
+        .success-check.show {
+            display: block;
+        }
+        
+        @keyframes successCelebrate {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) translateY(20px);
+            }
+            70% {
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Animated Stats */
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+            position: relative;
+            padding: 0 15px;
+        }
+        
+        .stat-value {
+            display: block;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 6px;
+            font-variant-numeric: tabular-nums;
+            animation: countUp 1.5s ease-out;
+        }
+        
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Pulse Animation for Online Indicator */
+        .online-indicator {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 12px;
+            height: 12px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulseOnline 2s infinite;
+        }
+        
+        @keyframes pulseOnline {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+                transform: scale(1.1);
+            }
+        }
+        
+        /* Animated Footer */
+        .footer {
+            text-align: center;
+            margin-top: 35px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            animation: fadeIn 1s ease-out 0.7s both;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .time-container {
+                position: relative;
+                top: 0;
+                right: 0;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            
+            .time {
+                font-size: 36px;
+            }
+            
+            .login-container {
+                padding: 40px 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+            
+            .time {
+                font-size: 28px;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Animated Background Elements -->
+    <div class="particles" id="particles"></div>
+    <div class="waves">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+    
+    <!-- Real-Time Clock -->
+    <div class="time-container">
+        <div class="time" id="currentTime">00:00:00</div>
+        <div class="date">
+            <span class="weekday" id="weekday">Monday</span>, 
+            <span id="currentDate">January 1, 2024</span>
+        </div>
+    </div>
+    
+    <!-- Login Container -->
     <div class="login-container">
-        <div id="rtc-display">
-            <span id="rtc-date"></span><br>
-            <span id="rtc-time"></span>
-        </div>
-        
-        <h2>System Access</h2> 
-        <p>Authenticate with your Name</p> 
-        
-        <div class="input-group" id="userNameGroup">
-            <input type="text" id="userName" placeholder="Full Name or Alias">
-            <div class="error" id="errorMessage">⚠️ Please provide your name to proceed.</div>
-        </div>
-        
-        <button onclick="login()" id="loginBtn">
-            <div class="btn-content icon-enter">
-                <span>Access Terminal</span> 
+        <div class="logo-section">
+            <div class="logo" onclick="animateLogo()">
+                <div class="logo-inner">LC</div>
             </div>
+            <h1>Welcome Back</h1>
+            <p>Enter your credentials to access the advanced dashboard</p>
+        </div>
+        
+        <div class="input-group">
+            <label for="userName">Your Name</label>
+            <div class="input-wrapper">
+                <input type="text" id="userName" placeholder="Enter your full name" autocomplete="name">
+                <div class="input-icon">👤</div>
+            </div>
+            <div class="error-message" id="errorMessage">
+                <span>⚠️</span>
+                <span>Please enter your name to continue</span>
+            </div>
+        </div>
+        
+        <button class="login-btn" onclick="login()" id="loginBtn">
+            <span class="btn-text">Enter Dashboard</span>
+            <div class="loading-spinner"></div>
         </button>
         
+        <!-- Loading Animation -->
         <div class="loading-container" id="loadingContainer">
+            <div class="loading-stages" id="loadingStages">
+                <div class="stage" id="stage1">Initializing</div>
+                <div class="stage" id="stage2">Loading</div>
+                <div class="stage" id="stage3">Authenticating</div>
+                <div class="stage" id="stage4">Redirecting</div>
+            </div>
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
             </div>
-            <div class="loading-text" id="loadingText">Loading application...</div>
         </div>
         
-        <div class="success-check" id="successCheck">✅ Access Granted</div>
+        <!-- Success Animation -->
+        <div class="success-check" id="successCheck">
+            ✓ Login successful! Redirecting...
+        </div>
+        
+        <!-- Animated Stats -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="online-indicator"></div>
+                <span class="stat-value" id="totalUsers">0</span>
+                <span>Total Users</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="todayLogins">0</span>
+                <span>Today's Logins</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="activeUsers">0</span>
+                <span>Active Now</span>
+            </div>
+        </div>
+        
+        <!-- Animated Footer -->
+        <div class="footer">
+            <p>Advanced Dashboard System v2.1 | Real-Time Monitoring</p>
+        </div>
     </div>
 
     <script>
-        // --- New: Real-Time Clock Function ---
-        function updateRealTimeClock() {
-            const now = new Date();
-            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-            const dateOptions = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-
-            document.getElementById('rtc-time').textContent = now.toLocaleTimeString('en-US', timeOptions);
-            document.getElementById('rtc-date').textContent = now.toLocaleDateString('en-US', dateOptions).toUpperCase();
+        // Create animated particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random properties
+                const size = Math.random() * 8 + 2;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const delay = Math.random() * 15;
+                const duration = Math.random() * 10 + 15;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.opacity = Math.random() * 0.4 + 0.1;
+                
+                particlesContainer.appendChild(particle);
+            }
         }
-
-        // Initialize and update the clock every second
-        updateRealTimeClock();
-        setInterval(updateRealTimeClock, 1000);
-
+        
+        // Real-time clock and date
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Format time
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const timeString = `${hours}:${minutes}:${seconds}`;
+            
+            // Format date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('en-US', options);
+            const weekday = now.toLocaleDateString('en-US', { weekday: 'long' });
+            
+            // Update DOM
+            document.getElementById('currentTime').textContent = timeString;
+            document.getElementById('currentDate').textContent = dateString;
+            document.getElementById('weekday').textContent = weekday;
+            
+            // Add pulsing effect for seconds
+            const timeElement = document.getElementById('currentTime');
+            if (seconds === '00') {
+                timeElement.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    timeElement.style.transform = 'scale(1)';
+                }, 300);
+            }
+        }
+        
+        // Initialize stats with animation
+        function updateStats() {
+            const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+            const today = new Date().toDateString();
+            
+            // Calculate today's logins
+            const todayLogins = allUsers.filter(user => {
+                const loginDate = new Date(user.loginTime).toDateString();
+                return loginDate === today;
+            }).length;
+            
+            // Simulate active users (random for demo)
+            const activeUsers = Math.floor(Math.random() * 50) + 20;
+            
+            // Animate numbers counting up
+            animateCounter('totalUsers', allUsers.length);
+            animateCounter('todayLogins', todayLogins);
+            animateCounter('activeUsers', activeUsers);
+        }
+        
+        // Animated number counter
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const currentValue = parseInt(element.textContent) || 0;
+            const duration = 1500;
+            const steps = 60;
+            const increment = (targetValue - currentValue) / steps;
+            let step = 0;
+            
+            function updateCounter() {
+                if (step < steps) {
+                    const value = Math.floor(currentValue + (increment * step));
+                    element.textContent = value;
+                    step++;
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = targetValue;
+                }
+            }
+            
+            updateCounter();
+        }
+        
+        // Enhanced login function with animations
         async function login() {
-            const userNameInput = document.getElementById('userName');
-            const userNameGroup = document.getElementById('userNameGroup');
-            const userName = userNameInput.value.trim();
+            const userName = document.getElementById('userName').value.trim();
             const errorMessage = document.getElementById('errorMessage');
             const loginBtn = document.getElementById('loginBtn');
+            const btnText = loginBtn.querySelector('.btn-text');
             const loadingContainer = document.getElementById('loadingContainer');
             const loadingProgress = document.getElementById('loadingProgress');
-            const loadingText = document.getElementById('loadingText');
             const successCheck = document.getElementById('successCheck');
-            const btnContent = loginBtn.querySelector('.btn-content');
+            const stages = document.querySelectorAll('.stage');
             
-            // Clear any previous success/error states
-            loginBtn.classList.remove('btn-success');
-            successCheck.style.display = 'none';
-
             if (userName) {
-                // Remove error state classes
-                errorMessage.style.display = 'none';
-                userNameGroup.classList.remove('input-error');
+                // Hide error message with animation
+                errorMessage.style.opacity = '0';
+                errorMessage.style.transform = 'translateY(-10px)';
                 
-                // Show loading state
-                loginBtn.classList.add('btn-loading');
-                btnContent.innerHTML = '<span>Processing...</span>';
-                loadingContainer.style.display = 'block';
+                // Show loading state with animation
+                loginBtn.classList.add('loading');
+                btnText.textContent = 'Processing...';
+                loadingContainer.classList.add('active');
                 
-                // Simulate loading progress
-                await simulateLoading(loadingProgress, loadingText);
+                // Animate loading stages
+                let stageIndex = 0;
+                const stageInterval = setInterval(() => {
+                    if (stageIndex > 0) {
+                        stages[stageIndex - 1].classList.remove('active');
+                    }
+                    if (stageIndex < stages.length) {
+                        stages[stageIndex].classList.add('active');
+                        stageIndex++;
+                    } else {
+                        clearInterval(stageInterval);
+                    }
+                }, 800);
                 
-                // User tracking data and database operations (Unchanged logic)
+                // Simulate loading progress with smooth animation
+                await simulateLoading(loadingProgress);
+                
+                // Generate user data
                 const userData = {
                     id: generateUserId(),
                     name: userName,
@@ -294,59 +910,72 @@
                     isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
                 };
                 
+                // Store user info
                 localStorage.setItem('currentUserName', userName);
                 localStorage.setItem('currentLoginTime', userData.loginTime);
                 localStorage.setItem('currentUserId', userData.id);
+                
+                // Add to database
                 addUserToDatabase(userData);
-                console.log('USER LOGIN:', userData);
                 
-                // Show success state
-                loginBtn.classList.remove('btn-loading');
-                loginBtn.classList.add('btn-success');
-                btnContent.innerHTML = '<span>Redirecting...</span>';
-                loadingContainer.style.display = 'none';
-                successCheck.style.display = 'block';
+                // Show success animation
+                loginBtn.classList.remove('loading');
+                loginBtn.classList.add('success');
+                loadingContainer.classList.remove('active');
+                successCheck.classList.add('show');
                 
-                // Wait a moment then redirect
+                // Update stats with animation
+                updateStats();
+                
+                // Add confetti effect
+                createConfetti();
+                
+                // Redirect after animation completes
                 setTimeout(() => {
                     window.location.href = 'main.html';
-                }, 800);
+                }, 1500);
                 
             } else {
-                // Show error state
-                errorMessage.style.display = 'block';
-                userNameGroup.classList.add('input-error'); // Apply visual error state
+                // Show error with animation
+                errorMessage.style.opacity = '1';
+                errorMessage.style.transform = 'translateY(0)';
                 
-                // Add shake animation to input
-                userNameInput.style.animation = 'shake 0.5s ease';
+                // Shake input animation
+                const userNameInput = document.getElementById('userName');
+                userNameInput.classList.add('shake');
                 setTimeout(() => {
-                    userNameInput.style.animation = '';
+                    userNameInput.classList.remove('shake');
                 }, 500);
+                
+                // Focus on input
+                userNameInput.focus();
             }
         }
-
-        // Simulate loading progress (Unchanged logic)
-        async function simulateLoading(progressBar, loadingText) {
-            const steps = [
-                { progress: 20, text: "Authenticating..." },
-                { progress: 40, text: "Retrieving user data..." },
-                { progress: 60, text: "Establishing secure connection..." },
-                { progress: 80, text: "Finalizing access protocols..." },
-                { progress: 100, text: "Access complete." }
-            ];
-            
-            for (let step of steps) {
-                progressBar.style.width = step.progress + '%';
-                loadingText.textContent = step.text;
-                await new Promise(resolve => setTimeout(resolve, 300));
-            }
+        
+        // Simulate loading with stages
+        async function simulateLoading(progressBar) {
+            return new Promise(resolve => {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 2;
+                    progressBar.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        resolve();
+                    }
+                }, 30);
+            });
         }
-
-        // --- Utility functions (Unchanged) ---
+        
+        // Generate user ID
         function generateUserId() {
-            return 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+            const timestamp = Date.now().toString(36);
+            const random = Math.random().toString(36).substr(2, 9);
+            return `usr_${timestamp}_${random}`;
         }
-
+        
+        // Get device type
         function getDeviceType() {
             const ua = navigator.userAgent;
             if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
@@ -357,12 +986,14 @@
                 return 'Desktop';
             }
         }
-
+        
+        // Add user to database
         function addUserToDatabase(userData) {
             const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
             
             const existingUserIndex = allUsers.findIndex(user => 
-                user.name === userData.name && user.deviceType === userData.deviceType
+                user.name.toLowerCase() === userData.name.toLowerCase() && 
+                user.deviceType === userData.deviceType
             );
             
             if (existingUserIndex !== -1) {
@@ -381,10 +1012,9 @@
             
             localStorage.setItem('allUsers', JSON.stringify(allUsers));
             initializeUserTracking(userData.id);
-            
-            console.log('USERS DATABASE: ' + allUsers.length + ' total users');
         }
-
+        
+        // Initialize user tracking
         function initializeUserTracking(userId) {
             if (!localStorage.getItem('allPageViews')) {
                 localStorage.setItem('allPageViews', JSON.stringify([]));
@@ -403,30 +1033,91 @@
             
             addPageView(pageView);
         }
-
+        
+        // Add page view
         function addPageView(pageView) {
             const allPageViews = JSON.parse(localStorage.getItem('allPageViews') || '[]');
             allPageViews.push(pageView);
             localStorage.setItem('allPageViews', JSON.stringify(allPageViews));
         }
-
+        
+        // Generate action ID
         function generateActionId() {
-            return 'id_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+            return `act_${Date.now().toString(36)}_${Math.random().toString(36).substr(2, 9)}`;
         }
         
-        document.getElementById('userName').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                login();
+        // Logo click animation
+        function animateLogo() {
+            const logo = document.querySelector('.logo');
+            logo.style.animation = 'none';
+            void logo.offsetWidth; // Trigger reflow
+            logo.style.animation = 'logoFloat 8s ease-in-out infinite';
+        }
+        
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#6366f1', '#06b6d4', '#f59e0b', '#10b981', '#8b5cf6'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = '-20px';
+                confetti.style.opacity = '0.8';
+                confetti.style.zIndex = '9999';
+                confetti.style.pointerEvents = 'none';
+                
+                // Animation
+                const animation = confetti.animate([
+                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                    { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 1000,
+                    easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+                });
+                
+                document.body.appendChild(confetti);
+                animation.onfinish = () => confetti.remove();
             }
-        });
+        }
         
-        document.getElementById('userName').addEventListener('input', function() {
-            document.getElementById('errorMessage').style.display = 'none';
-            document.getElementById('userNameGroup').classList.remove('input-error');
-        });
-        
+        // Initialize everything when page loads
         window.onload = function() {
-            document.getElementById('userName').focus();
+            createParticles();
+            updateDateTime();
+            updateStats();
+            
+            // Update time every second
+            setInterval(updateDateTime, 1000);
+            
+            // Update stats every 10 seconds
+            setInterval(updateStats, 10000);
+            
+            // Auto-focus input with animation
+            setTimeout(() => {
+                const input = document.getElementById('userName');
+                input.focus();
+                input.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    input.style.transform = 'scale(1)';
+                }, 200);
+            }, 500);
+            
+            // Add keyboard listener for Enter key
+            document.getElementById('userName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+            
+            // Clear error on input
+            document.getElementById('userName').addEventListener('input', function() {
+                document.getElementById('errorMessage').style.opacity = '0';
+            });
         };
     </script>
 </body>
