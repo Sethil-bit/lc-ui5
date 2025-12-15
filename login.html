@@ -201,7 +201,7 @@
             <div class="logo">
                 <div class="logo-inner">LC</div>
             </div>
-            <h1>Welcome Back</h1>
+            <h1>Good Day</h1>
             <p>Enter your name to access</p>
         </div>
         
@@ -290,9 +290,9 @@
                     loginBtn.classList.remove('loading');
                     successMessage.classList.add('show');
                     
-                    // Redirect after delay
+                    // Redirect to main.html after delay
                     setTimeout(() => {
-                        window.location.href = 'dashboard.html';
+                        window.location.href = 'main.html'; // Changed to main.html
                     }, 1200);
                     
                 } catch (error) {
@@ -301,6 +301,14 @@
                     errorMessage.querySelector('span:last-child').textContent = 'Login failed. Please try again.';
                     errorMessage.classList.add('show');
                 }
+            }
+            
+            // Check if user is already logged in (optional)
+            // You can add this if you want to skip login for returning users
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                // Optional: Auto-redirect if user is already logged in
+                // window.location.href = 'main.html';
             }
         });
     </script>
