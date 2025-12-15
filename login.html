@@ -235,82 +235,362 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const userNameInput = document.getElementById('userName');
-            const loginBtn = document.getElementById('loginBtn');
-            const errorMessage = document.getElementById('errorMessage');
-            const successMessage = document.getElementById('successMessage');
+        console.log('Login page initialized');
+        
+        // Create background particles
+        createBackgroundAnimation();
+        
+        // Update time immediately
+        updateDateTime();
+        
+        // Set up event listeners
+        setupEventListeners();
+        
+        // Check if user is already logged in
+        const currentUser = localStorage.getItem('currentUserName');
+        if (currentUser) {
+            // User is already logged in, redirect to main page
+            console.log('User already logged in:', currentUser);
+            window.location.href = 'main.html';
+        }
+        
+        // Auto-focus input with delay for mobile
+        setTimeout(() => {
+            const input = document.getElementById('userName');
+            if (input) {
+                input.focus();
+            }
+        }, 300);
+    });
+    
+    // Create background particles
+    function createBackgroundAnimation() {
+        const container = document.getElementById('backgroundAnimation');
+        if (!container) return;
+        
+        const particleCount = 15;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
             
-            // Auto-focus input
-            setTimeout(() => {
-                userNameInput.focus();
-            }, 100);
+            const size = Math.random() * 5 + 2;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+            const delay = Math.random() * 15;
+            const duration = Math.random() * 15 + 20;
             
-            // Handle login button click
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${posX}%`;
+            particle.style.top = `${posY}%`;
+            particle.style.animationDelay = `${delay}s`;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.opacity = Math.random() * 0.2 + 0.05;
+            
+            container.appendChild(particle);
+        }
+    }
+    
+    // Update real-time clock
+    function updateDateTime() {
+        try {
+            const now = new Date();
+            
+            // Format time
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            // Format date
+            const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            const weekday = weekdays[now.getDay()];
+            const month = months[now.getMonth()];
+            const date = now.getDate();
+            const year = now.getFullYear();
+            
+            // Update DOM
+            const timeElement = document.getElementById('currentTime');
+            const dateElement = document.getElementById('currentDate');
+            const weekdayElement = document.getElementById('weekday');
+            
+            if (timeElement) {
+                timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+                
+                // Add subtle animation on second change
+                if (seconds === '00') {
+                    timeElement.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        timeElement.style.transform = 'scale(1)';
+                    }, 300);
+                }
+            }
+            
+            if (dateElement) dateElement.textContent = `${month} ${date}, ${year}`;
+            if (weekdayElement) weekdayElement.textContent = weekday;
+            
+        } catch (error) {
+            console.error('Error updating datetime:', error);
+        }
+        
+        // Update every second
+        setTimeout(updateDateTime, 1000);
+    }
+    
+    // Set up event listeners
+    function setupEventListeners() {
+        // Login button click
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
             loginBtn.addEventListener('click', handleLogin);
-            
-            // Handle Enter key in input
+        }
+        
+        // Enter key in input field
+        const userNameInput = document.getElementById('userName');
+        if (userNameInput) {
             userNameInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
+                    e.preventDefault();
                     handleLogin();
                 }
             });
             
             // Clear error on input
             userNameInput.addEventListener('input', function() {
-                errorMessage.classList.remove('show');
+                const errorMessage = document.getElementById('errorMessage');
+                if (errorMessage) {
+                    errorMessage.classList.remove('show');
+                }
             });
+        }
+    }
+    
+    // Handle login process
+    async function handleLogin() {
+        console.log('Login initiated');
+        
+        const userName = document.getElementById('userName').value.trim();
+        const errorMessage = document.getElementById('errorMessage');
+        const loginBtn = document.getElementById('loginBtn');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const loadingProgress = document.getElementById('loadingProgress');
+        const successCheck = document.getElementById('successCheck');
+        const userNameInput = document.getElementById('userName');
+        
+        // Validate input
+        if (!userName || userName.length < 2) {
+            console.log('Invalid name entered');
             
-            async function handleLogin() {
-                const userName = userNameInput.value.trim();
-                
-                // Validate input
-                if (!userName || userName.length < 2) {
-                    errorMessage.classList.add('show');
-                    userNameInput.focus();
-                    return;
-                }
-                
-                // Show loading state
-                loginBtn.classList.add('loading');
-                
-                // Simulate API call delay
-                try {
-                    await new Promise(resolve => setTimeout(resolve, 800));
-                    
-                    // Store user data
-                    const userData = {
-                        name: userName,
-                        loginTime: new Date().toISOString(),
-                        userId: 'user_' + Date.now()
-                    };
-                    
-                    localStorage.setItem('currentUser', JSON.stringify(userData));
-                    
-                    // Show success
-                    loginBtn.classList.remove('loading');
-                    successMessage.classList.add('show');
-                    
-                    // Redirect to main.html after delay
-                    setTimeout(() => {
-                        window.location.href = 'main.html'; // Changed to main.html
-                    }, 1200);
-                    
-                } catch (error) {
-                    console.error('Login error:', error);
-                    loginBtn.classList.remove('loading');
-                    errorMessage.querySelector('span:last-child').textContent = 'Login failed. Please try again.';
-                    errorMessage.classList.add('show');
-                }
+            // Show error
+            if (errorMessage) {
+                errorMessage.classList.add('show');
             }
             
-            // Check if user is already logged in (optional)
-            // You can add this if you want to skip login for returning users
-            const savedUser = localStorage.getItem('currentUser');
-            if (savedUser) {
-                // Optional: Auto-redirect if user is already logged in
-                // window.location.href = 'main.html';
+            // Shake input
+            if (userNameInput) {
+                userNameInput.classList.add('shake');
+                setTimeout(() => {
+                    userNameInput.classList.remove('shake');
+                }, 500);
+                
+                // Focus input
+                userNameInput.focus();
             }
+            
+            return;
+        }
+        
+        console.log('Valid name entered:', userName);
+        
+        // Hide error message
+        if (errorMessage) {
+            errorMessage.classList.remove('show');
+        }
+        
+        // Show loading state
+        if (loginBtn) {
+            loginBtn.classList.add('loading');
+        }
+        
+        if (loadingContainer) {
+            loadingContainer.classList.add('active');
+        }
+        
+        // Animate loading progress
+        try {
+            await animateLoading(loadingProgress);
+        } catch (error) {
+            console.error('Loading animation error:', error);
+        }
+        
+        // Create user data with authentication token
+        const userData = {
+            id: generateUserId(),
+            name: userName,
+            loginTime: new Date().toISOString(),
+            deviceType: getDeviceType(),
+            isAuthenticated: true,
+            authToken: generateAuthToken(),
+            sessionExpiry: Date.now() + (24 * 60 * 60 * 1000) // 24 hours from now
+        };
+        
+        // Store user info with multiple authentication checks
+        try {
+            // Clear any previous session first
+            localStorage.removeItem('currentUserName');
+            localStorage.removeItem('currentLoginTime');
+            localStorage.removeItem('currentUserId');
+            localStorage.removeItem('userAuthToken');
+            localStorage.removeItem('isLoggedIn');
+            
+            // Store new session data
+            localStorage.setItem('currentUserName', userName);
+            localStorage.setItem('currentLoginTime', userData.loginTime);
+            localStorage.setItem('currentUserId', userData.id);
+            localStorage.setItem('userAuthToken', userData.authToken);
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('sessionExpiry', userData.sessionExpiry.toString());
+            
+            // Store complete user data
+            localStorage.setItem('currentUserData', JSON.stringify(userData));
+            
+            // Add to users database
+            addUserToDatabase(userData);
+            
+            console.log('User data saved successfully');
+            
+        } catch (error) {
+            console.error('Storage error:', error);
+            // Show error to user
+            errorMessage.textContent = 'Login failed. Please try again.';
+            errorMessage.classList.add('show');
+            loginBtn.classList.remove('loading');
+            loadingContainer.classList.remove('active');
+            return;
+        }
+        
+        // Show success state
+        if (loginBtn) {
+            loginBtn.classList.remove('loading');
+            loginBtn.classList.add('success');
+        }
+        
+        if (loadingContainer) {
+            loadingContainer.classList.remove('active');
+        }
+        
+        if (successCheck) {
+            successCheck.classList.add('show');
+        }
+        
+        // Reset loading progress
+        if (loadingProgress) {
+            loadingProgress.style.width = '0%';
+        }
+        
+        // Important: Add a small delay before redirect to ensure localStorage is saved
+        setTimeout(() => {
+            console.log('Redirecting to main page...');
+            console.log('Stored user:', localStorage.getItem('currentUserName'));
+            console.log('isLoggedIn:', localStorage.getItem('isLoggedIn'));
+            
+            // Force redirect - don't check anything else
+            window.location.href = 'main.html';
+        }, 1200);
+    }
+    
+    // Animate loading progress
+    function animateLoading(progressBar) {
+        return new Promise((resolve) => {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 2;
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, 20);
         });
-    </script>
+    }
+    
+    // Generate user ID
+    function generateUserId() {
+        return 'usr_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
+    }
+    
+    // Generate authentication token
+    function generateAuthToken() {
+        return 'auth_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+    }
+    
+    // Get device type
+    function getDeviceType() {
+        const ua = navigator.userAgent;
+        if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
+            return 'Mobile';
+        } else if (/Tablet|iPad|PlayBook|Silk|Xoom|SCH-I800|GT-P1000|SHW-M180S/.test(ua)) {
+            return 'Tablet';
+        } else {
+            return 'Desktop';
+        }
+    }
+    
+    // Add user to database
+    function addUserToDatabase(userData) {
+        try {
+            const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+            
+            // Check if user exists
+            const existingUserIndex = allUsers.findIndex(user => 
+                user.name.toLowerCase() === userData.name.toLowerCase()
+            );
+            
+            if (existingUserIndex !== -1) {
+                // Update existing user
+                allUsers[existingUserIndex].loginTime = userData.loginTime;
+                allUsers[existingUserIndex].loginCount = (allUsers[existingUserIndex].loginCount || 1) + 1;
+                allUsers[existingUserIndex].lastActivity = userData.loginTime;
+                allUsers[existingUserIndex].isAuthenticated = true;
+                allUsers[existingUserIndex].authToken = userData.authToken;
+            } else {
+                // Add new user
+                userData.loginCount = 1;
+                userData.firstSeen = userData.loginTime;
+                userData.lastActivity = userData.loginTime;
+                allUsers.push(userData);
+            }
+            
+            localStorage.setItem('allUsers', JSON.stringify(allUsers));
+            console.log('User database updated. Total users:', allUsers.length);
+            
+        } catch (error) {
+            console.error('Error updating user database:', error);
+        }
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        // Update background particles
+        const container = document.getElementById('backgroundAnimation');
+        if (container) {
+            container.innerHTML = '';
+            createBackgroundAnimation();
+        }
+    });
+    
+    // Handle page visibility change
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            // Page became visible, update time
+            updateDateTime();
+        }
+    });
+</script>
 </body>
 </html>
