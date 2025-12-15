@@ -2,183 +2,69 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Dashboard</title>
     <style>
-        /* Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        html {
-            font-size: 16px;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0f172a;
             color: #f8fafc;
             min-height: 100vh;
-            min-height: -webkit-fill-available;
-            padding: 20px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative;
-            overflow-x: hidden;
+            padding: 20px;
         }
         
-        /* Mobile-first adjustments */
-        @media (max-width: 768px) {
-            html {
-                font-size: 14px;
-            }
-            
-            body {
-                padding: 15px;
-                padding-top: 80px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            html {
-                font-size: 13px;
-            }
-            
-            body {
-                padding: 10px;
-                padding-top: 90px;
-            }
-        }
-        
-        /* Real-time Clock */
-        .time-container {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            z-index: 100;
-            background: rgba(18, 18, 30, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 12px 24px;
-            border-radius: 16px;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            width: 90%;
-            max-width: 320px;
-        }
-        
-        .time {
-            font-size: clamp(28px, 6vw, 40px);
-            font-weight: 700;
-            background: linear-gradient(135deg, #f8fafc, #06b6d4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 2px;
-            font-variant-numeric: tabular-nums;
-            line-height: 1.2;
-        }
-        
-        .date {
-            font-size: clamp(13px, 3vw, 16px);
-            color: #94a3b8;
-            margin-top: 6px;
-            font-weight: 500;
-            line-height: 1.4;
-        }
-        
-        .weekday {
-            color: #f59e0b;
-            font-weight: 600;
-        }
-        
-        /* Login Container */
         .login-container {
-            background: rgba(18, 18, 30, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: clamp(30px, 6vw, 50px);
+            background-color: #1e293b;
+            border-radius: 16px;
+            padding: 40px;
             width: 100%;
-            max-width: 420px;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            margin-top: 40px;
-            position: relative;
-            z-index: 2;
+            max-width: 400px;
+            border: 1px solid #334155;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
         
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 30px 25px;
-                border-radius: 20px;
-                margin-top: 30px;
-            }
-        }
-        
-        .login-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #6366f1, #06b6d4, #f59e0b);
-            border-radius: 24px 24px 0 0;
-        }
-        
-        /* Logo Section */
         .logo-section {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
         
         .logo {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #6366f1, #06b6d4);
-            border-radius: 18px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
-            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
-            transform: rotate(45deg);
-            transition: transform 0.5s ease;
-        }
-        
-        .logo:hover {
-            transform: rotate(0deg);
         }
         
         .logo-inner {
-            transform: rotate(-45deg);
             font-weight: 800;
-            font-size: 28px;
+            font-size: 24px;
             color: white;
         }
         
         .logo-section h1 {
-            font-size: clamp(24px, 5vw, 32px);
-            font-weight: 800;
-            margin-bottom: 12px;
-            color: #f8fafc;
-            letter-spacing: -0.5px;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
         
         .logo-section p {
             color: #94a3b8;
-            font-size: clamp(14px, 3vw, 16px);
-            line-height: 1.6;
-            max-width: 300px;
-            margin: 0 auto;
+            font-size: 14px;
         }
         
-        /* Input Group */
         .input-group {
             margin-bottom: 25px;
         }
@@ -187,299 +73,129 @@
             display: block;
             margin-bottom: 10px;
             color: #94a3b8;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
-        }
-        
-        .input-wrapper {
-            position: relative;
         }
         
         #userName {
             width: 100%;
-            padding: 18px 20px;
-            background: rgba(30, 41, 59, 0.7);
-            border: 2px solid rgba(99, 102, 241, 0.2);
-            border-radius: 14px;
+            padding: 16px;
+            background-color: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 12px;
             color: #f8fafc;
             font-size: 16px;
-            transition: all 0.3s ease;
             outline: none;
-            -webkit-appearance: none;
-            appearance: none;
+            transition: all 0.3s ease;
         }
         
         #userName:focus {
             border-color: #6366f1;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-            transform: translateY(-2px);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
         }
         
         #userName::placeholder {
             color: #64748b;
         }
         
-        /* Fix for iOS input zoom */
-        @media screen and (max-width: 768px) {
-            #userName {
-                font-size: 16px !important;
-            }
-        }
-        
-        .input-icon {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #64748b;
-            font-size: 18px;
-        }
-        
-        /* Error Message */
         .error-message {
             color: #ef4444;
             font-size: 14px;
             margin-top: 10px;
-            display: flex;
+            display: none;
             align-items: center;
             gap: 8px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            min-height: 24px;
         }
         
         .error-message.show {
-            opacity: 1;
+            display: flex;
         }
         
-        /* Login Button */
         #loginBtn {
             width: 100%;
-            padding: 20px;
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
             border: none;
-            border-radius: 14px;
-            font-size: 17px;
+            border-radius: 12px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            margin-top: 15px;
-            touch-action: manipulation;
-            user-select: none;
-            position: relative;
-            overflow: hidden;
+            gap: 10px;
         }
         
         #loginBtn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
         }
         
         #loginBtn:active {
             transform: translateY(0);
         }
         
-        #loginBtn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s ease;
-        }
-        
-        #loginBtn:hover::before {
-            left: 100%;
-        }
-        
         #loginBtn.loading {
-            opacity: 0.9;
+            opacity: 0.8;
             pointer-events: none;
         }
         
-        #loginBtn.success {
-            background: #10b981;
-        }
-        
-        .btn-text {
-            transition: opacity 0.3s ease;
-        }
-        
         .loading-spinner {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 0.8s linear infinite;
-            opacity: 0;
-        }
-        
-        #loginBtn.loading .btn-text {
-            opacity: 0;
+            display: none;
         }
         
         #loginBtn.loading .loading-spinner {
-            opacity: 1;
+            display: block;
+        }
+        
+        #loginBtn.loading .btn-text {
+            opacity: 0.7;
         }
         
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
         
-        /* Loading Container */
-        .loading-container {
-            margin-top: 25px;
-            display: none;
-        }
-        
-        .loading-container.active {
-            display: block;
-        }
-        
-        .loading-bar {
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 15px;
-        }
-        
-        .loading-progress {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #6366f1, #06b6d4, #f59e0b);
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-        
-        /* Success Check */
-        .success-check {
-            text-align: center;
-            margin-top: 25px;
+        .success-message {
             color: #10b981;
-            font-weight: 600;
-            font-size: 15px;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 500;
             display: none;
-            animation: slideIn 0.5s ease;
         }
         
-        .success-check.show {
+        .success-message.show {
             display: block;
         }
         
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Simple Footer */
         .footer {
             text-align: center;
-            margin-top: 35px;
-            font-size: 13px;
+            margin-top: 30px;
             color: #64748b;
+            font-size: 13px;
         }
         
-        /* Background Particles */
-        .background-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .particle {
-            position: absolute;
-            background: linear-gradient(135deg, #6366f1, #06b6d4);
-            border-radius: 50%;
-            opacity: 0.1;
-            animation: float 20s infinite linear;
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(0) translateX(0) rotate(0deg);
-                opacity: 0.05;
-            }
-            50% {
-                opacity: 0.15;
-            }
-            100% {
-                transform: translateY(-100vh) translateX(100vw) rotate(360deg);
-                opacity: 0.05;
-            }
-        }
-        
-        /* Shake animation for error */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
-        
-        .shake {
-            animation: shake 0.5s ease;
-        }
-        
-        /* Safe area support for iOS */
-        @supports (padding: max(0px)) {
-            body {
-                padding-left: max(20px, env(safe-area-inset-left));
-                padding-right: max(20px, env(safe-area-inset-right));
-                padding-top: max(90px, env(safe-area-inset-top));
-                padding-bottom: max(20px, env(safe-area-inset-bottom));
-            }
-        }
-        
-        /* Keyboard adjustments for mobile */
-        @media screen and (max-width: 768px) {
-            .time-container {
-                top: 15px;
-                padding: 10px 20px;
-            }
-            
-            body {
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            
+        @media (max-width: 480px) {
             .login-container {
-                margin-bottom: env(safe-area-inset-bottom, 20px);
+                padding: 30px 25px;
+            }
+            
+            body {
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Real-Time Clock -->
-    <div class="time-container">
-        <div class="time" id="currentTime">00:00:00</div>
-        <div class="date">
-            <span class="weekday" id="weekday">Monday</span>, 
-            <span id="currentDate">January 1, 2024</span>
-        </div>
-    </div>
-    
-    <!-- Background Animation -->
-    <div class="background-animation" id="backgroundAnimation"></div>
-    
-    <!-- Login Container -->
     <div class="login-container">
         <div class="logo-section">
             <div class="logo">
@@ -491,352 +207,100 @@
         
         <div class="input-group">
             <label for="userName">Your Name</label>
-            <div class="input-wrapper">
-                <input type="text" id="userName" placeholder="Enter your name here" autocomplete="name" inputmode="text">
-                <div class="input-icon">👤</div>
-            </div>
+            <input 
+                type="text" 
+                id="userName" 
+                placeholder="Enter your full name"
+                autocomplete="name"
+            >
             <div class="error-message" id="errorMessage">
                 <span>⚠️</span>
-                <span>Please enter a valid name</span>
+                <span>Please enter a valid name (at least 2 characters)</span>
             </div>
         </div>
         
         <button id="loginBtn">
-            <span class="btn-text">⛴️        Enter Application</span>
+            <span class="btn-text">Enter Application</span>
             <div class="loading-spinner"></div>
         </button>
         
-        <!-- Loading Animation -->
-        <div class="loading-container" id="loadingContainer">
-            <div class="loading-bar">
-                <div class="loading-progress" id="loadingProgress"></div>
-            </div>
-        </div>
-        
-        <!-- Success Message -->
-        <div class="success-check" id="successCheck">
+        <div class="success-message" id="successMessage">
             ✓ Login successful! Redirecting...
         </div>
         
-        <!-- Simple Footer -->
         <div class="footer">
             <p>Advanced UI with LC date calculation | Secure Login</p>
         </div>
     </div>
 
     <script>
-        // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Login page initialized');
-            
-            // Create background particles
-            createBackgroundAnimation();
-            
-            // Update time immediately
-            updateDateTime();
-            
-            // Set up event listeners
-            setupEventListeners();
-            
-            // Auto-focus input with delay for mobile
-            setTimeout(() => {
-                const input = document.getElementById('userName');
-                if (input) {
-                    input.focus();
-                }
-            }, 300);
-        });
-        
-        // Create background particles
-        function createBackgroundAnimation() {
-            const container = document.getElementById('backgroundAnimation');
-            if (!container) return;
-            
-            const particleCount = 15;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                const size = Math.random() * 5 + 2;
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                const delay = Math.random() * 15;
-                const duration = Math.random() * 15 + 20;
-                
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${posX}%`;
-                particle.style.top = `${posY}%`;
-                particle.style.animationDelay = `${delay}s`;
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.opacity = Math.random() * 0.2 + 0.05;
-                
-                container.appendChild(particle);
-            }
-        }
-        
-        // Update real-time clock
-        function updateDateTime() {
-            try {
-                const now = new Date();
-                
-                // Format time
-                const hours = now.getHours().toString().padStart(2, '0');
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const seconds = now.getSeconds().toString().padStart(2, '0');
-                
-                // Format date
-                const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                
-                const weekday = weekdays[now.getDay()];
-                const month = months[now.getMonth()];
-                const date = now.getDate();
-                const year = now.getFullYear();
-                
-                // Update DOM
-                const timeElement = document.getElementById('currentTime');
-                const dateElement = document.getElementById('currentDate');
-                const weekdayElement = document.getElementById('weekday');
-                
-                if (timeElement) {
-                    timeElement.textContent = `${hours}:${minutes}:${seconds}`;
-                    
-                    // Add subtle animation on second change
-                    if (seconds === '00') {
-                        timeElement.style.transform = 'scale(1.05)';
-                        setTimeout(() => {
-                            timeElement.style.transform = 'scale(1)';
-                        }, 300);
-                    }
-                }
-                
-                if (dateElement) dateElement.textContent = `${month} ${date}, ${year}`;
-                if (weekdayElement) weekdayElement.textContent = weekday;
-                
-            } catch (error) {
-                console.error('Error updating datetime:', error);
-            }
-            
-            // Update every second
-            setTimeout(updateDateTime, 1000);
-        }
-        
-        // Set up event listeners
-        function setupEventListeners() {
-            // Login button click
-            const loginBtn = document.getElementById('loginBtn');
-            if (loginBtn) {
-                loginBtn.addEventListener('click', handleLogin);
-            }
-            
-            // Enter key in input field
             const userNameInput = document.getElementById('userName');
-            if (userNameInput) {
-                userNameInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleLogin();
-                    }
-                });
-                
-                // Clear error on input
-                userNameInput.addEventListener('input', function() {
-                    const errorMessage = document.getElementById('errorMessage');
-                    if (errorMessage) {
-                        errorMessage.classList.remove('show');
-                    }
-                });
-            }
-        }
-        
-        // Handle login process
-        async function handleLogin() {
-            console.log('Login initiated');
-            
-            const userName = document.getElementById('userName').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
             const errorMessage = document.getElementById('errorMessage');
-            const loginBtn = document.getElementById('loginBtn');
-            const loadingContainer = document.getElementById('loadingContainer');
-            const loadingProgress = document.getElementById('loadingProgress');
-            const successCheck = document.getElementById('successCheck');
-            const userNameInput = document.getElementById('userName');
+            const successMessage = document.getElementById('successMessage');
             
-            // Validate input
-            if (!userName || userName.length < 2) {
-                console.log('Invalid name entered');
+            // Auto-focus input
+            setTimeout(() => {
+                userNameInput.focus();
+            }, 100);
+            
+            // Handle login button click
+            loginBtn.addEventListener('click', handleLogin);
+            
+            // Handle Enter key in input
+            userNameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleLogin();
+                }
+            });
+            
+            // Clear error on input
+            userNameInput.addEventListener('input', function() {
+                errorMessage.classList.remove('show');
+            });
+            
+            async function handleLogin() {
+                const userName = userNameInput.value.trim();
                 
-                // Show error
-                if (errorMessage) {
+                // Validate input
+                if (!userName || userName.length < 2) {
+                    errorMessage.classList.add('show');
+                    userNameInput.focus();
+                    return;
+                }
+                
+                // Show loading state
+                loginBtn.classList.add('loading');
+                
+                // Simulate API call delay
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    
+                    // Store user data
+                    const userData = {
+                        name: userName,
+                        loginTime: new Date().toISOString(),
+                        userId: 'user_' + Date.now()
+                    };
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(userData));
+                    
+                    // Show success
+                    loginBtn.classList.remove('loading');
+                    successMessage.classList.add('show');
+                    
+                    // Redirect after delay
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1200);
+                    
+                } catch (error) {
+                    console.error('Login error:', error);
+                    loginBtn.classList.remove('loading');
+                    errorMessage.querySelector('span:last-child').textContent = 'Login failed. Please try again.';
                     errorMessage.classList.add('show');
                 }
-                
-                // Shake input
-                if (userNameInput) {
-                    userNameInput.classList.add('shake');
-                    setTimeout(() => {
-                        userNameInput.classList.remove('shake');
-                    }, 500);
-                    
-                    // Focus input
-                    userNameInput.focus();
-                }
-                
-                return;
-            }
-            
-            console.log('Valid name entered:', userName);
-            
-            // Hide error message
-            if (errorMessage) {
-                errorMessage.classList.remove('show');
-            }
-            
-            // Show loading state
-            if (loginBtn) {
-                loginBtn.classList.add('loading');
-            }
-            
-            if (loadingContainer) {
-                loadingContainer.classList.add('active');
-            }
-            
-            // Animate loading progress
-            try {
-                await animateLoading(loadingProgress);
-            } catch (error) {
-                console.error('Loading animation error:', error);
-            }
-            
-            // Create user data
-            const userData = {
-                id: generateUserId(),
-                name: userName,
-                loginTime: new Date().toISOString(),
-                deviceType: getDeviceType()
-            };
-            
-            // Store user info
-            try {
-                localStorage.setItem('currentUserName', userName);
-                localStorage.setItem('currentLoginTime', userData.loginTime);
-                localStorage.setItem('currentUserId', userData.id);
-                
-                // Add to users database
-                addUserToDatabase(userData);
-                
-            } catch (error) {
-                console.error('Storage error:', error);
-            }
-            
-            // Show success state
-            if (loginBtn) {
-                loginBtn.classList.remove('loading');
-                loginBtn.classList.add('success');
-            }
-            
-            if (loadingContainer) {
-                loadingContainer.classList.remove('active');
-            }
-            
-            if (successCheck) {
-                successCheck.classList.add('show');
-            }
-            
-            // Reset loading progress
-            if (loadingProgress) {
-                loadingProgress.style.width = '0%';
-            }
-            
-            // Redirect after delay
-            setTimeout(() => {
-                console.log('Redirecting to main page...');
-                window.location.href = 'main.html';
-            }, 1200);
-        }
-        
-        // Animate loading progress
-        function animateLoading(progressBar) {
-            return new Promise((resolve) => {
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 2;
-                    if (progressBar) {
-                        progressBar.style.width = `${progress}%`;
-                    }
-                    
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                        resolve();
-                    }
-                }, 20);
-            });
-        }
-        
-        // Generate user ID
-        function generateUserId() {
-            return 'usr_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
-        }
-        
-        // Get device type
-        function getDeviceType() {
-            const ua = navigator.userAgent;
-            if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
-                return 'Mobile';
-            } else if (/Tablet|iPad|PlayBook|Silk|Xoom|SCH-I800|GT-P1000|SHW-M180S/.test(ua)) {
-                return 'Tablet';
-            } else {
-                return 'Desktop';
-            }
-        }
-        
-        // Add user to database
-        function addUserToDatabase(userData) {
-            try {
-                const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-                
-                // Check if user exists
-                const existingUserIndex = allUsers.findIndex(user => 
-                    user.name.toLowerCase() === userData.name.toLowerCase()
-                );
-                
-                if (existingUserIndex !== -1) {
-                    // Update existing user
-                    allUsers[existingUserIndex].loginTime = userData.loginTime;
-                    allUsers[existingUserIndex].loginCount = (allUsers[existingUserIndex].loginCount || 1) + 1;
-                    allUsers[existingUserIndex].lastActivity = userData.loginTime;
-                } else {
-                    // Add new user
-                    userData.loginCount = 1;
-                    userData.firstSeen = userData.loginTime;
-                    userData.lastActivity = userData.loginTime;
-                    allUsers.push(userData);
-                }
-                
-                localStorage.setItem('allUsers', JSON.stringify(allUsers));
-                console.log('User database updated. Total users:', allUsers.length);
-                
-            } catch (error) {
-                console.error('Error updating user database:', error);
-            }
-        }
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            // Update background particles
-            const container = document.getElementById('backgroundAnimation');
-            if (container) {
-                container.innerHTML = '';
-                createBackgroundAnimation();
-            }
-        });
-        
-        // Handle page visibility change
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                // Page became visible, update time
-                updateDateTime();
             }
         });
     </script>
