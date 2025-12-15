@@ -2,354 +2,672 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neo Login | Cyber Interface</title>
     <style>
+        /* Ultra-Advanced Transparent Theme */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --primary-glow: #00f2fe;
+            --secondary-glow: #4facfe;
+            --accent-glow: #f093fb;
+            --matrix-green: #00ff41;
+            --cyber-purple: #9d4edd;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+            font-family: 'SF Mono', 'Courier New', monospace;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(79, 172, 254, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(157, 78, 221, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 242, 254, 0.08) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a0f 0%, #0f0c29 30%, #000 100%);
+            color: #ffffff;
             min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Cyber Grid Background */
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            z-index: -2;
+        }
+        
+        /* Floating Glow Orbs */
+        .glow-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.4;
+            z-index: -1;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary-glow);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--cyber-purple);
+            bottom: 10%;
+            right: 10%;
+            animation-delay: -10s;
+        }
+        
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: var(--accent-glow);
+            top: 50%;
+            right: 20%;
+            animation-delay: -5s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        
+        /* Main Container */
+        .login-container {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 40px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            min-height: 100vh;
         }
         
-        .login-container {
-            background-color: #1e293b;
-            border-radius: 16px;
-            padding: 40px;
+        /* Glass Morphism Panel */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 60px 50px;
             width: 100%;
-            max-width: 400px;
-            border: 1px solid #334155;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 25px 45px rgba(0, 0, 0, 0.2),
+                inset 0 0 100px rgba(255, 255, 255, 0.02),
+                0 0 50px rgba(0, 242, 254, 0.1);
         }
         
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--primary-glow), 
+                var(--accent-glow), 
+                transparent);
+            animation: scanline 3s linear infinite;
+        }
+        
+        .glass-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(135deg, transparent 30%, rgba(79, 172, 254, 0.03) 50%, transparent 70%),
+                linear-gradient(45deg, transparent 40%, rgba(157, 78, 221, 0.02) 60%, transparent 80%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Logo Section */
         .logo-section {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
+            position: relative;
         }
         
-        .logo {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            border-radius: 12px;
+        .hologram-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        
+        .logo-core {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at center, 
+                    rgba(0, 242, 254, 0.3) 0%, 
+                    transparent 70%),
+                conic-gradient(from 0deg, 
+                    var(--primary-glow), 
+                    var(--accent-glow), 
+                    var(--cyber-purple), 
+                    var(--primary-glow));
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+            box-shadow: 
+                0 0 60px rgba(0, 242, 254, 0.3),
+                0 0 100px rgba(157, 78, 221, 0.2),
+                inset 0 0 50px rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-radius: 50%;
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        .logo-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
+            font-size: 32px;
+            font-weight: 900;
+            color: transparent;
+            background: linear-gradient(135deg, var(--primary-glow), var(--accent-glow));
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(0, 242, 254, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
         }
         
-        .logo-inner {
-            font-weight: 800;
-            font-size: 24px;
-            color: white;
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        @keyframes glow {
+            0% { filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.3)); }
+            100% { filter: drop-shadow(0 0 30px rgba(0, 242, 254, 0.6)); }
         }
         
         .logo-section h1 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-size: 36px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, var(--primary-glow) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+        
+        .logo-section h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-glow), transparent);
         }
         
         .logo-section p {
-            color: #94a3b8;
             font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 1px;
+            font-weight: 300;
+            margin-top: 20px;
         }
         
-        .input-group {
-            margin-bottom: 25px;
+        /* Input Field */
+        .input-container {
+            position: relative;
+            margin-bottom: 40px;
         }
         
-        .input-group label {
-            display: block;
-            margin-bottom: 10px;
-            color: #94a3b8;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        #userName {
+        .neon-input {
             width: 100%;
-            padding: 16px;
-            background-color: #0f172a;
-            border: 2px solid #334155;
-            border-radius: 12px;
-            color: #f8fafc;
-            font-size: 16px;
+            padding: 25px 20px 25px 60px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: #fff;
+            font-size: 18px;
+            font-family: 'SF Mono', monospace;
+            letter-spacing: 1px;
             outline: none;
             transition: all 0.3s ease;
+            position: relative;
+            backdrop-filter: blur(10px);
         }
         
-        #userName:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        .neon-input:focus {
+            border-color: var(--primary-glow);
+            box-shadow: 
+                0 0 30px rgba(0, 242, 254, 0.2),
+                inset 0 0 20px rgba(0, 242, 254, 0.1);
+            background: rgba(255, 255, 255, 0.05);
         }
         
-        #userName::placeholder {
-            color: #64748b;
+        .neon-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 300;
         }
         
+        .input-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: var(--primary-glow);
+            z-index: 2;
+            filter: drop-shadow(0 0 10px var(--primary-glow));
+        }
+        
+        .input-glow {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--primary-glow), 
+                transparent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .neon-input:focus ~ .input-glow {
+            transform: scaleX(1);
+        }
+        
+        /* Error Message */
         .error-message {
-            color: #ef4444;
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            font-size: 12px;
+            color: #ff4757;
+            display: flex;
             align-items: center;
             gap: 8px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
         }
         
         .error-message.show {
-            display: flex;
-        }
-        
-        #loginBtn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        #loginBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-        }
-        
-        #loginBtn:active {
+            opacity: 1;
             transform: translateY(0);
         }
         
-        #loginBtn.loading {
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            padding: 25px;
+            background: linear-gradient(135deg, 
+                rgba(0, 242, 254, 0.1), 
+                rgba(157, 78, 221, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .login-btn:hover {
+            border-color: var(--primary-glow);
+            box-shadow: 
+                0 0 40px rgba(0, 242, 254, 0.3),
+                inset 0 0 30px rgba(0, 242, 254, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .login-btn:hover::before {
+            left: 100%;
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .login-btn.loading {
             opacity: 0.8;
-            pointer-events: none;
+            cursor: not-allowed;
         }
         
-        .loading-spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
+        /* Loading Animation */
+        .quantum-loader {
             display: none;
+            position: relative;
+            width: 30px;
+            height: 30px;
         }
         
-        #loginBtn.loading .loading-spinner {
+        .login-btn.loading .quantum-loader {
             display: block;
         }
         
-        #loginBtn.loading .btn-text {
+        .login-btn.loading .btn-text {
             opacity: 0.7;
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .quantum-loader::before,
+        .quantum-loader::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: var(--primary-glow);
+            animation: spin 1s linear infinite;
         }
         
-        .success-message {
-            color: #10b981;
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-            font-weight: 500;
-            display: none;
+        .quantum-loader::after {
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            border-top-color: var(--accent-glow);
+            animation: spin 1s linear infinite reverse;
         }
         
-        .success-message.show {
-            display: block;
+        .btn-text {
+            transition: opacity 0.3s ease;
         }
         
-        .footer {
+        /* Success Animation */
+        .success-container {
             text-align: center;
             margin-top: 30px;
-            color: #64748b;
-            font-size: 13px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .success-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .success-check {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 255, 65, 0.1);
+            border-radius: 50%;
+            position: relative;
+            margin-bottom: 20px;
+            animation: successPulse 2s ease-in-out infinite;
+        }
+        
+        .success-check::before {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: var(--matrix-green);
+        }
+        
+        @keyframes successPulse {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.4); 
+            }
+            50% { 
+                box-shadow: 0 0 0 20px rgba(0, 255, 65, 0); 
+            }
+        }
+        
+        .success-text {
+            font-size: 14px;
+            color: var(--matrix-green);
+            letter-spacing: 1px;
+            font-weight: 300;
+        }
+        
+        /* Data Stream Effect */
+        .data-stream {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--primary-glow), 
+                transparent);
+            opacity: 0.5;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 20px;
+            }
+            
+            .glass-panel {
+                padding: 40px 30px;
+            }
+            
+            .logo-section h1 {
+                font-size: 28px;
+            }
+            
+            .hologram-logo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .neon-input {
+                padding: 20px 20px 20px 50px;
+                font-size: 16px;
+            }
+            
+            .login-btn {
+                padding: 20px;
+                font-size: 16px;
+            }
         }
         
         @media (max-width: 480px) {
-            .login-container {
-                padding: 30px 25px;
+            .glass-panel {
+                padding: 30px 20px;
+                border-radius: 20px;
             }
             
+            .logo-section h1 {
+                font-size: 24px;
+            }
+            
+            .hologram-logo {
+                width: 80px;
+                height: 80px;
+            }
+        }
+        
+        /* Safe Area Support */
+        @supports (padding: max(0px)) {
             body {
-                padding: 15px;
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+                padding-top: max(20px, env(safe-area-inset-top));
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
             }
         }
     </style>
 </head>
 <body>
+    <!-- Cyber Grid Background -->
+    <div class="cyber-grid"></div>
+    
+    <!-- Glow Orbs -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+    
+    <!-- Main Login Container -->
     <div class="login-container">
-        <div class="logo-section">
-            <div class="logo">
-                <div class="logo-inner">LC</div>
+        <div class="glass-panel">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <div class="hologram-logo">
+                    <div class="logo-core"></div>
+                    <div class="logo-grid"></div>
+                    <div class="logo-text">LC</div>
+                </div>
+                <h1>NEO ACCESS</h1>
+                <p>ENTER IDENTIFICATION TO PROCEED</p>
             </div>
-            <h1>Good Day</h1>
-            <p>Enter your name to access</p>
-        </div>
-        
-        <div class="input-group">
-            <label for="userName">Your Name</label>
-            <input 
-                type="text" 
-                id="userName" 
-                placeholder="Enter your full name"
-                autocomplete="name"
-            >
-            <div class="error-message" id="errorMessage">
-                <span>⚠️</span>
-                <span>Please enter a valid name (at least 2 characters)</span>
+            
+            <!-- Input Field -->
+            <div class="input-container">
+                <div class="input-icon">👤</div>
+                <input 
+                    type="text" 
+                    class="neon-input" 
+                    id="userName" 
+                    placeholder="ENTER YOUR NAME"
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+                <div class="input-glow"></div>
+                <div class="error-message" id="errorMessage">
+                    <span>⚠️</span>
+                    <span>IDENTIFICATION REQUIRED (MIN 2 CHARACTERS)</span>
+                </div>
             </div>
-        </div>
-        
-        <button id="loginBtn">
-            <span class="btn-text">Enter Application</span>
-            <div class="loading-spinner"></div>
-        </button>
-        
-        <div class="success-message" id="successMessage">
-            ✓ Login successful! Redirecting...
-        </div>
-        
-        <div class="footer">
-            <p>Advanced UI with LC date calculation | Secure Login</p>
+            
+            <!-- Login Button -->
+            <button class="login-btn" id="loginBtn">
+                <span class="btn-text">INITIATE ACCESS</span>
+                <div class="quantum-loader"></div>
+            </button>
+            
+            <!-- Success Animation -->
+            <div class="success-container" id="successContainer">
+                <div class="success-check"></div>
+                <div class="success-text">ACCESS GRANTED • REDIRECTING...</div>
+            </div>
+            
+            <!-- Data Stream -->
+            <div class="data-stream"></div>
         </div>
     </div>
 
     <script>
+        // Advanced Transparent Login System
         document.addEventListener('DOMContentLoaded', function() {
-        console.log('Login page initialized');
-        
-        // Create background particles
-        createBackgroundAnimation();
-        
-        // Update time immediately
-        updateDateTime();
-        
-        // Set up event listeners
-        setupEventListeners();
-        
-        // Check if user is already logged in
-        const currentUser = localStorage.getItem('currentUserName');
-        if (currentUser) {
-            // User is already logged in, redirect to main page
-            console.log('User already logged in:', currentUser);
-            window.location.href = 'main.html';
-        }
-        
-        // Auto-focus input with delay for mobile
-        setTimeout(() => {
-            const input = document.getElementById('userName');
-            if (input) {
-                input.focus();
-            }
-        }, 300);
-    });
-    
-    // Create background particles
-    function createBackgroundAnimation() {
-        const container = document.getElementById('backgroundAnimation');
-        if (!container) return;
-        
-        const particleCount = 15;
-        
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
+            console.log('⚡ NEO INTERFACE INITIALIZED');
             
-            const size = Math.random() * 5 + 2;
-            const posX = Math.random() * 100;
-            const posY = Math.random() * 100;
-            const delay = Math.random() * 15;
-            const duration = Math.random() * 15 + 20;
+            // DOM Elements
+            const userNameInput = document.getElementById('userName');
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const successContainer = document.getElementById('successContainer');
             
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.left = `${posX}%`;
-            particle.style.top = `${posY}%`;
-            particle.style.animationDelay = `${delay}s`;
-            particle.style.animationDuration = `${duration}s`;
-            particle.style.opacity = Math.random() * 0.2 + 0.05;
+            // Initialize
+            setTimeout(() => {
+                userNameInput.focus();
+                // Add typing effect animation
+                userNameInput.placeholder = '';
+                typeWriter("ENTER YOUR NAME", userNameInput, 0);
+            }, 500);
             
-            container.appendChild(particle);
-        }
-    }
-    
-    // Update real-time clock
-    function updateDateTime() {
-        try {
-            const now = new Date();
-            
-            // Format time
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
-            
-            // Format date
-            const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            
-            const weekday = weekdays[now.getDay()];
-            const month = months[now.getMonth()];
-            const date = now.getDate();
-            const year = now.getFullYear();
-            
-            // Update DOM
-            const timeElement = document.getElementById('currentTime');
-            const dateElement = document.getElementById('currentDate');
-            const weekdayElement = document.getElementById('weekday');
-            
-            if (timeElement) {
-                timeElement.textContent = `${hours}:${minutes}:${seconds}`;
-                
-                // Add subtle animation on second change
-                if (seconds === '00') {
-                    timeElement.style.transform = 'scale(1.05)';
-                    setTimeout(() => {
-                        timeElement.style.transform = 'scale(1)';
-                    }, 300);
+            // Typewriter effect for placeholder
+            function typeWriter(text, element, i) {
+                if (i < text.length) {
+                    element.placeholder += text.charAt(i);
+                    i++;
+                    setTimeout(() => typeWriter(text, element, i), 50);
                 }
             }
             
-            if (dateElement) dateElement.textContent = `${month} ${date}, ${year}`;
-            if (weekdayElement) weekdayElement.textContent = weekday;
-            
-        } catch (error) {
-            console.error('Error updating datetime:', error);
-        }
-        
-        // Update every second
-        setTimeout(updateDateTime, 1000);
-    }
-    
-    // Set up event listeners
-    function setupEventListeners() {
-        // Login button click
-        const loginBtn = document.getElementById('loginBtn');
-        if (loginBtn) {
+            // Event Listeners
             loginBtn.addEventListener('click', handleLogin);
-        }
-        
-        // Enter key in input field
-        const userNameInput = document.getElementById('userName');
-        if (userNameInput) {
+            
             userNameInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -357,240 +675,364 @@
                 }
             });
             
-            // Clear error on input
             userNameInput.addEventListener('input', function() {
-                const errorMessage = document.getElementById('errorMessage');
-                if (errorMessage) {
-                    errorMessage.classList.remove('show');
-                }
+                errorMessage.classList.remove('show');
+                // Add glow effect while typing
+                this.style.boxShadow = '0 0 20px rgba(0, 242, 254, 0.1)';
+                setTimeout(() => {
+                    this.style.boxShadow = '';
+                }, 300);
             });
-        }
-    }
-    
-    // Handle login process
-    async function handleLogin() {
-        console.log('Login initiated');
-        
-        const userName = document.getElementById('userName').value.trim();
-        const errorMessage = document.getElementById('errorMessage');
-        const loginBtn = document.getElementById('loginBtn');
-        const loadingContainer = document.getElementById('loadingContainer');
-        const loadingProgress = document.getElementById('loadingProgress');
-        const successCheck = document.getElementById('successCheck');
-        const userNameInput = document.getElementById('userName');
-        
-        // Validate input
-        if (!userName || userName.length < 2) {
-            console.log('Invalid name entered');
             
-            // Show error
-            if (errorMessage) {
-                errorMessage.classList.add('show');
+            // Advanced Login Handler
+            async function handleLogin() {
+                const userName = userNameInput.value.trim();
+                
+                // Validation with cyber effect
+                if (!userName || userName.length < 2) {
+                    showError();
+                    return;
+                }
+                
+                // Cyber sound effect simulation
+                playCyberSound();
+                
+                // Start quantum loading
+                loginBtn.classList.add('loading');
+                
+                // Create holographic effect
+                createHologramEffect();
+                
+                // Process login with advanced animation
+                try {
+                    // Simulate quantum processing
+                    await quantumProcess();
+                    
+                    // Store session data
+                    const sessionData = {
+                        id: generateQuantumId(),
+                        name: userName,
+                        loginTime: new Date().toISOString(),
+                        sessionKey: generateSessionKey(),
+                        accessLevel: 'quantum',
+                        hologramActive: true
+                    };
+                    
+                    // Advanced storage with encryption simulation
+                    storeQuantumSession(sessionData);
+                    
+                    // Show success hologram
+                    showSuccessHologram();
+                    
+                    // Redirect with quantum tunnel effect
+                    setTimeout(() => {
+                        createTunnelEffect(() => {
+                            window.location.href = 'main.html';
+                        });
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.error('Quantum processing error:', error);
+                    loginBtn.classList.remove('loading');
+                    showError('QUANTUM ERROR • RETRY');
+                }
             }
             
-            // Shake input
-            if (userNameInput) {
-                userNameInput.classList.add('shake');
+            // Quantum Process Simulation
+            async function quantumProcess() {
+                return new Promise((resolve) => {
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += Math.random() * 20;
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            // Add quantum fluctuation
+                            setTimeout(resolve, 200);
+                        }
+                    }, 100);
+                });
+            }
+            
+            // Error Display with Cyber Effect
+            function showError(message = 'IDENTIFICATION REQUIRED') {
+                errorMessage.querySelector('span:last-child').textContent = message;
+                errorMessage.classList.add('show');
+                
+                // Cyber shake effect
+                userNameInput.style.animation = 'none';
                 setTimeout(() => {
-                    userNameInput.classList.remove('shake');
-                }, 500);
+                    userNameInput.style.animation = 'shake 0.5s ease-in-out';
+                }, 10);
+                
+                // Error glow
+                userNameInput.style.borderColor = '#ff4757';
+                userNameInput.style.boxShadow = '0 0 30px rgba(255, 71, 87, 0.3)';
+                
+                setTimeout(() => {
+                    userNameInput.style.animation = '';
+                    userNameInput.style.borderColor = '';
+                    userNameInput.style.boxShadow = '';
+                }, 1000);
                 
                 // Focus input
                 userNameInput.focus();
             }
             
-            return;
-        }
-        
-        console.log('Valid name entered:', userName);
-        
-        // Hide error message
-        if (errorMessage) {
-            errorMessage.classList.remove('show');
-        }
-        
-        // Show loading state
-        if (loginBtn) {
-            loginBtn.classList.add('loading');
-        }
-        
-        if (loadingContainer) {
-            loadingContainer.classList.add('active');
-        }
-        
-        // Animate loading progress
-        try {
-            await animateLoading(loadingProgress);
-        } catch (error) {
-            console.error('Loading animation error:', error);
-        }
-        
-        // Create user data with authentication token
-        const userData = {
-            id: generateUserId(),
-            name: userName,
-            loginTime: new Date().toISOString(),
-            deviceType: getDeviceType(),
-            isAuthenticated: true,
-            authToken: generateAuthToken(),
-            sessionExpiry: Date.now() + (24 * 60 * 60 * 1000) // 24 hours from now
-        };
-        
-        // Store user info with multiple authentication checks
-        try {
-            // Clear any previous session first
-            localStorage.removeItem('currentUserName');
-            localStorage.removeItem('currentLoginTime');
-            localStorage.removeItem('currentUserId');
-            localStorage.removeItem('userAuthToken');
-            localStorage.removeItem('isLoggedIn');
-            
-            // Store new session data
-            localStorage.setItem('currentUserName', userName);
-            localStorage.setItem('currentLoginTime', userData.loginTime);
-            localStorage.setItem('currentUserId', userData.id);
-            localStorage.setItem('userAuthToken', userData.authToken);
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('sessionExpiry', userData.sessionExpiry.toString());
-            
-            // Store complete user data
-            localStorage.setItem('currentUserData', JSON.stringify(userData));
-            
-            // Add to users database
-            addUserToDatabase(userData);
-            
-            console.log('User data saved successfully');
-            
-        } catch (error) {
-            console.error('Storage error:', error);
-            // Show error to user
-            errorMessage.textContent = 'Login failed. Please try again.';
-            errorMessage.classList.add('show');
-            loginBtn.classList.remove('loading');
-            loadingContainer.classList.remove('active');
-            return;
-        }
-        
-        // Show success state
-        if (loginBtn) {
-            loginBtn.classList.remove('loading');
-            loginBtn.classList.add('success');
-        }
-        
-        if (loadingContainer) {
-            loadingContainer.classList.remove('active');
-        }
-        
-        if (successCheck) {
-            successCheck.classList.add('show');
-        }
-        
-        // Reset loading progress
-        if (loadingProgress) {
-            loadingProgress.style.width = '0%';
-        }
-        
-        // Important: Add a small delay before redirect to ensure localStorage is saved
-        setTimeout(() => {
-            console.log('Redirecting to main page...');
-            console.log('Stored user:', localStorage.getItem('currentUserName'));
-            console.log('isLoggedIn:', localStorage.getItem('isLoggedIn'));
-            
-            // Force redirect - don't check anything else
-            window.location.href = 'main.html';
-        }, 1200);
-    }
-    
-    // Animate loading progress
-    function animateLoading(progressBar) {
-        return new Promise((resolve) => {
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 2;
-                if (progressBar) {
-                    progressBar.style.width = `${progress}%`;
-                }
+            // Hologram Effect
+            function createHologramEffect() {
+                const hologram = document.createElement('div');
+                hologram.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 300px;
+                    height: 300px;
+                    background: radial-gradient(circle, rgba(0,242,254,0.1) 0%, transparent 70%);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 1000;
+                    animation: hologramExpand 1.5s ease-out forwards;
+                `;
                 
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    resolve();
-                }
-            }, 20);
-        });
-    }
-    
-    // Generate user ID
-    function generateUserId() {
-        return 'usr_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
-    }
-    
-    // Generate authentication token
-    function generateAuthToken() {
-        return 'auth_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
-    }
-    
-    // Get device type
-    function getDeviceType() {
-        const ua = navigator.userAgent;
-        if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
-            return 'Mobile';
-        } else if (/Tablet|iPad|PlayBook|Silk|Xoom|SCH-I800|GT-P1000|SHW-M180S/.test(ua)) {
-            return 'Tablet';
-        } else {
-            return 'Desktop';
-        }
-    }
-    
-    // Add user to database
-    function addUserToDatabase(userData) {
-        try {
-            const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
-            
-            // Check if user exists
-            const existingUserIndex = allUsers.findIndex(user => 
-                user.name.toLowerCase() === userData.name.toLowerCase()
-            );
-            
-            if (existingUserIndex !== -1) {
-                // Update existing user
-                allUsers[existingUserIndex].loginTime = userData.loginTime;
-                allUsers[existingUserIndex].loginCount = (allUsers[existingUserIndex].loginCount || 1) + 1;
-                allUsers[existingUserIndex].lastActivity = userData.loginTime;
-                allUsers[existingUserIndex].isAuthenticated = true;
-                allUsers[existingUserIndex].authToken = userData.authToken;
-            } else {
-                // Add new user
-                userData.loginCount = 1;
-                userData.firstSeen = userData.loginTime;
-                userData.lastActivity = userData.loginTime;
-                allUsers.push(userData);
+                document.body.appendChild(hologram);
+                
+                setTimeout(() => {
+                    hologram.remove();
+                }, 1500);
             }
             
-            localStorage.setItem('allUsers', JSON.stringify(allUsers));
-            console.log('User database updated. Total users:', allUsers.length);
+            // Success Hologram
+            function showSuccessHologram() {
+                loginBtn.classList.remove('loading');
+                successContainer.classList.add('show');
+                
+                // Create success particles
+                for (let i = 0; i < 50; i++) {
+                    createSuccessParticle();
+                }
+            }
             
-        } catch (error) {
-            console.error('Error updating user database:', error);
-        }
-    }
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        // Update background particles
-        const container = document.getElementById('backgroundAnimation');
-        if (container) {
-            container.innerHTML = '';
-            createBackgroundAnimation();
-        }
-    });
-    
-    // Handle page visibility change
-    document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            // Page became visible, update time
-            updateDateTime();
-        }
-    });
-</script>
+            // Success Particles
+            function createSuccessParticle() {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: fixed;
+                    width: 4px;
+                    height: 4px;
+                    background: var(--matrix-green);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 1000;
+                    top: 50%;
+                    left: 50%;
+                    animation: particleExplode 1s ease-out forwards;
+                `;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 100 + Math.random() * 200;
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                    particle.style.opacity = '0';
+                }, 10);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+            
+            // Tunnel Effect for Redirect
+            function createTunnelEffect(callback) {
+                const tunnel = document.createElement('div');
+                tunnel.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: radial-gradient(circle, transparent 10%, #000 70%);
+                    z-index: 9999;
+                    opacity: 0;
+                    animation: tunnelEffect 1s ease-in forwards;
+                `;
+                
+                document.body.appendChild(tunnel);
+                
+                setTimeout(callback, 800);
+            }
+            
+            // CSS Animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-10px); }
+                    75% { transform: translateX(10px); }
+                }
+                
+                @keyframes hologramExpand {
+                    0% { 
+                        transform: translate(-50%, -50%) scale(0);
+                        opacity: 1;
+                    }
+                    100% { 
+                        transform: translate(-50%, -50%) scale(3);
+                        opacity: 0;
+                    }
+                }
+                
+                @keyframes particleExplode {
+                    0% { 
+                        transform: translate(0, 0);
+                        opacity: 1;
+                    }
+                    100% { 
+                        transform: translate(var(--tx), var(--ty));
+                        opacity: 0;
+                    }
+                }
+                
+                @keyframes tunnelEffect {
+                    0% { 
+                        opacity: 0;
+                        transform: scale(1);
+                    }
+                    100% { 
+                        opacity: 1;
+                        transform: scale(1.5);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Sound Effect Simulation
+            function playCyberSound() {
+                // In real implementation, you would play an audio file
+                console.log('🔊 CYBER SOUND EFFECT TRIGGERED');
+            }
+            
+            // Quantum ID Generator
+            function generateQuantumId() {
+                const timestamp = Date.now().toString(36);
+                const random = Math.random().toString(36).substr(2, 9);
+                const hash = btoa(timestamp + random).substr(0, 16);
+                return `QID-${hash}`.toUpperCase();
+            }
+            
+            // Session Key Generator
+            function generateSessionKey() {
+                const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+                let key = '';
+                for (let i = 0; i < 32; i++) {
+                    key += chars[Math.floor(Math.random() * chars.length)];
+                }
+                return `SK-${btoa(key).substr(0, 24)}`;
+            }
+            
+            // Advanced Session Storage
+            function storeQuantumSession(data) {
+                try {
+                    // Encrypt simulation
+                    const encryptedData = btoa(JSON.stringify(data));
+                    
+                    // Store in multiple locations for redundancy
+                    localStorage.setItem('quantum_session', encryptedData);
+                    localStorage.setItem('hologram_active', 'true');
+                    localStorage.setItem('access_time', Date.now().toString());
+                    localStorage.setItem('user_identity', data.name);
+                    localStorage.setItem('session_valid', 'true');
+                    
+                    // Add to session history
+                    const history = JSON.parse(localStorage.getItem('quantum_history') || '[]');
+                    history.push({
+                        id: data.id,
+                        time: new Date().toISOString(),
+                        accessType: 'hologram'
+                    });
+                    localStorage.setItem('quantum_history', JSON.stringify(history));
+                    
+                    console.log('💾 QUANTUM SESSION STORED:', data.id);
+                } catch (error) {
+                    console.error('Storage error:', error);
+                }
+            }
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl+Alt+L to focus login
+                if (e.ctrlKey && e.altKey && e.key === 'l') {
+                    e.preventDefault();
+                    userNameInput.focus();
+                }
+                
+                // Escape to clear
+                if (e.key === 'Escape') {
+                    userNameInput.value = '';
+                    errorMessage.classList.remove('show');
+                }
+            });
+            
+            // Add dynamic background interaction
+            document.addEventListener('mousemove', function(e) {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                // Move glow orbs slightly with mouse
+                document.querySelectorAll('.glow-orb').forEach((orb, index) => {
+                    const speed = 0.02;
+                    orb.style.transform = `translate(${x * speed * 100}px, ${y * speed * 100}px)`;
+                });
+            });
+            
+            // Add periodic cyber effects
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    createDataStream();
+                }
+            }, 3000);
+            
+            function createDataStream() {
+                const stream = document.createElement('div');
+                stream.style.cssText = `
+                    position: fixed;
+                    top: ${Math.random() * 100}%;
+                    left: 0;
+                    width: 100%;
+                    height: 1px;
+                    background: linear-gradient(90deg, transparent, var(--matrix-green), transparent);
+                    pointer-events: none;
+                    z-index: -1;
+                    animation: streamFlow 2s linear forwards;
+                `;
+                
+                document.body.appendChild(stream);
+                
+                setTimeout(() => {
+                    stream.remove();
+                }, 2000);
+            }
+            
+            // Add stream animation
+            const streamStyle = document.createElement('style');
+            streamStyle.textContent = `
+                @keyframes streamFlow {
+                    0% { 
+                        transform: translateX(-100%);
+                        opacity: 0;
+                    }
+                    10% { opacity: 0.5; }
+                    90% { opacity: 0.5; }
+                    100% { 
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(streamStyle);
+        });
+    </script>
 </body>
 </html>
