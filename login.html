@@ -647,6 +647,7 @@
             const errorMessage = document.getElementById('errorMessage');
             const successContainer = document.getElementById('successContainer');
             
+            
             // Initialize
             setTimeout(() => {
                 userNameInput.focus();
@@ -1239,6 +1240,10 @@
         
         // Store user info with multiple authentication checks
         try {
+
+                // 🌍 TRACK GLOBAL LOGIN HERE
+    trackGlobalLogin(userName);
+
             // Clear any previous session first
             localStorage.removeItem('currentUserName');
             localStorage.removeItem('currentLoginTime');
@@ -1393,5 +1398,52 @@
         }
     });
 </script>
+    <!-- GLOBAL LOGIN TRACKING (FIREBASE) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+/* 🔹 PUT YOUR FIREBASE CONFIG HERE */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXX",
+  appId: "XXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+/* 🔹 Global Tracking Function */
+window.trackGlobalLogin = async function(userName) {
+
+    try {
+        const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
+
+        const loginData = {
+            name: userName,
+            deviceType: getDeviceType(),
+            browser: navigator.userAgent,
+            platform: navigator.platform,
+            ip: ipData.ip,
+            country: ipData.country_name,
+            city: ipData.city,
+            loginTime: new Date().toISOString(),
+            pageURL: window.location.href
+        };
+
+        push(ref(database, "globalLogins/"), loginData);
+
+        console.log("🌍 Global login tracked:", loginData);
+
+    } catch (error) {
+        console.error("Tracking error:", error);
+    }
+};
+</script>
+
 </body>
 </html>
