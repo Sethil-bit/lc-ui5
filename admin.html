@@ -1768,5 +1768,133 @@
             }
         });
     </script>
+    <!-- FIREBASE GLOBAL LOGIN TRACKING -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+/* ================================
+   🔹 1. YOUR FIREBASE CONFIG HERE
+   ================================ */
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXX",
+  appId: "XXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+/* ================================
+   🔹 2. DEVICE DETECTION
+   ================================ */
+
+function getDeviceType() {
+    const ua = navigator.userAgent;
+    if (/mobile/i.test(ua)) return "Mobile";
+    if (/tablet/i.test(ua)) return "Tablet";
+    return "Desktop";
+}
+
+/* ================================
+   🔹 3. TRACK LOGIN FUNCTION
+   ================================ */
+
+window.trackGlobalLogin = async function(userName) {
+
+    try {
+        // Get IP + Location
+        const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
+
+        const loginData = {
+            name: userName || "Guest",
+            deviceType: getDeviceType(),
+            browser: navigator.userAgent,
+            platform: navigator.platform,
+            language: navigator.language,
+            ip: ipData.ip,
+            country: ipData.country_name,
+            city: ipData.city,
+            region: ipData.region,
+            loginTime: new Date().toISOString(),
+            pageURL: window.location.href
+        };
+
+        push(ref(database, "globalLogins/"), loginData);
+
+        console.log("✅ Global Login Tracked:", loginData);
+
+    } catch (error) {
+        console.error("Tracking Error:", error);
+    }
+};
+
+/* ================================
+   🔹 4. LOAD ALL LOGIN DATA (ADMIN)
+   ================================ */
+
+window.loadGlobalLogins = function() {
+    const loginsRef = ref(database, "globalLogins/");
+    
+    onValue(loginsRef, (snapshot) => {
+        const data = snapshot.val();
+        if (!data) return;
+
+        const loginArray = Object.values(data);
+        loginArray.sort((a,b) => new Date(b.loginTime) - new Date(a.loginTime));
+
+        displayGlobalLogins(loginArray);
+    });
+};
+
+/* ================================
+   🔹 5. DISPLAY DATA IN TABLE
+   ================================ */
+
+function displayGlobalLogins(logins) {
+
+    let html = `
+        <table border="1" style="width:100%; color:white;">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Device</th>
+                <th>IP</th>
+                <th>Location</th>
+                <th>Browser</th>
+                <th>Time</th>
+                <th>Page</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
+
+    logins.forEach(login => {
+        html += `
+            <tr>
+                <td>${login.name}</td>
+                <td>${login.deviceType}</td>
+                <td>${login.ip}</td>
+                <td>${login.city}, ${login.country}</td>
+                <td>${login.platform}</td>
+                <td>${new Date(login.loginTime).toLocaleString()}</td>
+                <td>${login.pageURL}</td>
+            </tr>
+        `;
+    });
+
+    html += "</tbody></table>";
+
+    const container = document.getElementById("usersTableContainer");
+    if (container) container.innerHTML = html;
+}
+
+</script>
+
 </body>
 </html>
