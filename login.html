@@ -3,84 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advanced Login with Waves</title>
+<title>Ocean Login</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-
 body{
   height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
-  background:linear-gradient(180deg,#1d2671,#0f2027);
+  background:linear-gradient(#0f2027,#203a43,#2c5364);
   overflow:hidden;
 }
 
-/* 🌊 Waves */
-.wave{
+/* 🌊 SVG Waves */
+.ocean{
   position:absolute;
   bottom:0;
+  width:100%;
+}
+
+.wave svg{
+  display:block;
   width:200%;
-  height:200px;
-  background:rgba(255,255,255,0.1);
-  border-radius:1000px;
-  animation:wave 10s linear infinite;
+  height:150px;
+  animation:waveMove 10s linear infinite;
 }
 
-.wave:nth-child(1){opacity:.4;animation-duration:12s;bottom:0}
-.wave:nth-child(2){opacity:.3;animation-duration:18s;bottom:20px}
-.wave:nth-child(3){opacity:.2;animation-duration:25s;bottom:40px}
+.wave:nth-child(2) svg{animation-duration:18s;opacity:.6}
+.wave:nth-child(3) svg{animation-duration:25s;opacity:.4}
 
-@keyframes wave{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-50%)}
+@keyframes waveMove{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
 }
 
-/* floating circles */
-.circle{
+
+
+.ship::before{
+  content:'';
   position:absolute;
-  border-radius:50%;
-  background:rgba(255,255,255,0.1);
-  animation:float 10s infinite ease-in-out;
-}
-.circle:nth-child(4){width:200px;height:200px;top:10%;left:10%;}
-.circle:nth-child(5){width:300px;height:300px;bottom:20%;right:10%;animation-duration:15s;}
-
-@keyframes float{
-0%{transform:translateY(0)}
-50%{transform:translateY(-30px)}
-100%{transform:translateY(0)}
+  top:-30px;
+  left:40px;
+  width:40px;
+  height:30px;
+  background:rgba(0,0,0,0.5);
+  border-radius:5px;
 }
 
-.login-container{
+.ship::after{
+  content:'';
+  position:absolute;
+  top:-50px;
+  left:58px;
+  width:4px;
+  height:50px;
+  background:rgba(0,0,0,0.5);
+}
+
+@keyframes shipMove{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-8px)}
+}
+
+@keyframes shipMove{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-10px)}
+}
+
+/* Login box */
+.login{
   backdrop-filter:blur(15px);
   background:rgba(255,255,255,0.1);
   padding:40px;
   border-radius:20px;
   width:320px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.3);
-  animation:fadeIn 1s ease;
-  z-index:2;
-}
-
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(20px)}
-to{opacity:1;transform:translateY(0)}
-}
-
-h2{
-  text-align:center;
   color:#fff;
+  z-index:2;
+  text-align:center;
+}
+
+.input{
+  position:relative;
   margin-bottom:25px;
 }
 
-.input-group{
-  position:relative;
-  margin-bottom:30px;
-}
-
-.input-group input{
+.input input{
   width:100%;
   padding:10px;
   border:none;
@@ -90,20 +98,17 @@ h2{
   outline:none;
 }
 
-.input-group label{
+.input label{
   position:absolute;
   top:10px;
   left:0;
-  color:#ddd;
-  pointer-events:none;
-  transition:0.3s;
+  transition:.3s;
 }
 
-.input-group input:focus ~ label,
-.input-group input:valid ~ label{
+.input input:focus ~ label,
+.input input:valid ~ label{
   top:-10px;
   font-size:12px;
-  color:#fff;
 }
 
 button{
@@ -112,109 +117,68 @@ button{
   border:none;
   border-radius:25px;
   background:#fff;
-  color:#333;
-  font-weight:bold;
   cursor:pointer;
-  transition:0.3s;
 }
 
-button:hover{
-  background:#ff7eb3;
-  color:#fff;
-}
-
-.msg{
-  margin-top:15px;
-  text-align:center;
-  color:#fff;
-}
-
-.success{color:lightgreen}
-.error{color:#ff4d4d}
-
-.shake{animation:shake 0.3s}
-@keyframes shake{
-0%{transform:translateX(0)}
-25%{transform:translateX(-5px)}
-50%{transform:translateX(5px)}
-75%{transform:translateX(-5px)}
-100%{transform:translateX(0)}
-}
-
-.loader{
-  display:none;
-  margin:auto;
-  width:20px;height:20px;
-  border:3px solid transparent;
-  border-top:3px solid #333;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
-
-.loading .loader{display:block}
-.loading span{display:none}
-
-@keyframes spin{to{transform:rotate(360deg)}}
+.msg{margin-top:10px}
 
 </style>
 </head>
 <body>
 
+
+
 <!-- Waves -->
-<div class="wave"></div>
-<div class="wave"></div>
-<div class="wave"></div>
+<div class="ocean">
+  <div class="wave">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,30 C150,80 350,0 600,40 C850,80 1050,20 1200,40 L1200,120 L0,120 Z" fill="#00c6ff"></path>
+    </svg>
+  </div>
+  <div class="wave">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,40 C200,0 400,80 600,40 C800,0 1000,80 1200,40 L1200,120 L0,120 Z" fill="#0072ff"></path>
+    </svg>
+  </div>
+  <div class="wave">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,50 C150,100 350,20 600,60 C850,100 1050,40 1200,60 L1200,120 L0,120 Z" fill="#005bea"></path>
+    </svg>
+  </div>
+</div>
 
-<!-- floating circles -->
-<div class="circle"></div>
-<div class="circle"></div>
+<!-- Login -->
+<div class="login" id="box">
+  <h2>Ocean Login</h2>
 
-<div class="login-container" id="box">
-  <h2>Login</h2>
-
-  <div class="input-group">
-    <input type="text" id="username" required>
+  <div class="input">
+    <input type="text" id="user" required>
     <label>Username</label>
   </div>
 
-  <button id="btn">
-    <span>Sign In</span>
-    <div class="loader"></div>
-  </button>
-
+  <button onclick="login()">Enter</button>
   <div class="msg" id="msg"></div>
 </div>
 
 <script>
-const btn=document.getElementById('btn');
-const msg=document.getElementById('msg');
-const box=document.getElementById('box');
+function login(){
+  const u=document.getElementById('user').value.trim();
+  const msg=document.getElementById('msg');
 
-btn.onclick=()=>{
-  const user=document.getElementById('username').value.trim();
-
-  if(user.length<2){
+  if(u.length<2){
     msg.innerHTML='Enter valid username';
-    msg.className='msg error';
-    box.classList.add('shake');
-    setTimeout(()=>box.classList.remove('shake'),300);
+    msg.style.color='red';
     return;
   }
 
-  btn.classList.add('loading');
+  msg.innerHTML='Welcome Captain ⚓';
+  msg.style.color='lightgreen';
+
+  localStorage.setItem('currentUserName',u);
 
   setTimeout(()=>{
-    btn.classList.remove('loading');
-    msg.innerHTML='Login Successful';
-    msg.className='msg success';
-
-    localStorage.setItem('currentUserName',user);
-
-    setTimeout(()=>{
-      window.location.href='main.html';
-    },1000);
-
-  },1200);
+    window.location.href='main.html';
+  },1000);
 }
 </script>
 
