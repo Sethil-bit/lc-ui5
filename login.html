@@ -644,7 +644,7 @@
         // Also store in localStorage if remember me is checked
         if (rememberCheck.checked || usernameValue !== null) {
             localStorage.setItem('lumina_user', JSON.stringify(sessionData));
-            localStorage.setItem('current_user', username);
+            localStorage.setItem('currentUserName', user);
             localStorage.setItem('is_logged_in', 'true');
         }
         
