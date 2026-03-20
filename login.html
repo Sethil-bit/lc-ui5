@@ -643,9 +643,7 @@
         
         // Also store in localStorage if remember me is checked
         if (rememberCheck.checked || usernameValue !== null) {
-            localStorage.setItem('lumina_user', JSON.stringify(sessionData));
             localStorage.setItem('currentUserName', user);
-            localStorage.setItem('is_logged_in', 'true');
         }
         
         // Create success particles
@@ -746,10 +744,6 @@
                     const data = JSON.parse(sessionData);
                     data.lastActivity = Date.now();
                     sessionStorage.setItem('lumina_user', JSON.stringify(data));
-                    
-                    // Also update localStorage if remember me was checked
-                    if (rememberCheck.checked) {
-                        localStorage.setItem('lumina_user', JSON.stringify(data));
                     }
                 } catch(e) {}
             }
