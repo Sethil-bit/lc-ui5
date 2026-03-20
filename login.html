@@ -466,6 +466,11 @@
     const rememberCheck = document.getElementById('remember');
     const guestBtn = document.getElementById('guestBtn');
 
+    // Check if we're on the login page to prevent redirect loop
+    const isLoginPage = window.location.pathname.includes('login.html') || 
+                        window.location.pathname === '/' || 
+                        window.location.pathname.endsWith('/');
+
     // Create particles
     function createParticles() {
         const particlesContainer = document.getElementById('particles');
@@ -599,9 +604,16 @@
         return div.innerHTML;
     }
 
-    // REDIRECT FUNCTION - FIXED
+    // REDIRECT FUNCTION - with check to prevent loop
+    let redirecting = false;
+    
     function redirectToMain() {
+        if (redirecting) return;
+        redirecting = true;
+        
         console.log('Redirecting to main.html...');
+        // Clear session flags before redirect to prevent loop on main page
+        // But we need to keep the user data
         window.location.href = 'main.html';
     }
 
@@ -625,19 +637,22 @@
         
         setLoading(true);
         
-        // Store session
+        // Store session with a timestamp to indicate fresh login
+        const loginData = {
+            username: username,
+            loginTime: Date.now(),
+            isLoggedIn: true
+        };
+        
         if (rememberCheck.checked || usernameValue !== null) {
-            localStorage.setItem('lumina_username', username);
-            localStorage.setItem('is_logged_in', 'true');
+            localStorage.setItem('lumina_user', JSON.stringify(loginData));
         }
-        sessionStorage.setItem('lumina_session', 'active');
-        sessionStorage.setItem('current_user', username);
-        sessionStorage.setItem('is_logged_in', 'true');
+        sessionStorage.setItem('lumina_session', JSON.stringify(loginData));
         
         // Create success particles
         createSuccessParticles();
         
-        // Show success message briefly
+        // Show success message
         showMessage(`Welcome, ${escapeHtml(username)}! Redirecting...`, 'success');
         
         // Animate button
@@ -657,10 +672,14 @@
         setLoading(true);
         
         // Store guest session
-        sessionStorage.setItem('lumina_session', 'active');
-        sessionStorage.setItem('current_user', guestName);
-        sessionStorage.setItem('is_logged_in', 'true');
-        sessionStorage.setItem('is_guest', 'true');
+        const guestData = {
+            username: guestName,
+            loginTime: Date.now(),
+            isLoggedIn: true,
+            isGuest: true
+        };
+        
+        sessionStorage.setItem('lumina_session', JSON.stringify(guestData));
         
         // Create success particles
         createSuccessParticles();
@@ -676,16 +695,21 @@
 
     // Load saved username
     function loadSavedUsername() {
-        const saved = localStorage.getItem('lumina_username');
-        if (saved) {
-            usernameInput.value = saved;
-            rememberCheck.checked = true;
+        try {
+            const saved = localStorage.getItem('lumina_user');
+            if (saved) {
+                const userData = JSON.parse(saved);
+                if (userData && userData.username) {
+                    usernameInput.value = userData.username;
+                    rememberCheck.checked = true;
+                }
+            }
+        } catch(e) {
+            console.log('Error loading saved user');
         }
         
-        // Check if already logged in
-        if (sessionStorage.getItem('is_logged_in') === 'true' || localStorage.getItem('is_logged_in') === 'true') {
-            redirectToMain();
-        }
+        // DO NOT auto-redirect from login page - let user click button
+        // This was causing the infinite loop
     }
 
     // Event listeners
@@ -711,7 +735,8 @@
         usernameInput.focus();
     }, 300);
     
-    console.log('✨ Lumina Login Ready - Will redirect to main.html');
+    console.log('✨ Lumina Login Ready - Click Continue to go to main.html');
+    console.log('⚠️ No auto-redirect - user must click button');
 </script>
 </body>
 </html>
