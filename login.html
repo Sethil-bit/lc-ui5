@@ -434,7 +434,7 @@
         <div class="logo-circle">
             <i class="fas fa-user-astronaut"></i>
         </div>
-        <h1>Welcome</h1>
+        <h1>Good Day</h1>
         <p>Enter your username to continue</p>
     </div>
 
@@ -650,7 +650,7 @@
         createSuccessParticles();
         
         // Show success message
-        showMessage(`Welcome, ${escapeHtml(username)}! Redirecting...`, 'success');
+        showMessage(`Good Day, ${escapeHtml(username)}! Redirecting...`, 'success');
         
         // Animate button
         loginBtn.style.transform = 'scale(0.98)';
@@ -688,7 +688,7 @@
         sessionStorage.setItem('session_start', Date.now().toString());
         
         createSuccessParticles();
-        showMessage(`Welcome, ${guestName}! Redirecting...`, 'success');
+        showMessage(`Good Day, ${guestName}! Redirecting...`, 'success');
         
         setTimeout(() => {
             redirectToMain();
