@@ -1,780 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LUMINA | Username Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Login with Waves</title>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(145deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow-x: hidden;
-        }
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
 
-        .wave-bg {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-        }
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(180deg,#1d2671,#0f2027);
+  overflow:hidden;
+}
 
-        .wave {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(99,102,241,0.08)" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,170.7C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x;
-            background-size: cover;
-            animation: waveMove 20s linear infinite;
-            opacity: 0.5;
-        }
+/* 🌊 Waves */
+.wave{
+  position:absolute;
+  bottom:0;
+  width:200%;
+  height:200px;
+  background:rgba(255,255,255,0.1);
+  border-radius:1000px;
+  animation:wave 10s linear infinite;
+}
 
-        .wave2 {
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(168,85,247,0.06)" fill-opacity="1" d="M0,192L48,176C96,160,192,128,288,138.7C384,149,480,203,576,213.3C672,224,768,192,864,176C960,160,1056,160,1152,176C1248,192,1344,224,1392,240L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x;
-            background-size: cover;
-            animation: waveMove 15s linear infinite reverse;
-            opacity: 0.4;
-        }
+.wave:nth-child(1){opacity:.4;animation-duration:12s;bottom:0}
+.wave:nth-child(2){opacity:.3;animation-duration:18s;bottom:20px}
+.wave:nth-child(3){opacity:.2;animation-duration:25s;bottom:40px}
 
-        .wave3 {
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(236,72,153,0.05)" fill-opacity="1" d="M0,256L48,240C96,224,192,192,288,197.3C384,203,480,245,576,250.7C672,256,768,224,864,208C960,192,1056,192,1152,208C1248,224,1344,256,1392,272L1440,288L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x;
-            background-size: cover;
-            animation: waveMove 25s linear infinite;
-            opacity: 0.3;
-        }
+@keyframes wave{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
 
-        @keyframes waveMove {
-            0% {
-                background-position-x: 0;
-            }
-            100% {
-                background-position-x: 1440px;
-            }
-        }
+/* floating circles */
+.circle{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,0.1);
+  animation:float 10s infinite ease-in-out;
+}
+.circle:nth-child(4){width:200px;height:200px;top:10%;left:10%;}
+.circle:nth-child(5){width:300px;height:300px;bottom:20%;right:10%;animation-duration:15s;}
 
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
+@keyframes float{
+0%{transform:translateY(0)}
+50%{transform:translateY(-30px)}
+100%{transform:translateY(0)}
+}
 
-        .particle {
-            position: absolute;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            animation: floatParticle 12s infinite ease-in-out;
-        }
+.login-container{
+  backdrop-filter:blur(15px);
+  background:rgba(255,255,255,0.1);
+  padding:40px;
+  border-radius:20px;
+  width:320px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  animation:fadeIn 1s ease;
+  z-index:2;
+}
 
-        @keyframes floatParticle {
-            0%, 100% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.3;
-            }
-            90% {
-                opacity: 0.3;
-            }
-            100% {
-                transform: translateY(-100vh) translateX(100px);
-                opacity: 0;
-            }
-        }
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:translateY(0)}
+}
 
-        .login-card {
-            position: relative;
-            z-index: 10;
-            width: 480px;
-            max-width: 92%;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border-radius: 48px;
-            padding: 48px 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+h2{
+  text-align:center;
+  color:#fff;
+  margin-bottom:25px;
+}
 
-        .login-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
+.input-group{
+  position:relative;
+  margin-bottom:30px;
+}
 
-        .logo-wrapper {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+.input-group input{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-bottom:2px solid #fff;
+  background:transparent;
+  color:#fff;
+  outline:none;
+}
 
-        .logo-circle {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #6366f1, #a855f7, #ec489a);
-            border-radius: 32px;
-            margin: 0 auto 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: logoFloat 3s ease-in-out infinite;
-            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);
-        }
+.input-group label{
+  position:absolute;
+  top:10px;
+  left:0;
+  color:#ddd;
+  pointer-events:none;
+  transition:0.3s;
+}
 
-        @keyframes logoFloat {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-                border-radius: 32px;
-            }
-            50% {
-                transform: translateY(-8px) rotate(2deg);
-                border-radius: 40px;
-            }
-        }
+.input-group input:focus ~ label,
+.input-group input:valid ~ label{
+  top:-10px;
+  font-size:12px;
+  color:#fff;
+}
 
-        .logo-circle i {
-            font-size: 36px;
-            color: white;
-        }
+button{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:25px;
+  background:#fff;
+  color:#333;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
 
-        .logo-wrapper h1 {
-            font-size: 32px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff, #c084fc);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-        }
+button:hover{
+  background:#ff7eb3;
+  color:#fff;
+}
 
-        .logo-wrapper p {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 14px;
-            font-weight: 500;
-        }
+.msg{
+  margin-top:15px;
+  text-align:center;
+  color:#fff;
+}
 
-        .input-group {
-            margin-bottom: 32px;
-            position: relative;
-        }
+.success{color:lightgreen}
+.error{color:#ff4d4d}
 
-        .input-group i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.4);
-            transition: all 0.3s ease;
-            z-index: 2;
-        }
+.shake{animation:shake 0.3s}
+@keyframes shake{
+0%{transform:translateX(0)}
+25%{transform:translateX(-5px)}
+50%{transform:translateX(5px)}
+75%{transform:translateX(-5px)}
+100%{transform:translateX(0)}
+}
 
-        .input-group input {
-            width: 100%;
-            padding: 18px 18px 18px 52px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1.5px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px;
-            font-size: 16px;
-            font-family: 'Inter', sans-serif;
-            color: white;
-            transition: all 0.3s ease;
-            outline: none;
-        }
+.loader{
+  display:none;
+  margin:auto;
+  width:20px;height:20px;
+  border:3px solid transparent;
+  border-top:3px solid #333;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
 
-        .input-group input:focus {
-            border-color: #a855f7;
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
-        }
+.loading .loader{display:block}
+.loading span{display:none}
 
-        .input-group input:focus + i {
-            color: #c084fc;
-            transform: translateY(-50%) scale(1.1);
-        }
+@keyframes spin{to{transform:rotate(360deg)}}
 
-        .input-group input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-            font-weight: 500;
-        }
-
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, rgba(168, 85, 247, 0) 70%);
-            transform: scale(0);
-            animation: rippleAnim 0.6s linear;
-            pointer-events: none;
-        }
-
-        @keyframes rippleAnim {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        .options-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 20px 0 32px;
-        }
-
-        .checkbox {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .checkbox input {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: #a855f7;
-        }
-
-        .guest-link {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s ease;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .guest-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #a855f7, #ec489a);
-            transition: width 0.3s ease;
-        }
-
-        .guest-link:hover {
-            color: #c084fc;
-        }
-
-        .guest-link:hover::after {
-            width: 100%;
-        }
-
-        .login-button {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #6366f1, #a855f7, #ec489a);
-            background-size: 200% auto;
-            border: none;
-            border-radius: 32px;
-            font-size: 16px;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            color: white;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px -8px rgba(99, 102, 241, 0.4);
-        }
-
-        .login-button:hover {
-            transform: translateY(-2px);
-            background-position: 100% 0;
-            box-shadow: 0 12px 28px -8px rgba(168, 85, 247, 0.5);
-        }
-
-        .login-button:active {
-            transform: translateY(1px);
-        }
-
-        .login-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.6s ease;
-        }
-
-        .login-button:hover::before {
-            left: 100%;
-        }
-
-        .login-button.loading {
-            pointer-events: none;
-            opacity: 0.8;
-        }
-
-        .loader {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .message-container {
-            margin-top: 24px;
-            text-align: center;
-            min-height: 48px;
-        }
-
-        .toast {
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(12px);
-            border-radius: 40px;
-            padding: 12px 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        .toast.success {
-            border-left: 3px solid #10b981;
-            color: #34d399;
-        }
-
-        .toast.error {
-            border-left: 3px solid #ef4444;
-            color: #f87171;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 560px) {
-            .login-card {
-                padding: 36px 28px;
-                border-radius: 40px;
-            }
-            
-            .logo-wrapper h1 {
-                font-size: 28px;
-            }
-            
-            .logo-circle {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .logo-circle i {
-                font-size: 30px;
-            }
-            
-            .input-group input {
-                padding: 16px 16px 16px 48px;
-                font-size: 14px;
-            }
-        }
-    </style>
+</style>
 </head>
 <body>
 
-<div class="wave-bg">
-    <div class="wave"></div>
-    <div class="wave2"></div>
-    <div class="wave3"></div>
-</div>
+<!-- Waves -->
+<div class="wave"></div>
+<div class="wave"></div>
+<div class="wave"></div>
 
-<div class="particles" id="particles"></div>
+<!-- floating circles -->
+<div class="circle"></div>
+<div class="circle"></div>
 
-<div class="login-card">
-    <div class="logo-wrapper">
-        <div class="logo-circle">
-            <i class="fas fa-user-astronaut"></i>
-        </div>
-        <h1>Good Day</h1>
-        <p>Enter your username to continue</p>
-    </div>
+<div class="login-container" id="box">
+  <h2>Login</h2>
 
-    <div class="input-group" id="usernameGroup">
-        <i class="fas fa-user"></i>
-        <input type="text" id="username" placeholder="Username" autocomplete="off" spellcheck="false">
-    </div>
+  <div class="input-group">
+    <input type="text" id="username" required>
+    <label>Username</label>
+  </div>
 
-    <div class="options-row">
-        <label class="checkbox">
-            <input type="checkbox" id="remember"> Remember me
-        </label>
-        <a class="guest-link" id="guestBtn">Continue as guest</a>
-    </div>
+  <button id="btn">
+    <span>Sign In</span>
+    <div class="loader"></div>
+  </button>
 
-    <button class="login-button" id="loginBtn">
-        <span id="btnText">Continue</span>
-    </button>
-
-    <div class="message-container" id="messageContainer"></div>
+  <div class="msg" id="msg"></div>
 </div>
 
 <script>
-    // DOM Elements
-    const usernameInput = document.getElementById('username');
-    const loginBtn = document.getElementById('loginBtn');
-    const btnText = document.getElementById('btnText');
-    const messageContainer = document.getElementById('messageContainer');
-    const rememberCheck = document.getElementById('remember');
-    const guestBtn = document.getElementById('guestBtn');
+const btn=document.getElementById('btn');
+const msg=document.getElementById('msg');
+const box=document.getElementById('box');
 
-    // Create particles
-    function createParticles() {
-        const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 50; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            const size = Math.random() * 4 + 1;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.left = `${Math.random() * 100}%`;
-            particle.style.bottom = `-${Math.random() * 20}px`;
-            particle.style.animationDelay = `${Math.random() * 10}s`;
-            particle.style.animationDuration = `${Math.random() * 8 + 6}s`;
-            particlesContainer.appendChild(particle);
-        }
-    }
-    createParticles();
+btn.onclick=()=>{
+  const user=document.getElementById('username').value.trim();
 
-    // Ripple effect on input
-    function createRipple(event, element) {
-        const rect = element.getBoundingClientRect();
-        const ripple = document.createElement('span');
-        ripple.classList.add('ripple');
-        const size = Math.max(rect.width, rect.height);
-        ripple.style.width = ripple.style.height = `${size}px`;
-        const x = event.clientX - rect.left - size / 2;
-        const y = event.clientY - rect.top - size / 2;
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        element.style.position = 'relative';
-        element.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
-    }
+  if(user.length<2){
+    msg.innerHTML='Enter valid username';
+    msg.className='msg error';
+    box.classList.add('shake');
+    setTimeout(()=>box.classList.remove('shake'),300);
+    return;
+  }
 
-    // Add ripple to input group
-    const usernameGroup = document.getElementById('usernameGroup');
-    usernameGroup.addEventListener('click', (e) => {
-        if (e.target.tagName === 'INPUT') {
-            createRipple(e, usernameGroup);
-        }
-    });
+  btn.classList.add('loading');
 
-    // Show message function
-    function showMessage(text, type = 'error') {
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        const icon = type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>';
-        toast.innerHTML = `${icon} <span>${text}</span>`;
-        messageContainer.innerHTML = '';
-        messageContainer.appendChild(toast);
-        
-        setTimeout(() => {
-            if (messageContainer.firstChild === toast) {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-10px)';
-                toast.style.transition = 'all 0.3s ease';
-                setTimeout(() => {
-                    if (messageContainer.firstChild === toast) messageContainer.innerHTML = '';
-                }, 300);
-            }
-        }, 4000);
-    }
+  setTimeout(()=>{
+    btn.classList.remove('loading');
+    msg.innerHTML='Login Successful';
+    msg.className='msg success';
 
-    // Shake animation
-    function shakeElement(element) {
-        element.style.transform = 'translateX(4px)';
-        setTimeout(() => { element.style.transform = 'translateX(-4px)'; }, 80);
-        setTimeout(() => { element.style.transform = 'translateX(2px)'; }, 160);
-        setTimeout(() => { element.style.transform = 'translateX(0)'; }, 240);
-    }
+    localStorage.setItem('currentUserName',user);
 
-    // Button loading state
-    function setLoading(loading) {
-        if (loading) {
-            loginBtn.classList.add('loading');
-            btnText.innerHTML = '<span class="loader"></span> Connecting...';
-        } else {
-            loginBtn.classList.remove('loading');
-            btnText.innerHTML = 'Continue';
-        }
-    }
+    setTimeout(()=>{
+      window.location.href='main.html';
+    },1000);
 
-    // Create success particles
-    function createSuccessParticles() {
-        for (let i = 0; i < 40; i++) {
-            const particle = document.createElement('div');
-            particle.style.cssText = `
-                position: fixed;
-                width: ${Math.random() * 6 + 2}px;
-                height: ${Math.random() * 6 + 2}px;
-                background: radial-gradient(circle, #10b981, #34d399);
-                border-radius: 50%;
-                pointer-events: none;
-                z-index: 9999;
-                top: 50%;
-                left: 50%;
-                box-shadow: 0 0 10px #10b981;
-                animation: particleBurst ${Math.random() * 0.8 + 0.5}s ease-out forwards;
-            `;
-            
-            const angle = Math.random() * Math.PI * 2;
-            const distance = 80 + Math.random() * 150;
-            const tx = Math.cos(angle) * distance;
-            const ty = Math.sin(angle) * distance;
-            
-            document.body.appendChild(particle);
-            
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes particleBurst {
-                    0% {
-                        transform: translate(-50%, -50%) scale(1);
-                        opacity: 1;
-                    }
-                    100% {
-                        transform: translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            setTimeout(() => particle.remove(), 800);
-        }
-    }
-
-    // Escape HTML
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    let redirecting = false;
-    
-    function redirectToMain() {
-        if (redirecting) return;
-        redirecting = true;
-        window.location.href = 'main.html';
-    }
-
-    // Login handler with persistent session
-    async function handleLogin(usernameValue = null) {
-        let username = usernameValue !== null ? usernameValue : usernameInput.value.trim();
-        
-        if (!username) {
-            showMessage('Please enter your username', 'error');
-            shakeElement(usernameGroup);
-            usernameInput.focus();
-            return;
-        }
-        
-        if (username.length < 2) {
-            showMessage('Username must be at least 2 characters', 'error');
-            shakeElement(usernameGroup);
-            usernameInput.focus();
-            return;
-        }
-        
-        setLoading(true);
-        
-        // Create persistent session data with timestamp
-        const sessionData = {
-            username: username,
-            loginTime: Date.now(),
-            lastActivity: Date.now(),
-            isLoggedIn: true,
-            sessionId: Math.random().toString(36).substring(2)
-        };
-        
-        // Store in both sessionStorage and localStorage for persistence
-        sessionStorage.setItem('lumina_user', JSON.stringify(sessionData));
-        sessionStorage.setItem('current_user', username);
-        sessionStorage.setItem('is_logged_in', 'true');
-        
-        // Also store in localStorage if remember me is checked
-        if (rememberCheck.checked || usernameValue !== null) {
-            localStorage.setItem('currentUserName', user);
-        }
-        
-        // Create success particles
-        createSuccessParticles();
-        
-        // Show success message
-        showMessage(`Good Day, ${escapeHtml(username)}! Redirecting...`, 'success');
-        
-        // Animate button
-        loginBtn.style.transform = 'scale(0.98)';
-        setTimeout(() => { loginBtn.style.transform = ''; }, 200);
-        
-        // Set a flag in session to prevent auto logout
-        sessionStorage.setItem('session_active', 'true');
-        sessionStorage.setItem('session_start', Date.now().toString());
-        
-        // Redirect after 1 second
-        setTimeout(() => {
-            redirectToMain();
-        }, 1000);
-    }
-
-    // Guest login handler
-    async function handleGuestLogin() {
-        const guestName = 'Guest_' + Math.floor(Math.random() * 10000);
-        setLoading(true);
-        
-        // Store guest session
-        const guestData = {
-            username: guestName,
-            loginTime: Date.now(),
-            lastActivity: Date.now(),
-            isLoggedIn: true,
-            isGuest: true,
-            sessionId: Math.random().toString(36).substring(2)
-        };
-        
-        sessionStorage.setItem('lumina_user', JSON.stringify(guestData));
-        sessionStorage.setItem('current_user', guestName);
-        sessionStorage.setItem('is_logged_in', 'true');
-        sessionStorage.setItem('session_active', 'true');
-        sessionStorage.setItem('session_start', Date.now().toString());
-        
-        createSuccessParticles();
-        showMessage(`Good Day, ${guestName}! Redirecting...`, 'success');
-        
-        setTimeout(() => {
-            redirectToMain();
-        }, 1000);
-    }
-
-    // Load saved username and check existing session
-    function loadSavedUsername() {
-        // First check sessionStorage for active session
-        const activeSession = sessionStorage.getItem('session_active');
-        const sessionUser = sessionStorage.getItem('lumina_user');
-        
-        if (activeSession === 'true' && sessionUser) {
-            try {
-                const userData = JSON.parse(sessionUser);
-                if (userData && userData.isLoggedIn === true) {
-                    // Session exists, redirect to main
-                    redirectToMain();
-                    return;
-                }
-            } catch(e) {}
-        }
-        
-        // Check localStorage for saved username
-        try {
-            const saved = localStorage.getItem('lumina_user');
-            if (saved) {
-                const userData = JSON.parse(saved);
-                if (userData && userData.username) {
-                    usernameInput.value = userData.username;
-                    rememberCheck.checked = true;
-                }
-            }
-        } catch(e) {
-            console.log('Error loading saved user');
-        }
-        
-        // Also check for simple stored username
-        const simpleUser = localStorage.getItem('current_user');
-        if (simpleUser && !usernameInput.value) {
-            usernameInput.value = simpleUser;
-            rememberCheck.checked = true;
-        }
-    }
-
-    // Keep session alive by periodically refreshing
-    let sessionKeepAlive = setInterval(function() {
-        const sessionActive = sessionStorage.getItem('session_active');
-        if (sessionActive === 'true') {
-            const sessionData = sessionStorage.getItem('lumina_user');
-            if (sessionData) {
-                try {
-                    const data = JSON.parse(sessionData);
-                    data.lastActivity = Date.now();
-                    sessionStorage.setItem('lumina_user', JSON.stringify(data));
-                    }
-                } catch(e) {}
-            }
-        }
-    }, 30000); // Refresh every 30 seconds
-
-    // Event listeners
-    loginBtn.addEventListener('click', () => handleLogin());
-    guestBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        handleGuestLogin();
-    });
-    
-    usernameInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleLogin();
-    });
-    
-    usernameInput.addEventListener('input', () => {
-        messageContainer.innerHTML = '';
-    });
-    
-    // Initialize
-    loadSavedUsername();
-    
-    // Focus on username input
-    setTimeout(() => {
-        usernameInput.focus();
-    }, 300);
-    
-    console.log('✨ Lumina Login Ready - Session will persist');
-    console.log('✅ Session keep-alive active - No auto logout');
+  },1200);
+}
 </script>
+
 </body>
 </html>
