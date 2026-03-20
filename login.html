@@ -3,63 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ocean Login</title>
+<title>Advanced Login</title>
 
 <style>
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:'Segoe UI',sans-serif;
+  font-family:Segoe UI,sans-serif;
 }
 
 body{
   height:100vh;
+  overflow:hidden;
   display:flex;
   justify-content:center;
   align-items:center;
-  background:linear-gradient(#0f2027,#203a43,#2c5364);
-  overflow:hidden;
+  background: radial-gradient(circle at top, #1b4d6b, #0a1a24);
 }
 
-/* 🌊 Ocean background */
-.ocean{
+/* 🌊 Canvas Ocean */
+canvas{
   position:absolute;
   bottom:0;
+  left:0;
   width:100%;
+  height:100%;
   z-index:0;
-  pointer-events:none; /* ✅ FIX CLICK ISSUE */
 }
 
-.wave svg{
-  display:block;
-  width:200%;
-  height:150px;
-  animation:waveMove 10s linear infinite;
-}
-
-.wave:nth-child(2) svg{animation-duration:18s;opacity:.6}
-.wave:nth-child(3) svg{animation-duration:25s;opacity:.4}
-
-@keyframes waveMove{
-  from{transform:translateX(0)}
-  to{transform:translateX(-50%)}
-}
-
-/* 🌊 Login Box */
+/* 🔐 Login Box */
 .login{
   position:relative;
   z-index:2;
-  backdrop-filter:blur(15px);
-  background:rgba(255,255,255,0.1);
+  width:320px;
   padding:40px;
   border-radius:20px;
-  width:320px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+  box-shadow:0 10px 40px rgba(0,0,0,0.3);
   color:#fff;
   text-align:center;
 }
 
-/* Input */
+.login h2{
+  margin-bottom:20px;
+  letter-spacing:1px;
+}
+
 .input{
   position:relative;
   margin-bottom:25px;
@@ -67,9 +58,9 @@ body{
 
 .input input{
   width:100%;
-  padding:10px;
+  padding:12px;
   border:none;
-  border-bottom:2px solid #fff;
+  border-bottom:2px solid rgba(255,255,255,0.6);
   background:transparent;
   color:#fff;
   outline:none;
@@ -77,62 +68,44 @@ body{
 
 .input label{
   position:absolute;
-  top:10px;
   left:0;
-  transition:.3s;
-  pointer-events:none; /* ✅ FIX LABEL CLICK ISSUE */
+  top:12px;
+  color:rgba(255,255,255,0.7);
+  transition:0.3s;
+  pointer-events:none;
 }
 
 .input input:focus ~ label,
 .input input:valid ~ label{
   top:-10px;
   font-size:12px;
+  color:#00d4ff;
 }
 
-/* Button */
 button{
   width:100%;
-  padding:10px;
+  padding:12px;
   border:none;
   border-radius:25px;
-  background:#fff;
+  background:linear-gradient(90deg,#00c6ff,#0072ff);
+  color:white;
   cursor:pointer;
+  font-weight:bold;
 }
 
-/* Message */
 .msg{
   margin-top:10px;
+  font-size:14px;
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- 🌊 Waves -->
-<div class="ocean">
-  <div class="wave">
-    <svg viewBox="0 0 1200 120">
-      <path d="M0,30 C150,80 350,0 600,40 C850,80 1050,20 1200,40 L1200,120 L0,120 Z" fill="#00c6ff"></path>
-    </svg>
-  </div>
+<canvas id="ocean"></canvas>
 
-  <div class="wave">
-    <svg viewBox="0 0 1200 120">
-      <path d="M0,40 C200,0 400,80 600,40 C800,0 1000,80 1200,40 L1200,120 L0,120 Z" fill="#0072ff"></path>
-    </svg>
-  </div>
-
-  <div class="wave">
-    <svg viewBox="0 0 1200 120">
-      <path d="M0,50 C150,100 350,20 600,60 C850,100 1050,40 1200,60 L1200,120 L0,120 Z" fill="#005bea"></path>
-    </svg>
-  </div>
-</div>
-
-<!-- 🔐 Login Box -->
 <div class="login">
-  <h2>Ocean Login</h2>
+  <h2>Login</h2>
 
   <div class="input">
     <input type="text" id="user" required>
@@ -144,23 +117,76 @@ button{
 </div>
 
 <script>
+/* =========================
+   🌊 REALISTIC OCEAN ENGINE
+========================= */
+const canvas = document.getElementById("ocean");
+const ctx = canvas.getContext("2d");
+
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+let t = 0;
+
+function drawWave(color, amp, freq, speed, yOffset){
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height);
+
+  for(let x = 0; x <= canvas.width; x++){
+    let y = 
+      Math.sin((x * freq) + t * speed) * amp +
+      Math.sin((x * 0.01) + t * 0.6) * (amp * 0.4);
+
+    ctx.lineTo(x, canvas.height - y - yOffset);
+  }
+
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // 🌊 Deep sea base
+  drawWave("rgba(0,30,60,0.9)", 20, 0.01, 0.6, 80);
+
+  // 🌊 Mid waves
+  drawWave("rgba(0,90,160,0.6)", 30, 0.015, 1.0, 60);
+
+  // 🌊 Top waves (foam look)
+  drawWave("rgba(0,180,255,0.35)", 40, 0.02, 1.4, 40);
+
+  t += 0.02;
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+/* =========================
+   🔐 LOGIN
+========================= */
 function login(){
   const u = document.getElementById('user').value.trim();
   const msg = document.getElementById('msg');
 
   if(u.length < 2){
-    msg.innerHTML = 'Enter valid username';
-    msg.style.color = 'red';
+    msg.style.color = "red";
+    msg.innerText = "Enter valid username";
     return;
   }
 
-  msg.innerHTML = 'Welcome Captain ⚓';
-  msg.style.color = 'lightgreen';
+  localStorage.setItem("currentUserName", u);
 
-  localStorage.setItem('currentUserName', u);
+  msg.style.color = "lightgreen";
+  msg.innerText = "Welcome ⚓";
 
-  setTimeout(() => {
-    window.location.href = 'main.html';
+  setTimeout(()=>{
+    window.location.href = "main.html";
   }, 1000);
 }
 </script>
