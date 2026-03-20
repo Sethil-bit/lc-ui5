@@ -466,11 +466,6 @@
     const rememberCheck = document.getElementById('remember');
     const guestBtn = document.getElementById('guestBtn');
 
-    // Check if we're on the login page to prevent redirect loop
-    const isLoginPage = window.location.pathname.includes('login.html') || 
-                        window.location.pathname === '/' || 
-                        window.location.pathname.endsWith('/');
-
     // Create particles
     function createParticles() {
         const particlesContainer = document.getElementById('particles');
@@ -604,20 +599,15 @@
         return div.innerHTML;
     }
 
-    // REDIRECT FUNCTION - with check to prevent loop
     let redirecting = false;
     
     function redirectToMain() {
         if (redirecting) return;
         redirecting = true;
-        
-        console.log('Redirecting to main.html...');
-        // Clear session flags before redirect to prevent loop on main page
-        // But we need to keep the user data
         window.location.href = 'main.html';
     }
 
-    // Login handler with redirect
+    // Login handler with persistent session
     async function handleLogin(usernameValue = null) {
         let username = usernameValue !== null ? usernameValue : usernameInput.value.trim();
         
@@ -637,17 +627,26 @@
         
         setLoading(true);
         
-        // Store session with a timestamp to indicate fresh login
-        const loginData = {
+        // Create persistent session data with timestamp
+        const sessionData = {
             username: username,
             loginTime: Date.now(),
-            isLoggedIn: true
+            lastActivity: Date.now(),
+            isLoggedIn: true,
+            sessionId: Math.random().toString(36).substring(2)
         };
         
+        // Store in both sessionStorage and localStorage for persistence
+        sessionStorage.setItem('lumina_user', JSON.stringify(sessionData));
+        sessionStorage.setItem('current_user', username);
+        sessionStorage.setItem('is_logged_in', 'true');
+        
+        // Also store in localStorage if remember me is checked
         if (rememberCheck.checked || usernameValue !== null) {
-            localStorage.setItem('lumina_user', JSON.stringify(loginData));
+            localStorage.setItem('lumina_user', JSON.stringify(sessionData));
+            localStorage.setItem('current_user', username);
+            localStorage.setItem('is_logged_in', 'true');
         }
-        sessionStorage.setItem('lumina_session', JSON.stringify(loginData));
         
         // Create success particles
         createSuccessParticles();
@@ -659,6 +658,10 @@
         loginBtn.style.transform = 'scale(0.98)';
         setTimeout(() => { loginBtn.style.transform = ''; }, 200);
         
+        // Set a flag in session to prevent auto logout
+        sessionStorage.setItem('session_active', 'true');
+        sessionStorage.setItem('session_start', Date.now().toString());
+        
         // Redirect after 1 second
         setTimeout(() => {
             redirectToMain();
@@ -668,33 +671,50 @@
     // Guest login handler
     async function handleGuestLogin() {
         const guestName = 'Guest_' + Math.floor(Math.random() * 10000);
-        
         setLoading(true);
         
         // Store guest session
         const guestData = {
             username: guestName,
             loginTime: Date.now(),
+            lastActivity: Date.now(),
             isLoggedIn: true,
-            isGuest: true
+            isGuest: true,
+            sessionId: Math.random().toString(36).substring(2)
         };
         
-        sessionStorage.setItem('lumina_session', JSON.stringify(guestData));
+        sessionStorage.setItem('lumina_user', JSON.stringify(guestData));
+        sessionStorage.setItem('current_user', guestName);
+        sessionStorage.setItem('is_logged_in', 'true');
+        sessionStorage.setItem('session_active', 'true');
+        sessionStorage.setItem('session_start', Date.now().toString());
         
-        // Create success particles
         createSuccessParticles();
-        
-        // Show success message
         showMessage(`Welcome, ${guestName}! Redirecting...`, 'success');
         
-        // Redirect after 1 second
         setTimeout(() => {
             redirectToMain();
         }, 1000);
     }
 
-    // Load saved username
+    // Load saved username and check existing session
     function loadSavedUsername() {
+        // First check sessionStorage for active session
+        const activeSession = sessionStorage.getItem('session_active');
+        const sessionUser = sessionStorage.getItem('lumina_user');
+        
+        if (activeSession === 'true' && sessionUser) {
+            try {
+                const userData = JSON.parse(sessionUser);
+                if (userData && userData.isLoggedIn === true) {
+                    // Session exists, redirect to main
+                    redirectToMain();
+                    return;
+                }
+            } catch(e) {}
+        }
+        
+        // Check localStorage for saved username
         try {
             const saved = localStorage.getItem('lumina_user');
             if (saved) {
@@ -708,9 +728,33 @@
             console.log('Error loading saved user');
         }
         
-        // DO NOT auto-redirect from login page - let user click button
-        // This was causing the infinite loop
+        // Also check for simple stored username
+        const simpleUser = localStorage.getItem('current_user');
+        if (simpleUser && !usernameInput.value) {
+            usernameInput.value = simpleUser;
+            rememberCheck.checked = true;
+        }
     }
+
+    // Keep session alive by periodically refreshing
+    let sessionKeepAlive = setInterval(function() {
+        const sessionActive = sessionStorage.getItem('session_active');
+        if (sessionActive === 'true') {
+            const sessionData = sessionStorage.getItem('lumina_user');
+            if (sessionData) {
+                try {
+                    const data = JSON.parse(sessionData);
+                    data.lastActivity = Date.now();
+                    sessionStorage.setItem('lumina_user', JSON.stringify(data));
+                    
+                    // Also update localStorage if remember me was checked
+                    if (rememberCheck.checked) {
+                        localStorage.setItem('lumina_user', JSON.stringify(data));
+                    }
+                } catch(e) {}
+            }
+        }
+    }, 30000); // Refresh every 30 seconds
 
     // Event listeners
     loginBtn.addEventListener('click', () => handleLogin());
@@ -735,8 +779,8 @@
         usernameInput.focus();
     }, 300);
     
-    console.log('✨ Lumina Login Ready - Click Continue to go to main.html');
-    console.log('⚠️ No auto-redirect - user must click button');
+    console.log('✨ Lumina Login Ready - Session will persist');
+    console.log('✅ Session keep-alive active - No auto logout');
 </script>
 </body>
 </html>
