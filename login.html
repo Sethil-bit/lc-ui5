@@ -3,10 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login</title>
+<title>Ocean Login</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI',sans-serif;
+}
+
 body{
   height:100vh;
   display:flex;
@@ -16,11 +22,13 @@ body{
   overflow:hidden;
 }
 
-/* 🌊 SVG Waves */
+/* 🌊 Ocean background */
 .ocean{
   position:absolute;
   bottom:0;
   width:100%;
+  z-index:0;
+  pointer-events:none; /* ✅ FIX CLICK ISSUE */
 }
 
 .wave svg{
@@ -38,51 +46,20 @@ body{
   to{transform:translateX(-50%)}
 }
 
-
-
-.ship::before{
-  content:'';
-  position:absolute;
-  top:-30px;
-  left:40px;
-  width:40px;
-  height:30px;
-  background:rgba(0,0,0,0.5);
-  border-radius:5px;
-}
-
-.ship::after{
-  content:'';
-  position:absolute;
-  top:-50px;
-  left:58px;
-  width:4px;
-  height:50px;
-  background:rgba(0,0,0,0.5);
-}
-
-@keyframes shipMove{
-  0%,100%{transform:translateX(-50%) translateY(0)}
-  50%{transform:translateX(-50%) translateY(-8px)}
-}
-
-@keyframes shipMove{
-  0%,100%{transform:translateX(-50%) translateY(0)}
-  50%{transform:translateX(-50%) translateY(-10px)}
-}
-
-/* Login box */
+/* 🌊 Login Box */
 .login{
+  position:relative;
+  z-index:2;
   backdrop-filter:blur(15px);
   background:rgba(255,255,255,0.1);
   padding:40px;
   border-radius:20px;
   width:320px;
   color:#fff;
-  z-index:2;
   text-align:center;
 }
 
+/* Input */
 .input{
   position:relative;
   margin-bottom:25px;
@@ -103,6 +80,7 @@ body{
   top:10px;
   left:0;
   transition:.3s;
+  pointer-events:none; /* ✅ FIX LABEL CLICK ISSUE */
 }
 
 .input input:focus ~ label,
@@ -111,6 +89,7 @@ body{
   font-size:12px;
 }
 
+/* Button */
 button{
   width:100%;
   padding:10px;
@@ -120,36 +99,40 @@ button{
   cursor:pointer;
 }
 
-.msg{margin-top:10px}
+/* Message */
+.msg{
+  margin-top:10px;
+}
 
 </style>
 </head>
+
 <body>
 
-
-
-<!-- Waves -->
+<!-- 🌊 Waves -->
 <div class="ocean">
   <div class="wave">
-    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+    <svg viewBox="0 0 1200 120">
       <path d="M0,30 C150,80 350,0 600,40 C850,80 1050,20 1200,40 L1200,120 L0,120 Z" fill="#00c6ff"></path>
     </svg>
   </div>
+
   <div class="wave">
-    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+    <svg viewBox="0 0 1200 120">
       <path d="M0,40 C200,0 400,80 600,40 C800,0 1000,80 1200,40 L1200,120 L0,120 Z" fill="#0072ff"></path>
     </svg>
   </div>
+
   <div class="wave">
-    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+    <svg viewBox="0 0 1200 120">
       <path d="M0,50 C150,100 350,20 600,60 C850,100 1050,40 1200,60 L1200,120 L0,120 Z" fill="#005bea"></path>
     </svg>
   </div>
 </div>
 
-<!-- Login -->
-<div class="login" id="box">
-  <h2>Login</h2>
+<!-- 🔐 Login Box -->
+<div class="login">
+  <h2>Ocean Login</h2>
 
   <div class="input">
     <input type="text" id="user" required>
@@ -162,23 +145,23 @@ button{
 
 <script>
 function login(){
-  const u=document.getElementById('user').value.trim();
-  const msg=document.getElementById('msg');
+  const u = document.getElementById('user').value.trim();
+  const msg = document.getElementById('msg');
 
-  if(u.length<2){
-    msg.innerHTML='Enter valid username';
-    msg.style.color='red';
+  if(u.length < 2){
+    msg.innerHTML = 'Enter valid username';
+    msg.style.color = 'red';
     return;
   }
 
-  msg.innerHTML='Welcome Captain ⚓';
-  msg.style.color='lightgreen';
+  msg.innerHTML = 'Welcome Captain ⚓';
+  msg.style.color = 'lightgreen';
 
-  localStorage.setItem('currentUserName',u);
+  localStorage.setItem('currentUserName', u);
 
-  setTimeout(()=>{
-    window.location.href='main.html';
-  },1000);
+  setTimeout(() => {
+    window.location.href = 'main.html';
+  }, 1000);
 }
 </script>
 
