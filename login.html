@@ -22,7 +22,6 @@ body{
   background: radial-gradient(circle at top, #1b4d6b, #0a1a24);
 }
 
-/* 🌊 Canvas Ocean */
 canvas{
   position:absolute;
   bottom:0;
@@ -32,7 +31,6 @@ canvas{
   z-index:0;
 }
 
-/* 🔐 Login Box */
 .login{
   position:relative;
   z-index:2;
@@ -48,7 +46,6 @@ canvas{
 
 .login h2{
   margin-bottom:20px;
-  letter-spacing:1px;
 }
 
 .input{
@@ -72,7 +69,6 @@ canvas{
   top:12px;
   color:rgba(255,255,255,0.7);
   transition:0.3s;
-  pointer-events:none;
 }
 
 .input input:focus ~ label,
@@ -118,7 +114,7 @@ button{
 
 <script>
 /* =========================
-   🌊 REALISTIC OCEAN ENGINE
+   🌊 OCEAN ENGINE
 ========================= */
 const canvas = document.getElementById("ocean");
 const ctx = canvas.getContext("2d");
@@ -131,6 +127,8 @@ resize();
 window.addEventListener("resize", resize);
 
 let t = 0;
+let waveBoost = false;
+let boostPower = 1;
 
 function drawWave(color, amp, freq, speed, yOffset){
   ctx.beginPath();
@@ -152,19 +150,29 @@ function drawWave(color, amp, freq, speed, yOffset){
 function animate(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  // 🌊 Deep sea base
-  drawWave("rgba(0,30,60,0.9)", 20, 0.01, 0.6, 80);
+  // 🌊 Smooth limited boost
+  if(waveBoost){
+    boostPower += 0.01;
+    if(boostPower > 1.4) boostPower = 1.4;
+  } else {
+    boostPower = 1;
+  }
 
-  // 🌊 Mid waves
-  drawWave("rgba(0,90,160,0.6)", 30, 0.015, 1.0, 60);
+  drawWave("rgba(0,30,60,0.9)", 20 * boostPower, 0.01, 0.6 * boostPower, 80);
+  drawWave("rgba(0,90,160,0.6)", 30 * boostPower, 0.015, 1.0 * boostPower, 60);
+  drawWave("rgba(0,180,255,0.35)", 40 * boostPower, 0.02, 1.4 * boostPower, 40);
 
-  // 🌊 Top waves (foam look)
-  drawWave("rgba(0,180,255,0.35)", 40, 0.02, 1.4, 40);
+  // ✨ soft glow
+  if(waveBoost){
+    ctx.fillStyle = "rgba(0,200,255,0.05)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
 
-  t += 0.02;
+  // 🧠 slower natural movement
+  t += 0.01 * boostPower;
+
   requestAnimationFrame(animate);
 }
-
 animate();
 
 /* =========================
@@ -185,16 +193,21 @@ function login(){
   msg.style.color = "lightgreen";
   msg.innerText = "Welcome ⚓";
 
+  waveBoost = true;
+
   setTimeout(()=>{
     window.location.href = "main.html";
-  }, 1000);
+  }, 1200);
 }
-  document.getElementById("user").addEventListener("keydown", function(e){
+
+/* =========================
+   ⌨️ ENTER KEY LOGIN
+========================= */
+document.getElementById("user").addEventListener("keydown", function(e){
   if(e.key === "Enter"){
     login();
   }
 });
-  
 </script>
 
 </body>
