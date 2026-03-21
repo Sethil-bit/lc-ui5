@@ -189,6 +189,12 @@ function login(){
     window.location.href = "main.html";
   }, 1000);
 }
+  document.getElementById("user").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    login();
+  }
+});
+  
 </script>
 
 </body>
