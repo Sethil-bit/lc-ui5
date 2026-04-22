@@ -143,7 +143,7 @@ button{
 </div>
 
 <script>
-/* 🌊 OCEAN ENGINE */
+/* 🌊 OCEAN ENGINE - TRANSPARENT WAVES WITH REAL REFLECTION EFFECT */
 const canvas = document.getElementById("ocean");
 const ctx = canvas.getContext("2d");
 
@@ -158,48 +158,138 @@ let t = 0;
 let waveBoost = false;
 let boostPower = 1;
 
-function drawWave(color, amp, freq, speed, yOffset){
+// Function to draw transparent waves with realistic reflection (mirror effect)
+function drawTransparentWave(color, amp, freq, speed, yOffset, opacity){
   ctx.beginPath();
   ctx.moveTo(0, canvas.height);
-
+  
+  // Store wave points for reflection
+  const points = [];
+  
   for(let x = 0; x <= canvas.width; x++){
     let y = 
       Math.sin((x * freq) + t * speed) * amp +
       Math.sin((x * 0.01) + t * 0.6) * (amp * 0.4);
-
-    ctx.lineTo(x, canvas.height - y - yOffset);
+    
+    let waveY = canvas.height - y - yOffset;
+    points.push({x: x, y: waveY});
+    ctx.lineTo(x, waveY);
   }
-
+  
+  ctx.lineTo(canvas.width, canvas.height);
+  
+  // TRANSPARENT fill - using rgba with low opacity
+  ctx.fillStyle = color;
+  ctx.fill();
+  
+  // === REAL REFLECTION EFFECT ===
+  // Draw mirrored version of the wave below the wave line to simulate water reflection
+  ctx.save();
+  ctx.globalAlpha = opacity * 0.35; // Reflection opacity
+  
+  ctx.beginPath();
+  // Start from left edge at bottom
+  ctx.moveTo(0, canvas.height);
+  
+  // Draw reflected wave (mirrored vertically)
+  for(let i = 0; i < points.length; i++){
+    let x = points[i].x;
+    let originalY = points[i].y;
+    // Mirror the wave: reflect around the wave's own Y position
+    // This creates a realistic water reflection that follows the wave shape
+    let reflectedY = canvas.height + (canvas.height - originalY) * 0.45;
+    reflectedY = Math.min(canvas.height + 50, Math.max(canvas.height - 20, reflectedY));
+    ctx.lineTo(x, reflectedY);
+  }
+  
   ctx.lineTo(canvas.width, canvas.height);
   ctx.fillStyle = color;
   ctx.fill();
+  ctx.restore();
+  
+  // === ADDITIONAL REFLECTION GLOSS ===
+  // Add subtle highlight streaks on wave peaks (simulating sun reflection on water)
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  for(let i = 0; i < points.length; i += 8){
+    let p = points[i];
+    if(p.y < canvas.height - 15){
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x + 2, p.y - 3);
+      ctx.lineTo(p.x - 2, p.y - 3);
+      ctx.fillStyle = `rgba(255, 255, 245, ${0.2 * boostPower})`;
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
+// Function to draw reflective ripples (extra realism)
+function drawReflectiveRipples(){
+  ctx.save();
+  ctx.globalAlpha = 0.12;
+  for(let i = 0; i < 12; i++){
+    let yPos = canvas.height - 45 + Math.sin(t * 1.5 + i) * 10;
+    ctx.beginPath();
+    ctx.moveTo(0, yPos);
+    for(let x = 0; x <= canvas.width; x += 40){
+      let offsetY = Math.sin(x * 0.015 + t * 2 + i) * 2.5;
+      ctx.lineTo(x, yPos + offsetY);
+    }
+    ctx.strokeStyle = `rgba(100, 200, 255, 0.25)`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  ctx.restore();
 }
 
 function animate(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-
+  
   if(waveBoost){
     boostPower += 0.01;
-    if(boostPower > 1.4) boostPower = 1.4;
+    if(boostPower > 1.35) boostPower = 1.35;
   } else {
     boostPower = 1;
   }
-
-  drawWave("rgba(0,30,60,0.85)", 20 * boostPower, 0.01, 0.6 * boostPower, 80);
-  drawWave("rgba(0,90,160,0.55)", 30 * boostPower, 0.015, 1.0 * boostPower, 60);
-  drawWave("rgba(0,180,255,0.3)", 40 * boostPower, 0.02, 1.4 * boostPower, 40);
-
+  
+  // Layer 1 - Deep background wave (very transparent)
+  drawTransparentWave("rgba(0, 60, 110, 0.12)", 18 * boostPower, 0.008, 0.5 * boostPower, 75, 0.4);
+  
+  // Layer 2 - Mid wave with reflection emphasis
+  drawTransparentWave("rgba(0, 120, 200, 0.18)", 28 * boostPower, 0.012, 0.85 * boostPower, 55, 0.5);
+  
+  // Layer 3 - Surface shimmer wave (more visible reflection)
+  drawTransparentWave("rgba(50, 180, 240, 0.22)", 22 * boostPower, 0.018, 1.2 * boostPower, 45, 0.6);
+  
+  // Layer 4 - Foam/crest layer (brightest reflection)
+  drawTransparentWave("rgba(130, 220, 255, 0.15)", 12 * boostPower, 0.022, 1.5 * boostPower, 40, 0.45);
+  
+  // Add reflective ripple lines for extra realism
+  drawReflectiveRipples();
+  
+  // Boost effect: extra glints on water surface
   if(waveBoost){
-    ctx.fillStyle = "rgba(0,200,255,0.05)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    for(let i = 0; i < 25; i++){
+      let x = Math.random() * canvas.width;
+      let y = canvas.height - 35 - Math.random() * 100;
+      ctx.beginPath();
+      ctx.arc(x, y, Math.random() * 3 + 1, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 245, 200, ${Math.random() * 0.4})`;
+      ctx.fill();
+    }
+    ctx.restore();
   }
-
-  t += 0.01 * boostPower;
+  
+  t += 0.012 * boostPower;
   requestAnimationFrame(animate);
 }
 animate();
 
-/* 🔐 LOGIN */
+/* 🔐 LOGIN (UNCHANGED) */
 function login(){
   const u = document.getElementById('user').value.trim();
   const msg = document.getElementById('msg');
