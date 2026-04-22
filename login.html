@@ -13,25 +13,48 @@
   font-family:Segoe UI,sans-serif;
 }
 
+/* BODY */
 body{
   height:100vh;
   overflow:hidden;
   display:flex;
   justify-content:center;
   align-items:center;
-  background: radial-gradient(circle at top, #1b4d6b, #0a1a24);
+  background:#000;
 }
 
+/* 🖼️ BACKGROUND IMAGE (GitHub correct path) */
+.bg-image{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: url("./images/bg.jpg") no-repeat center center/cover;
+  z-index:0;
+}
+
+/* DARK OVERLAY */
+.bg-image::after{
+  content:"";
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.35);
+}
+
+/* 🌊 CANVAS */
 canvas{
   position:absolute;
   bottom:0;
   left:0;
   width:100%;
   height:100%;
-  z-index:0;
-  pointer-events: none; /* ✅ ADD THIS */
+  z-index:1;
+  pointer-events:none;
 }
 
+/* 🔐 LOGIN BOX */
 .login{
   position:relative;
   z-index:2;
@@ -40,7 +63,7 @@ canvas{
   border-radius:20px;
   background:rgba(255,255,255,0.08);
   backdrop-filter: blur(20px);
-  box-shadow:0 10px 40px rgba(0,0,0,0.3);
+  box-shadow:0 10px 40px rgba(0,0,0,0.4);
   color:#fff;
   text-align:center;
 }
@@ -70,7 +93,7 @@ canvas{
   top:12px;
   color:rgba(255,255,255,0.7);
   transition:0.3s;
-  pointer-events: none; /* ✅ IMPORTANT FIX */
+  pointer-events:none;
 }
 
 .input input:focus ~ label,
@@ -100,8 +123,13 @@ button{
 
 <body>
 
+<!-- 🖼️ BACKGROUND -->
+<div class="bg-image"></div>
+
+<!-- 🌊 OCEAN -->
 <canvas id="ocean"></canvas>
 
+<!-- 🔐 LOGIN -->
 <div class="login">
   <h2>Login</h2>
 
@@ -115,9 +143,7 @@ button{
 </div>
 
 <script>
-/* =========================
-   🌊 OCEAN ENGINE
-========================= */
+/* 🌊 OCEAN ENGINE */
 const canvas = document.getElementById("ocean");
 const ctx = canvas.getContext("2d");
 
@@ -152,7 +178,6 @@ function drawWave(color, amp, freq, speed, yOffset){
 function animate(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  // 🌊 Smooth limited boost
   if(waveBoost){
     boostPower += 0.01;
     if(boostPower > 1.4) boostPower = 1.4;
@@ -160,26 +185,21 @@ function animate(){
     boostPower = 1;
   }
 
-  drawWave("rgba(0,30,60,0.9)", 20 * boostPower, 0.01, 0.6 * boostPower, 80);
-  drawWave("rgba(0,90,160,0.6)", 30 * boostPower, 0.015, 1.0 * boostPower, 60);
-  drawWave("rgba(0,180,255,0.35)", 40 * boostPower, 0.02, 1.4 * boostPower, 40);
+  drawWave("rgba(0,30,60,0.85)", 20 * boostPower, 0.01, 0.6 * boostPower, 80);
+  drawWave("rgba(0,90,160,0.55)", 30 * boostPower, 0.015, 1.0 * boostPower, 60);
+  drawWave("rgba(0,180,255,0.3)", 40 * boostPower, 0.02, 1.4 * boostPower, 40);
 
-  // ✨ soft glow
   if(waveBoost){
     ctx.fillStyle = "rgba(0,200,255,0.05)";
     ctx.fillRect(0,0,canvas.width,canvas.height);
   }
 
-  // 🧠 slower natural movement
   t += 0.01 * boostPower;
-
   requestAnimationFrame(animate);
 }
 animate();
 
-/* =========================
-   🔐 LOGIN
-========================= */
+/* 🔐 LOGIN */
 function login(){
   const u = document.getElementById('user').value.trim();
   const msg = document.getElementById('msg');
@@ -202,9 +222,7 @@ function login(){
   }, 1200);
 }
 
-/* =========================
-   ⌨️ ENTER KEY LOGIN
-========================= */
+/* ⌨️ ENTER KEY */
 document.getElementById("user").addEventListener("keydown", function(e){
   if(e.key === "Enter"){
     login();
