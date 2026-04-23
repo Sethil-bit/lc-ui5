@@ -13,123 +13,148 @@
   font-family:Segoe UI,sans-serif;
 }
 
-/* BODY */
 body{
   height:100vh;
   overflow:hidden;
   display:flex;
   justify-content:center;
   align-items:center;
-  background:#000;
-}
-
-/* 🖼️ BACKGROUND IMAGE (GitHub correct path) */
-.bg-image{
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background: url("./images/bg.jpg") no-repeat center center/cover;
-  z-index:0;
-}
-
-/* DARK OVERLAY */
-.bg-image::after{
-  content:"";
-  position:absolute;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.35);
+  background: radial-gradient(circle at 50% 20%, #0f3a52, #020b12 80%);
 }
 
 /* 🌊 CANVAS */
 canvas{
   position:absolute;
-  bottom:0;
-  left:0;
+  inset:0;
   width:100%;
   height:100%;
-  z-index:1;
-  pointer-events:none;
+  z-index:0;
 }
 
-/* 🔐 LOGIN BOX */
+/* 💎 LOGIN */
 .login{
   position:relative;
   z-index:2;
-  width:320px;
-  padding:40px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter: blur(20px);
-  box-shadow:0 10px 40px rgba(0,0,0,0.4);
+  width:340px;
+  padding:45px;
+  border-radius:25px;
+  background:rgba(255,255,255,0.06);
+  backdrop-filter: blur(25px) saturate(160%);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.6),
+    inset 0 0 40px rgba(255,255,255,0.05);
   color:#fff;
   text-align:center;
 }
 
 .login h2{
-  margin-bottom:20px;
+  margin-bottom:25px;
 }
 
+/* INPUT */
 .input{
   position:relative;
-  margin-bottom:25px;
+  margin-bottom:30px;
 }
 
 .input input{
   width:100%;
   padding:12px;
   border:none;
-  border-bottom:2px solid rgba(255,255,255,0.6);
-  background:transparent;
+  border-bottom:2px solid rgba(255,255,255,0.5);
+  background:rgba(255,255,255,0.05); /* FIX BASE */
   color:#fff;
   outline:none;
+  font-size:15px;
+}
+
+/* 🔥 FULL AUTOFILL + WHITE FIX */
+input,
+input:focus,
+input:active{
+  background-color: rgba(255,255,255,0.05) !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active{
+  -webkit-box-shadow: 0 0 0 1000px rgba(255,255,255,0.05) inset !important;
+  box-shadow: 0 0 0 1000px rgba(255,255,255,0.05) inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color:#ffffff;
+  border-bottom:2px solid rgba(255,255,255,0.5) !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* 🖱️ TEXT SELECTION FIX */
+input::selection{
+  background: rgba(0,200,255,0.3);
+  color:#fff;
+}
+input::-moz-selection{
+  background: rgba(0,200,255,0.3);
+  color:#fff;
 }
 
 .input label{
   position:absolute;
   left:0;
   top:12px;
-  color:rgba(255,255,255,0.7);
+  color:rgba(255,255,255,0.6);
   transition:0.3s;
   pointer-events:none;
 }
 
 .input input:focus ~ label,
 .input input:valid ~ label{
-  top:-10px;
+  top:-12px;
   font-size:12px;
-  color:#00d4ff;
+  color:#00eaff;
 }
 
+/* BUTTON */
 button{
   width:100%;
-  padding:12px;
+  padding:13px;
   border:none;
-  border-radius:25px;
-  background:linear-gradient(90deg,#00c6ff,#0072ff);
+  border-radius:30px;
+  background:linear-gradient(120deg,#00eaff,#0072ff);
   color:white;
   cursor:pointer;
   font-weight:bold;
 }
 
-.msg{
-  margin-top:10px;
-  font-size:14px;
+/* 🚀 LOADING BAR */
+.loader{
+  margin-top:20px;
+  width:100%;
+  height:6px;
+  background:rgba(255,255,255,0.1);
+  border-radius:10px;
+  overflow:hidden;
+  display:none;
+}
+
+.loader span{
+  display:block;
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#00eaff,#0072ff);
+  animation:load 1.2s ease forwards;
+}
+
+@keyframes load{
+  from{width:0%;}
+  to{width:100%;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🖼️ BACKGROUND -->
-<div class="bg-image"></div>
-
-<!-- 🌊 OCEAN -->
 <canvas id="ocean"></canvas>
 
-<!-- 🔐 LOGIN -->
 <div class="login">
   <h2>Login</h2>
 
@@ -139,183 +164,107 @@ button{
   </div>
 
   <button onclick="login()">Enter</button>
-  <div class="msg" id="msg"></div>
+
+  <div class="loader" id="loader">
+    <span></span>
+  </div>
 </div>
 
 <script>
-/* 🌊 OCEAN ENGINE - TRANSPARENT WAVES WITH REAL REFLECTION EFFECT */
 const canvas = document.getElementById("ocean");
 const ctx = canvas.getContext("2d");
 
 function resize(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
 }
 resize();
-window.addEventListener("resize", resize);
+addEventListener("resize", resize);
 
 let t = 0;
-let waveBoost = false;
-let boostPower = 1;
+let mouseX = 0;
+let mouseY = 0;
 
-// Function to draw transparent waves with realistic reflection (mirror effect)
-function drawTransparentWave(color, amp, freq, speed, yOffset, opacity){
-  ctx.beginPath();
-  ctx.moveTo(0, canvas.height);
-  
-  // Store wave points for reflection
-  const points = [];
-  
-  for(let x = 0; x <= canvas.width; x++){
-    let y = 
-      Math.sin((x * freq) + t * speed) * amp +
-      Math.sin((x * 0.01) + t * 0.6) * (amp * 0.4);
-    
-    let waveY = canvas.height - y - yOffset;
-    points.push({x: x, y: waveY});
-    ctx.lineTo(x, waveY);
-  }
-  
-  ctx.lineTo(canvas.width, canvas.height);
-  
-  // TRANSPARENT fill - using rgba with low opacity
-  ctx.fillStyle = color;
-  ctx.fill();
-  
-  // === REAL REFLECTION EFFECT ===
-  // Draw mirrored version of the wave below the wave line to simulate water reflection
-  ctx.save();
-  ctx.globalAlpha = opacity * 0.35; // Reflection opacity
-  
-  ctx.beginPath();
-  // Start from left edge at bottom
-  ctx.moveTo(0, canvas.height);
-  
-  // Draw reflected wave (mirrored vertically)
-  for(let i = 0; i < points.length; i++){
-    let x = points[i].x;
-    let originalY = points[i].y;
-    // Mirror the wave: reflect around the wave's own Y position
-    // This creates a realistic water reflection that follows the wave shape
-    let reflectedY = canvas.height + (canvas.height - originalY) * 0.45;
-    reflectedY = Math.min(canvas.height + 50, Math.max(canvas.height - 20, reflectedY));
-    ctx.lineTo(x, reflectedY);
-  }
-  
-  ctx.lineTo(canvas.width, canvas.height);
-  ctx.fillStyle = color;
-  ctx.fill();
-  ctx.restore();
-  
-  // === ADDITIONAL REFLECTION GLOSS ===
-  // Add subtle highlight streaks on wave peaks (simulating sun reflection on water)
-  ctx.save();
-  ctx.globalCompositeOperation = "lighter";
-  for(let i = 0; i < points.length; i += 8){
-    let p = points[i];
-    if(p.y < canvas.height - 15){
-      ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      ctx.lineTo(p.x + 2, p.y - 3);
-      ctx.lineTo(p.x - 2, p.y - 3);
-      ctx.fillStyle = `rgba(255, 255, 245, ${0.2 * boostPower})`;
-      ctx.fill();
-    }
-  }
-  ctx.restore();
+addEventListener("mousemove", e=>{
+  mouseX = e.clientX / canvas.width;
+  mouseY = e.clientY / canvas.height;
+});
+
+function wave(x,f,a,s,p){
+  return Math.sin(x*f + t*s + p) * a;
 }
 
-// Function to draw reflective ripples (extra realism)
-function drawReflectiveRipples(){
-  ctx.save();
-  ctx.globalAlpha = 0.12;
-  for(let i = 0; i < 12; i++){
-    let yPos = canvas.height - 45 + Math.sin(t * 1.5 + i) * 10;
-    ctx.beginPath();
-    ctx.moveTo(0, yPos);
-    for(let x = 0; x <= canvas.width; x += 40){
-      let offsetY = Math.sin(x * 0.015 + t * 2 + i) * 2.5;
-      ctx.lineTo(x, yPos + offsetY);
-    }
-    ctx.strokeStyle = `rgba(100, 200, 255, 0.25)`;
-    ctx.lineWidth = 1;
-    ctx.stroke();
+function drawLayer(color,amp,freq,speed,offset,alpha){
+  ctx.beginPath();
+
+  for(let x=0;x<=canvas.width;x++){
+    let influence = Math.sin((x/canvas.width + mouseX)*Math.PI);
+    let dynamicAmp = amp + influence*15*mouseY;
+
+    let y =
+      wave(x,freq,dynamicAmp,speed,0)+
+      wave(x,freq*0.5,dynamicAmp*0.5,speed*0.6,2)+
+      wave(x,freq*1.5,dynamicAmp*0.3,speed*1.3,5);
+
+    ctx.lineTo(x,canvas.height - y - offset);
   }
-  ctx.restore();
+
+  ctx.lineTo(canvas.width,canvas.height);
+  ctx.lineTo(0,canvas.height);
+  ctx.closePath();
+
+  ctx.fillStyle=color;
+  ctx.globalAlpha=alpha;
+  ctx.fill();
+  ctx.globalAlpha=1;
+}
+
+function reflection(){
+  const g=ctx.createLinearGradient(0,0,0,canvas.height);
+  g.addColorStop(0,"rgba(0,255,255,0.12)");
+  g.addColorStop(1,"transparent");
+  ctx.fillStyle=g;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
 }
 
 function animate(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  
-  if(waveBoost){
-    boostPower += 0.01;
-    if(boostPower > 1.35) boostPower = 1.35;
-  } else {
-    boostPower = 1;
-  }
-  
-  // Layer 1 - Deep background wave (very transparent)
-  drawTransparentWave("rgba(0, 60, 110, 0.12)", 18 * boostPower, 0.008, 0.5 * boostPower, 75, 0.4);
-  
-  // Layer 2 - Mid wave with reflection emphasis
-  drawTransparentWave("rgba(0, 120, 200, 0.18)", 28 * boostPower, 0.012, 0.85 * boostPower, 55, 0.5);
-  
-  // Layer 3 - Surface shimmer wave (more visible reflection)
-  drawTransparentWave("rgba(50, 180, 240, 0.22)", 22 * boostPower, 0.018, 1.2 * boostPower, 45, 0.6);
-  
-  // Layer 4 - Foam/crest layer (brightest reflection)
-  drawTransparentWave("rgba(130, 220, 255, 0.15)", 12 * boostPower, 0.022, 1.5 * boostPower, 40, 0.45);
-  
-  // Add reflective ripple lines for extra realism
-  drawReflectiveRipples();
-  
-  // Boost effect: extra glints on water surface
-  if(waveBoost){
-    ctx.save();
-    ctx.globalCompositeOperation = "lighter";
-    for(let i = 0; i < 25; i++){
-      let x = Math.random() * canvas.width;
-      let y = canvas.height - 35 - Math.random() * 100;
-      ctx.beginPath();
-      ctx.arc(x, y, Math.random() * 3 + 1, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 245, 200, ${Math.random() * 0.4})`;
-      ctx.fill();
-    }
-    ctx.restore();
-  }
-  
-  t += 0.012 * boostPower;
+
+  const bg=ctx.createLinearGradient(0,0,0,canvas.height);
+  bg.addColorStop(0,"#03141f");
+  bg.addColorStop(1,"#00070c");
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  drawLayer("#062437",25,0.006,0.4,120,0.9);
+  drawLayer("#0a4a6a",35,0.008,0.6,90,0.7);
+  drawLayer("#0e7ea6",45,0.01,0.9,60,0.5);
+  drawLayer("#13b7e6",55,0.012,1.2,30,0.35);
+
+  reflection();
+
+  t+=0.008;
   requestAnimationFrame(animate);
 }
 animate();
 
-/* 🔐 LOGIN (UNCHANGED) */
+/* LOGIN */
 function login(){
-  const u = document.getElementById('user').value.trim();
-  const msg = document.getElementById('msg');
+  const u=document.getElementById('user').value.trim();
+  if(u.length<2) return;
 
-  if(u.length < 2){
-    msg.style.color = "red";
-    msg.innerText = "Enter valid username";
-    return;
-  }
+  localStorage.setItem("currentUserName",u);
 
-  localStorage.setItem("currentUserName", u);
-
-  msg.style.color = "lightgreen";
-
-  waveBoost = true;
+  document.getElementById("loader").style.display="block";
 
   setTimeout(()=>{
-    window.location.href = "main.html";
-  }, 1200);
+    window.location.href="main.html";
+  },1200);
 }
 
-/* ⌨️ ENTER KEY */
-document.getElementById("user").addEventListener("keydown", function(e){
-  if(e.key === "Enter"){
-    login();
-  }
+/* ENTER KEY */
+document.getElementById("user").addEventListener("keydown",e=>{
+  if(e.key==="Enter") login();
 });
 </script>
 
