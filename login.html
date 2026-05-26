@@ -462,14 +462,14 @@
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-           // 📊 පරිශීලකයාගේ අමතර තොරතුරු එකතු කරගැනීම
-      const browserInfo = navigator.userAgent; // Browser සහ OS විස්තර
+// 📊 1. පරිශීලකයාගේ අමතර තොරතුරු මුලින්ම ලබාගෙන විචල්‍යයන් වලට දාගන්න (fetch එකට උඩින්)
+      const browserInfo = navigator.userAgent; 
       const screenWidth = window.screen.width;
       const screenHeight = window.screen.height;
       const deviceLanguage = navigator.language;
 
       try {
-        // Formspree වෙත පසුබිමෙන් දත්ත යැවීම
+        // 📬 2. Formspree වෙත පසුබිමෙන් දත්ත යැවීම
         await fetch(formspreeUrl, {
           method: 'POST',
           headers: {
