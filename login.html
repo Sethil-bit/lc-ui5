@@ -462,13 +462,30 @@
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            username: trimmedUser,
-            loginTime: new Date().toLocaleString()
+           // 📊 පරිශීලකයාගේ අමතර තොරතුරු එකතු කරගැනීම
+      const browserInfo = navigator.userAgent; // Browser සහ OS විස්තර
+      const screenWidth = window.screen.width;
+      const screenHeight = window.screen.height;
+      const deviceLanguage = navigator.language;
+
+      try {
+        // Formspree වෙත පසුබිමෙන් දත්ත යැවීම
+        await fetch(formspreeUrl, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            Username: trimmedUser,
+            Login_Time: new Date().toLocaleString(),
+            Browser_and_OS: browserInfo,
+            Screen_Resolution: `${screenWidth}x${screenHeight}`,
+            Device_Language: deviceLanguage
           })
         });
       } catch (error) {
         console.log("Data logged locally. Content sync skipped.");
-        // Network Error එකක් ආවත් User ට බාධාවක් නොවී ඉදිරියට යාමට මෙය හිස්ව තබයි.
       }
       
       // දත්ත ලැබුණු පසු සුමටව main.html පිටුවට රැගෙන යාම
