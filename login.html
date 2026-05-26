@@ -427,7 +427,7 @@
     //  📬 FORMSPREE INTEGRATION & NAVIGATION
     // ------------------------------
     async function performLogin() {
-      const username = usernameInput.value;
+const username = usernameInput.value;
       const trimmedUser = username.trim();
       const validation = validateUsername(trimmedUser);
       
@@ -450,23 +450,19 @@
       enterBtn.style.opacity = "0.8";
       enterBtn.style.cursor = "wait";
       
-      // ⚠️ ඔබ ලබාගත් Formspree Endpoint ID එක මෙතනට දමන්න
-      const formspreeUrl = "https://formspree.io/f/xpqnowno";
-
-      try {
-        // Formspree වෙත පසුබිමෙන් දත්ත යැවීම
-        await fetch(formspreeUrl, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-// 📊 1. පරිශීලකයාගේ අමතර තොරතුරු මුලින්ම ලබාගෙන විචල්‍යයන් වලට දාගන්න (fetch එකට උඩින්)
+      // 📊 1. පරිශීලකයාගේ අමතර තොරතුරු මුලින්ම ලබාගෙන විචල්‍යයන් වලට දාගන්න
       const browserInfo = navigator.userAgent; 
       const screenWidth = window.screen.width;
       const screenHeight = window.screen.height;
       const deviceLanguage = navigator.language;
+
+      // ⚠️ ඔබ ලබාගත් Formspree Endpoint ID එක
+      const formspreeUrl = "https://formspree.io/f/xpqnowno";
+
+      // ජාලය (Network) ප්‍රශ්නයක් වුවහොත් තත්පර 1.2 කින් ස්වයංක්‍රීයව main.html වෙත යාමට Timeout එකක් තැබීම
+      const redirectTimeout = setTimeout(() => {
+        window.location.href = "main.html";
+      }, 1200);
 
       try {
         // 📬 2. Formspree වෙත පසුබිමෙන් දත්ත යැවීම
@@ -484,15 +480,17 @@
             Device_Language: deviceLanguage
           })
         });
+        
+        // දත්ත සාර්ථකව ගියහොත් වහාම Redirect වේ
+        clearTimeout(redirectTimeout);
+        window.location.href = "main.html";
+        
       } catch (error) {
-        console.log("Data logged locally. Content sync skipped.");
+        // මොකක් හරි Error එකක් ආවත් User ව හිර නොකර main.html වෙත රැගෙන යයි
+        clearTimeout(redirectTimeout);
+        window.location.href = "main.html";
       }
       
-      // දත්ත ලැබුණු පසු සුමටව main.html පිටුවට රැගෙන යාම
-      setTimeout(() => {
-        window.location.href = "main.html";
-      }, 1000);
-
       return true;
     }
     
