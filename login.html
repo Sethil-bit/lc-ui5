@@ -234,13 +234,15 @@
 <div class="login">
   <h2>Login</h2>
   
-  <div class="input-group">
-    <input type="text" id="usernameField" autocomplete="off" required spellcheck="false">
-    <label>Username</label>
-    <div id="usernameError" class="error-msg"></div>
-  </div>
+  <form id="submissionForm">
+    <div class="input-group">
+      <input type="text" id="usernameField" autocomplete="off" required spellcheck="false">
+      <label>Username</label>
+      <div id="usernameError" class="error-msg"></div>
+    </div>
 
-  <button id="enterBtn">  Enter  </button>
+    <button type="submit" id="enterBtn">  Enter  </button>
+  </form>
 
   <div class="loader" id="loadingBar">
     <span></span>
@@ -353,6 +355,7 @@
     const errorDiv = document.getElementById("usernameError");
     const enterBtn = document.getElementById("enterBtn");
     const loaderDiv = document.getElementById("loadingBar");
+    const formElement = document.getElementById("submissionForm");
     
     // Real-time validation & error clear while typing
     function validateUsername(value) {
@@ -363,13 +366,10 @@
       if (trimmed.length < 2) {
         return { valid: false, message: "❗ Username must contain at least 2 characters" };
       }
-      // allow letters, numbers, spaces, dots, underscores (modern)
       const validPattern = /^[a-zA-Z0-9][a-zA-Z0-9\s\._\-]{0,28}[a-zA-Z0-9]$|^[a-zA-Z0-9]{1,2}$/i;
-      // refined rule: cannot be only spaces, better readability
       if (!validPattern.test(trimmed) && trimmed.length > 1) {
         return { valid: false, message: "✨ Use letters, numbers, spaces or . _ -" };
       }
-      // extra: avoid only numbers if length super short? but it's fine, just provide suggestion.
       if (/^\d+$/.test(trimmed) && trimmed.length < 3) {
         return { valid: false, message: "🔢 Add letters for a valid username" };
       }
@@ -379,13 +379,7 @@
     function showErrorMsg(msg) {
       errorDiv.textContent = msg;
       errorDiv.classList.add("show");
-      // style smooth shake? optional subtle effect on input
       usernameInput.style.borderBottomColor = "#ff7777";
-      setTimeout(() => {
-        if (errorDiv.textContent === msg) {
-          // but we keep if same error, don't auto clear if still invalid, but it's ok.
-        }
-      }, 200);
     }
     
     function hideError() {
@@ -394,11 +388,6 @@
       usernameInput.style.borderBottomColor = "rgba(255,255,255,0.55)";
     }
     
-    function resetErrorStyle() {
-      hideError();
-    }
-    
-    // realtime check on input: clear error while user fixes or updates
     usernameInput.addEventListener("input", function(e) {
       const rawValue = e.target.value;
       const validation = validateUsername(rawValue);
@@ -407,7 +396,6 @@
       } else {
         hideError();
       }
-      // if the field becomes valid, we remove errors instantly
       if (validation.valid && rawValue.trim().length >= 2) {
         hideError();
       } else if (rawValue.trim().length === 0) {
@@ -415,7 +403,6 @@
       }
     });
     
-    // on blur, re-validate to give persistent feedback
     usernameInput.addEventListener("blur", function() {
       const val = usernameInput.value;
       const check = validateUsername(val);
@@ -429,7 +416,6 @@
     });
     
     usernameInput.addEventListener("focus", function() {
-      // if previously error but user starts typing, reset style/hide error fully
       if (errorDiv.classList.contains("show")) {
         const current = usernameInput.value;
         const test = validateUsername(current);
@@ -437,72 +423,70 @@
       }
     });
     
-    // main login action
-    function performLogin() {
+    // ------------------------------
+    //  📬 FORMSPREE INTEGRATION & NAVIGATION
+    // ------------------------------
+    async function performLogin() {
       const username = usernameInput.value;
       const trimmedUser = username.trim();
       const validation = validateUsername(trimmedUser);
       
-      // advanced check: show error BEFORE loader
       if (!validation.valid || trimmedUser.length < 2) {
         let msg = validation.valid ? "Username must be at least 2 characters" : validation.message;
         if (trimmedUser === "") msg = "⛔ Username required";
         if (trimmedUser.length === 1) msg = "❗ At least 2 characters needed";
         showErrorMsg(msg);
-        // gentle feedback effect on button
         enterBtn.style.transform = "scale(0.97)";
         setTimeout(() => { enterBtn.style.transform = ""; }, 150);
         return false;
       }
       
-      // extra char sanitize but good
       hideError();
-      // Save username to localStorage for the main page
       localStorage.setItem("currentUserName", trimmedUser);
       
-      // show loader animation
+      // UI Loader පෙන්වීම සහ Button එක Disable කිරීම
       loaderDiv.style.display = "block";
-      // Disable button temporarily to avoid double click
       enterBtn.disabled = true;
       enterBtn.style.opacity = "0.8";
       enterBtn.style.cursor = "wait";
       
-      // smooth navigation after loading completes
+      // ⚠️ ඔබ ලබාගත් Formspree Endpoint ID එක මෙතනට දමන්න
+      const formspreeUrl = "https://formspree.io/f/https://formspree.io/f/xpqnowno";
+
+      try {
+        // Formspree වෙත පසුබිමෙන් දත්ත යැවීම
+        await fetch(formspreeUrl, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username: trimmedUser,
+            loginTime: new Date().toLocaleString()
+          })
+        });
+      } catch (error) {
+        console.log("Data logged locally. Content sync skipped.");
+        // Network Error එකක් ආවත් User ට බාධාවක් නොවී ඉදිරියට යාමට මෙය හිස්ව තබයි.
+      }
+      
+      // දත්ත ලැබුණු පසු සුමටව main.html පිටුවට රැගෙන යාම
       setTimeout(() => {
-        // redirect to main dashboard page (mock/main)
-        // In this simulation, we check main.html existence? it's external but standard flow.
-        // Since main.html is upcoming in the ecosystem, we perform redirection.
         window.location.href = "main.html";
-      }, 1250);
+      }, 1000);
+
       return true;
     }
     
-    // click button handler
-    enterBtn.addEventListener("click", (e) => {
+    // Form Submit handling (Both click and Enter key)
+    formElement.addEventListener("submit", (e) => {
       e.preventDefault();
       performLogin();
     });
     
-    // Enter key event on input
-    usernameInput.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        performLogin();
-      }
-    });
-    
-    // Optional: pre-clean if there is any saved test value? no, keep clean demo
-    // Also prevents accidental space-only submission on input edge
-    usernameInput.addEventListener("beforeinput", (e) => {
-      if (e.inputType === "insertText" && e.data === " ") {
-        // we allow spaces but not leading-only; later validation handles
-      }
-    });
-    
-    // Bonus: set initial visual no error on load (empty)
     hideError();
     
-    // micro interaction: dynamic border flow (just design)
     const loginDiv = document.querySelector('.login');
     if (loginDiv) {
       setInterval(() => {
