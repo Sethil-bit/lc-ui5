@@ -1069,8 +1069,17 @@ select {
     <input type="number" id="subDays" placeholder="e.g., 21" oninput="calculateAll()">
   </div>
   
+  <div class="input-group">
+    <label>Expiry Period:</label>
+    <select id="expiryDays" onchange="calculateAll()">
+      <option value="30">30 Days</option>
+      <option value="60">60 Days</option>
+      <option value="90" selected>90 Days (Default)</option>
+    </select>
+  </div>
+
   <div class="result-card hidden" id="date90Card">
-    <div>[90-Day] Expiry Date:</div>
+    <div id="expiryLabel">[90-Day] Expiry Date:</div>
     <div class="result-value" id="date90">--/--/----</div>
   </div>
   
@@ -1151,7 +1160,7 @@ select {
     <div class="export-options">
       <div class="export-option">
         <input type="checkbox" id="exportDate90" checked>
-        <label for="exportDate90">90-Day Expiry Date</label>
+        <label for="exportDate90">Expiry Date</label>
       </div>
       <div class="export-option">
         <input type="checkbox" id="exportFinalDate" checked>
@@ -1316,19 +1325,15 @@ function createParticles() {
     const particle = document.createElement('div');
     particle.classList.add('particle');
     
-    // Random size between 3px and 8px
     const size = Math.random() * 5 + 3;
     particle.style.width = `${size}px`;
     particle.style.height = `${size}px`;
     
-    // Random position
     particle.style.left = `${Math.random() * 100}vw`;
     
-    // Random color from theme
     const colors = ['var(--primary)', 'var(--secondary)', 'var(--accent)'];
     particle.style.background = colors[Math.floor(Math.random() * colors.length)];
     
-    // Random animation duration and delay
     const duration = Math.random() * 20 + 10;
     const delay = Math.random() * 10;
     particle.style.animationDuration = `${duration}s`;
@@ -1362,7 +1367,6 @@ function toggleSound() {
   showNotification(soundEnabled ? 'Sound enabled' : 'Sound muted');
 }
 
-// Notification system
 function showNotification(message) {
   const notification = document.getElementById('notification');
   const notificationText = document.getElementById('notificationText');
@@ -1375,7 +1379,6 @@ function showNotification(message) {
   }, 3000);
 }
 
-// Theme toggle with auto-detection
 function toggleTheme() {
   trackUserAction('theme_toggled', { 
     currentTheme: document.body.classList.contains('light-mode') ? 'light' : 'dark' 
@@ -1385,7 +1388,6 @@ function toggleTheme() {
   const btn = document.querySelector('.theme-toggle');
   btn.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
   
-  // Save theme preference
   localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
   
   btn.style.animation = 'none';
@@ -1394,14 +1396,12 @@ function toggleTheme() {
   }, 10);
 }
 
-// Auto-detect system theme
 function detectSystemTheme() {
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
     document.body.classList.add('light-mode');
     document.querySelector('.theme-toggle').textContent = '☀️';
   }
   
-  // Check for saved theme preference
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'light') {
     document.body.classList.add('light-mode');
@@ -1412,7 +1412,6 @@ function detectSystemTheme() {
   }
 }
 
-// Creator badge animation
 function animateCreatorBadge() {
   trackUserAction('creator_badge_clicked');
   playSound('click');
@@ -1423,7 +1422,6 @@ function animateCreatorBadge() {
   }, 10);
 }
 
-// Animation functions
 function showElement(element) {
   element.classList.remove('hidden');
   element.style.animation = 'none';
@@ -1436,11 +1434,12 @@ function hideElement(element) {
   element.classList.add('hidden');
 }
 
-// Main calculation function
+// Main calculation function: supports 30/60/90 days dynamically
 function calculateAll() {
   trackUserAction('date_calculation', {
     inputDate: document.getElementById('inputDate').value,
-    daysToSubtract: document.getElementById('subDays').value
+    daysToSubtract: document.getElementById('subDays').value,
+    expiryPeriod: document.getElementById('expiryDays').value
   });
   
   const inputDate = document.getElementById('inputDate').value;
@@ -1451,8 +1450,12 @@ function calculateAll() {
   
   if (inputDate) {
     const parts = inputDate.split('-');
+    const expiryDays = parseInt(document.getElementById('expiryDays').value) || 90;
+
     const date90 = new Date(parts[0], parts[1]-1, parts[2]);
-    date90.setDate(date90.getDate() + 90);
+    date90.setDate(date90.getDate() + expiryDays);
+
+    document.getElementById('expiryLabel').textContent = `[${expiryDays}-Day] Expiry Date:`;
     document.getElementById('date90').textContent = formatDate(date90);
     showElement(date90Card);
     
@@ -1470,7 +1473,6 @@ function calculateAll() {
   }
 }
 
-// Format date as DD/MM/YYYY
 function formatDate(date) {
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth()+1).toString().padStart(2, '0');
@@ -1478,7 +1480,6 @@ function formatDate(date) {
   return `${day}/${month}/${year}`;
 }
 
-// Number to words converter function
 function convertNumberToWords() {
   trackUserAction('number_conversion', {
     number: document.getElementById('numberInput').value,
@@ -1595,7 +1596,6 @@ function convertWholeNumber(numStr) {
   return '';
 }
 
-// Export functionality
 function showExport() {
   trackUserAction('export_panel_opened');
   playSound('click');
@@ -1631,7 +1631,8 @@ function exportResults() {
   }
   
   if (includeDate90 && !document.getElementById('date90Card').classList.contains('hidden')) {
-    content += `90-Day Expiry Date: ${document.getElementById('date90').textContent}\n`;
+    const expiryDays = document.getElementById('expiryDays').value;
+    content += `${expiryDays}-Day Expiry Date: ${document.getElementById('date90').textContent}\n`;
   }
   
   if (includeFinalDate && !document.getElementById('finalDateCard').classList.contains('hidden')) {
@@ -1667,7 +1668,7 @@ function exportResults() {
   hideExport();
 }
 
-// SHIP GAME Implementation
+// SHIP GAME Implementation (unchanged)
 let canvas, ctx;
 let Ship = [];
 let food = {};
@@ -1698,11 +1699,9 @@ function hideGame() {
 function initializeGame() {
   canvas = document.getElementById('gameCanvas');
   ctx = canvas.getContext('2d');
-  
   const gameOverlay = document.getElementById('gameOverlay');
   gameOverlay.style.display = 'flex';
   document.getElementById('gameOverText').textContent = 'SHIP GAME';
-  
   document.addEventListener('keydown', handleKeyPress);
 }
 
@@ -1712,7 +1711,6 @@ function startGame() {
   const gameOverlay = document.getElementById('gameOverlay');
   gameOverlay.style.display = 'none';
   
-  // Reset game state
   Ship = [
     {x: 5, y: 10},
     {x: 4, y: 10},
@@ -1738,7 +1736,6 @@ function pauseGame() {
   if (!gameRunning) return;
   
   gamePaused = !gamePaused;
-  
   const gameOverlay = document.getElementById('gameOverlay');
   if (gamePaused) {
     gameOverlay.style.display = 'flex';
@@ -1759,66 +1756,34 @@ function stopGame() {
 
 function gameLoop() {
   if (!gameRunning || gamePaused) return;
-  
   direction = nextDirection;
   moveShip();
-  
-  if (checkCollision()) {
-    gameOver();
-    return;
-  }
-  
-  if (checkFoodCollision()) {
-    eatFood();
-    generateFood();
-  }
-  
+  if (checkCollision()) { gameOver(); return; }
+  if (checkFoodCollision()) { eatFood(); generateFood(); }
   drawGame();
 }
 
 function moveShip() {
   const head = {x: Ship[0].x, y: Ship[0].y};
-  
   switch (direction) {
     case 'up': head.y--; break;
     case 'down': head.y++; break;
     case 'left': head.x--; break;
     case 'right': head.x++; break;
   }
-  
   Ship.unshift(head);
-  
-  // Remove tail if no food eaten
-  if (!food.eaten) {
-    Ship.pop();
-  } else {
-    food.eaten = false;
-  }
+  if (!food.eaten) Ship.pop();
+  else food.eaten = false;
 }
 
 function checkCollision() {
   const head = Ship[0];
-  
-  // Wall collision
-  if (head.x < 0 || head.x >= canvas.width/gridSize || 
-      head.y < 0 || head.y >= canvas.height/gridSize) {
-    return true;
-  }
-  
-  // Self collision
-  for (let i = 1; i < Ship.length; i++) {
-    if (head.x === Ship[i].x && head.y === Ship[i].y) {
-      return true;
-    }
-  }
-  
+  if (head.x < 0 || head.x >= canvas.width/gridSize || head.y < 0 || head.y >= canvas.height/gridSize) return true;
+  for (let i = 1; i < Ship.length; i++) if (head.x === Ship[i].x && head.y === Ship[i].y) return true;
   return false;
 }
 
-function checkFoodCollision() {
-  const head = Ship[0];
-  return head.x === food.x && head.y === food.y;
-}
+function checkFoodCollision() { return Ship[0].x === food.x && Ship[0].y === food.y; }
 
 function eatFood() {
   trackUserAction('game_food_eaten', { score: score + 10 });
@@ -1834,62 +1799,29 @@ function generateFood() {
     y: Math.floor(Math.random() * (canvas.height/gridSize)),
     eaten: false
   };
-  
-  // Make sure food doesn't appear on Ship
-  for (let segment of Ship) {
-    if (food.x === segment.x && food.y === segment.y) {
-      generateFood();
-      break;
-    }
-  }
+  for (let segment of Ship) if (food.x === segment.x && food.y === segment.y) { generateFood(); break; }
 }
 
 function drawGame() {
-  // Clear canvas
   ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--input-bg');
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
-  // Draw Ship
   Ship.forEach((segment, index) => {
-    if (index === 0) {
-      // Head
-      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary');
-    } else {
-      // Body
-      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--secondary');
-    }
+    ctx.fillStyle = index === 0 ? getComputedStyle(document.documentElement).getPropertyValue('--primary') : getComputedStyle(document.documentElement).getPropertyValue('--secondary');
     ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 1, gridSize - 1);
   });
-  
-  // Draw food
   ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent');
   ctx.beginPath();
-  ctx.arc(
-    food.x * gridSize + gridSize/2,
-    food.y * gridSize + gridSize/2,
-    gridSize/2 - 1,
-    0,
-    Math.PI * 2
-  );
+  ctx.arc(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2, gridSize/2 - 1, 0, Math.PI * 2);
   ctx.fill();
 }
 
 function handleKeyPress(e) {
   if (!gameRunning) return;
-  
   switch(e.key) {
-    case 'ArrowUp':
-      if (direction !== 'down') nextDirection = 'up';
-      break;
-    case 'ArrowDown':
-      if (direction !== 'up') nextDirection = 'down';
-      break;
-    case 'ArrowLeft':
-      if (direction !== 'right') nextDirection = 'left';
-      break;
-    case 'ArrowRight':
-      if (direction !== 'left') nextDirection = 'right';
-      break;
+    case 'ArrowUp': if (direction !== 'down') nextDirection = 'up'; break;
+    case 'ArrowDown': if (direction !== 'up') nextDirection = 'down'; break;
+    case 'ArrowLeft': if (direction !== 'right') nextDirection = 'left'; break;
+    case 'ArrowRight': if (direction !== 'left') nextDirection = 'right'; break;
   }
 }
 
@@ -1897,22 +1829,15 @@ function gameOver() {
   trackUserAction('game_over', { finalScore: score, highScore: Math.max(score, highScore) });
   playSound('error');
   stopGame();
-  
   const gameOverlay = document.getElementById('gameOverlay');
   gameOverlay.style.display = 'flex';
   document.getElementById('gameOverText').textContent = 'GAME OVER';
-  
-  if (score > highScore) {
-    highScore = score;
-    document.getElementById('highScoreValue').textContent = highScore;
-  }
+  if (score > highScore) { highScore = score; document.getElementById('highScoreValue').textContent = highScore; }
 }
 
-function updateScore() {
-  document.getElementById('scoreValue').textContent = score;
-}
+function updateScore() { document.getElementById('scoreValue').textContent = score; }
 
-// Initialize the application
+// Initialize
 window.onload = function() {
     checkLogin();
     createParticles();
@@ -1927,6 +1852,7 @@ window.onload = function() {
     document.getElementById('highScoreValue').textContent = highScore;
     
     showWelcomeMessage();
+    calculateAll();
 };
 </script>
 </body>
