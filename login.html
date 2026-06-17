@@ -219,28 +219,12 @@ font-family:'DM Sans',sans-serif;
 </div>
 
 <script>
-// Clear everything on load
-localStorage.clear();
-sessionStorage.clear();
-
 const form=document.getElementById("loginForm");
 const input=document.getElementById("username");
 const error=document.getElementById("error");
 const loaderWrapper=document.getElementById("loaderWrapper");
 const loaderFill=document.getElementById("loaderFill");
 const loaderPercent=document.getElementById("loaderPercent");
-
-// Clear input on load
-window.addEventListener('load', function() {
-    input.value = '';
-});
-
-// Also clear when page is shown (for back button)
-window.addEventListener('pageshow', function() {
-    input.value = '';
-    localStorage.clear();
-    sessionStorage.clear();
-});
 
 form.addEventListener("submit", async e => {
 e.preventDefault();
@@ -267,10 +251,9 @@ if(!/^[a-zA-Z0-9._\\-\\s]+$/.test(name)){
 
 error.style.display="none";
 
-// Store username temporarily in session (will be cleared on next page load)
-sessionStorage.setItem("tempUser", name);
+// Store in sessionStorage for main.html to read
+sessionStorage.setItem("loggedInUser", name);
 
-// Show loader with percentage
 loaderWrapper.style.display="block";
 let progress=0;
 const interval=setInterval(()=>{
@@ -300,8 +283,7 @@ clearInterval(interval);
 loaderFill.style.width="100%";
 loaderPercent.textContent="100%";
 setTimeout(()=>{
-// Pass username via URL parameter instead of localStorage
-window.location.href="main.html?user=" + encodeURIComponent(name);
+window.location.href="main.html";
 },400);
 },1200);
 });
