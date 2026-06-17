@@ -84,6 +84,16 @@ input::placeholder{
 color:rgba(255,255,255,.35);
 }
 
+/* Prevent autofill styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px rgba(15,15,30,.9) inset !important;
+    -webkit-text-fill-color: white !important;
+    background: rgba(15,15,30,.9) !important;
+}
+
 .error{
 display:none;
 margin-top:10px;
@@ -192,9 +202,9 @@ font-family:'DM Sans',sans-serif;
 <h1>LC Date Calculator</h1>
 <p class="subtitle">Sign in to continue</p>
 
-<form id="loginForm">
+<form id="loginForm" autocomplete="off">
 <div class="field">
-<input id="username" placeholder="Username" required>
+<input id="username" placeholder="Username" required autocomplete="off" readonly onfocus="this.removeAttribute('readonly')">
 <div id="error" class="error"></div>
 </div>
 
@@ -210,12 +220,21 @@ font-family:'DM Sans',sans-serif;
 </div>
 
 <script>
+// Clear any saved data on page load
+localStorage.clear();
+sessionStorage.clear();
+
 const form=document.getElementById("loginForm");
 const input=document.getElementById("username");
 const error=document.getElementById("error");
 const loaderWrapper=document.getElementById("loaderWrapper");
 const loaderFill=document.getElementById("loaderFill");
 const loaderPercent=document.getElementById("loaderPercent");
+
+// Force clear input on load
+window.addEventListener('load', function() {
+    input.value = '';
+});
 
 form.addEventListener("submit", async e => {
 e.preventDefault();
