@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Advanced UI with LC date calculation</title>
+<title>ADVANCED UI WITH LC DATE CALCULATION</title>
 <style>
 /* Your existing CSS styles remain exactly the same */
 :root {
@@ -1057,20 +1057,20 @@ select {
 <button class="admin-toggle" onclick="showAdmin()">🔒</button>
 
 <div class="container" id="mainContainer">
-  <h1>Advanced UI with LC date calculation</h1>
+  <h1>ADVANCED UI WITH LC DATE CALCULATION</h1>
   
   <div class="input-group">
-    <label>LC Open Date or Extend:</label>
+    <label>LC OPEN DATE:</label>
     <input type="date" id="inputDate" onchange="calculateAll()">
   </div>
   
   <div class="input-group">
-    <label>Period of Presentation:</label>
+    <label>PERIOD OF PRESENTATION:</label>
     <input type="number" id="subDays" placeholder="e.g., 21" oninput="calculateAll()">
   </div>
   
   <div class="input-group">
-    <label>Total LC Duration:</label>
+    <label>TOTAL LC DURATION:</label>
     <select id="expiryDays" onchange="calculateAll()">
       <option value="30">30 Days</option>
       <option value="60">60 Days</option>
@@ -1619,13 +1619,13 @@ function exportResults() {
   const includeNumberWords = document.getElementById('exportNumberWords').checked;
   const includeInputData = document.getElementById('exportInputData').checked;
   
-  let content = 'Advanced UI with LC date calculation Results\n';
+  let content = 'ADVANCED UI WITH LC DATE CALCULATION Results\n';
   content += '================================\n\n';
   
   if (includeInputData) {
     content += `Input Data:\n`;
-    content += `- LC Open Date or Extend: ${document.getElementById('inputDate').value || 'Not set'}\n`;
-    content += `- Period of Presentation: ${document.getElementById('subDays').value || '0'}\n`;
+    content += `- LC OPEN DATE: ${document.getElementById('inputDate').value || 'Not set'}\n`;
+    content += `- PERIOD OF PRESENTATION: ${document.getElementById('subDays').value || '0'}\n`;
     content += `- Number to Convert: ${document.getElementById('numberInput').value || 'Not set'}\n`;
     content += `- Currency: ${document.getElementById('currencySelect').value}\n\n`;
   }
@@ -1644,7 +1644,7 @@ function exportResults() {
   }
   
   content += `\nGenerated on: ${new Date().toLocaleString()}\n`;
-  content += `Tool: Advanced UI with LC date calculation by Sethil Yaddehige\n`;
+  content += `Tool: ADVANCED UI WITH LC DATE CALCULATION by Sethil Yaddehige\n`;
   
   if (exportFormat === 'pdf') {
     showNotification('PDF export would be generated here');
