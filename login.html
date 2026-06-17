@@ -84,7 +84,6 @@ input::placeholder{
 color:rgba(255,255,255,.35);
 }
 
-/* Prevent autofill styling */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -204,7 +203,7 @@ font-family:'DM Sans',sans-serif;
 
 <form id="loginForm" autocomplete="off">
 <div class="field">
-<input id="username" placeholder="Username" required autocomplete="off" readonly onfocus="this.removeAttribute('readonly')">
+<input id="username" placeholder="Username" required autocomplete="off">
 <div id="error" class="error"></div>
 </div>
 
