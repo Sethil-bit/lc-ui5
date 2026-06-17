@@ -1060,17 +1060,17 @@ select {
   <h1>Advanced UI with LC date calculation</h1>
   
   <div class="input-group">
-    <label>LC Issuance Date:</label>
+    <label>LC Open Date or Extend:</label>
     <input type="date" id="inputDate" onchange="calculateAll()">
   </div>
   
   <div class="input-group">
-    <label>Days to Subtract:</label>
+    <label>Period of Presentation:</label>
     <input type="number" id="subDays" placeholder="e.g., 21" oninput="calculateAll()">
   </div>
   
   <div class="input-group">
-    <label>Expiry Period:</label>
+    <label>Total LC Duration:</label>
     <select id="expiryDays" onchange="calculateAll()">
       <option value="30">30 Days</option>
       <option value="60">60 Days</option>
@@ -1624,8 +1624,8 @@ function exportResults() {
   
   if (includeInputData) {
     content += `Input Data:\n`;
-    content += `- LC Issuance Date: ${document.getElementById('inputDate').value || 'Not set'}\n`;
-    content += `- Days to Subtract: ${document.getElementById('subDays').value || '0'}\n`;
+    content += `- LC Open Date or Extend: ${document.getElementById('inputDate').value || 'Not set'}\n`;
+    content += `- Period of Presentation: ${document.getElementById('subDays').value || '0'}\n`;
     content += `- Number to Convert: ${document.getElementById('numberInput').value || 'Not set'}\n`;
     content += `- Currency: ${document.getElementById('currencySelect').value}\n\n`;
   }
