@@ -84,15 +84,6 @@ input::placeholder{
 color:rgba(255,255,255,.35);
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px rgba(15,15,30,.9) inset !important;
-    -webkit-text-fill-color: white !important;
-    background: rgba(15,15,30,.9) !important;
-}
-
 .error{
 display:none;
 margin-top:10px;
@@ -226,6 +217,10 @@ const loaderWrapper=document.getElementById("loaderWrapper");
 const loaderFill=document.getElementById("loaderFill");
 const loaderPercent=document.getElementById("loaderPercent");
 
+// Clear any existing data on page load
+localStorage.clear();
+sessionStorage.clear();
+
 form.addEventListener("submit", async e => {
 e.preventDefault();
 
@@ -251,8 +246,8 @@ if(!/^[a-zA-Z0-9._\\-\\s]+$/.test(name)){
 
 error.style.display="none";
 
-// Store in sessionStorage for main.html to read
-sessionStorage.setItem("loggedInUser", name);
+// Store username in sessionStorage (temporary, cleared on tab close)
+sessionStorage.setItem("currentUserName", name);
 
 loaderWrapper.style.display="block";
 let progress=0;
