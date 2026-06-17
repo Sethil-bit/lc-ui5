@@ -217,10 +217,6 @@ const loaderWrapper=document.getElementById("loaderWrapper");
 const loaderFill=document.getElementById("loaderFill");
 const loaderPercent=document.getElementById("loaderPercent");
 
-// Clear any existing data on page load
-localStorage.clear();
-sessionStorage.clear();
-
 form.addEventListener("submit", async e => {
 e.preventDefault();
 
@@ -246,8 +242,8 @@ if(!/^[a-zA-Z0-9._\\-\\s]+$/.test(name)){
 
 error.style.display="none";
 
-// Store username in sessionStorage (temporary, cleared on tab close)
-sessionStorage.setItem("currentUserName", name);
+// Save to localStorage
+localStorage.setItem("currentUserName", name);
 
 loaderWrapper.style.display="block";
 let progress=0;
