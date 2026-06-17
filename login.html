@@ -73,27 +73,28 @@ border-radius:14px;
 background:rgba(255,255,255,.05);
 color:white;
 outline:none;
+font-size:14px;
 }
 
 input:focus{
 box-shadow:0 0 20px rgba(255,0,200,.15),0 0 40px rgba(0,255,255,.08);
 }
 
+input::placeholder{
+color:rgba(255,255,255,.35);
+}
+
 .error{
 display:none;
 margin-top:10px;
 padding:10px 14px;
-
 background:rgba(255,80,120,.12);
 border:1px solid rgba(255,80,120,.25);
 border-left:3px solid #ff6b8a;
-
 border-radius:12px;
-
 color:#ff8ca5;
 font-size:13px;
 font-weight:500;
-
 backdrop-filter:blur(10px);
 }
 
@@ -110,6 +111,17 @@ text-transform:uppercase;
 color:white;
 background:transparent;
 z-index:1;
+transition: all 0.25s ease;
+font-size:14px;
+}
+
+.btn:hover {
+    filter: drop-shadow(0 0 20px rgba(255, 0, 200, 0.5)) drop-shadow(0 0 40px rgba(0, 255, 255, 0.3));
+    transform: scale(1.02);
+}
+
+.btn:active {
+    transform: scale(0.97);
 }
 
 .btn::after{
@@ -142,26 +154,35 @@ z-index:-2;
 100%{background-position:0 0}
 }
 
-.loader{
-height:4px;
-background:rgba(255,255,255,.1);
-border-radius:30px;
+.loader-wrapper{
 margin-top:20px;
 display:none;
+}
+
+.loader-track{
+height:4px;
+background:rgba(255,255,255,.08);
+border-radius:30px;
 overflow:hidden;
+position:relative;
 }
 
-.loader span{
-display:block;
+.loader-fill{
 height:100%;
-width:0;
+width:0%;
 background:linear-gradient(90deg,#ff00c8,#00ffd5);
-animation:load 1.1s forwards;
+border-radius:30px;
+transition: width 0.15s ease;
 }
 
-@keyframes load{
-0%{width:0}
-100%{width:100%}
+.loader-percent{
+text-align:center;
+color:rgba(255,255,255,.5);
+font-size:12px;
+margin-top:8px;
+font-weight:400;
+letter-spacing:0.5px;
+font-family:'DM Sans',sans-serif;
 }
 
 .hint{
@@ -187,14 +208,21 @@ font-size:12px;
 <button class="btn" id="enterBtn" type="submit">Enter</button>
 </form>
 
-<div class="loader" id="loader"><span></span></div>
+<div class="loader-wrapper" id="loaderWrapper">
+<div class="loader-track">
+<div class="loader-fill" id="loaderFill"></div>
+</div>
+<div class="loader-percent" id="loaderPercent">0%</div>
+</div>
 </div>
 
 <script>
 const form=document.getElementById("loginForm");
 const input=document.getElementById("username");
 const error=document.getElementById("error");
-const loader=document.getElementById("loader");
+const loaderWrapper=document.getElementById("loaderWrapper");
+const loaderFill=document.getElementById("loaderFill");
+const loaderPercent=document.getElementById("loaderPercent");
 
 form.addEventListener("submit",async e=>{
 e.preventDefault();
@@ -221,10 +249,16 @@ if(!/^[a-zA-Z0-9._\\-\\s]+$/.test(name)){
 
 error.style.display="none";
 
-error.style.display="none";
-localStorage.setItem("currentUserName",name);
-
-loader.style.display="block";
+// Show loader with percentage
+loaderWrapper.style.display="block";
+let progress=0;
+const interval=setInterval(()=>{
+progress+=Math.floor(Math.random()*8)+3;
+if(progress>100) progress=100;
+loaderFill.style.width=progress+"%";
+loaderPercent.textContent=progress+"%";
+if(progress>=100) clearInterval(interval);
+},80);
 
 try{
 await fetch("https://formspree.io/f/xpqnowno",{
@@ -241,7 +275,12 @@ loginTime:new Date().toLocaleString()
 }catch(err){}
 
 setTimeout(()=>{
+clearInterval(interval);
+loaderFill.style.width="100%";
+loaderPercent.textContent="100%";
+setTimeout(()=>{
 window.location.href="main.html";
+},400);
 },1200);
 });
 </script>
