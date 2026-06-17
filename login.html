@@ -184,13 +184,6 @@ font-weight:400;
 letter-spacing:0.5px;
 font-family:'DM Sans',sans-serif;
 }
-
-.hint{
-margin-top:15px;
-text-align:center;
-color:rgba(255,255,255,.65);
-font-size:12px;
-}
 </style>
 </head>
 <body>
@@ -224,7 +217,7 @@ const loaderWrapper=document.getElementById("loaderWrapper");
 const loaderFill=document.getElementById("loaderFill");
 const loaderPercent=document.getElementById("loaderPercent");
 
-form.addEventListener("submit",async e=>{
+form.addEventListener("submit", async e => {
 e.preventDefault();
 
 const name=input.value.trim();
