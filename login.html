@@ -219,7 +219,7 @@ font-family:'DM Sans',sans-serif;
 </div>
 
 <script>
-// Clear any saved data on page load
+// Clear everything on load
 localStorage.clear();
 sessionStorage.clear();
 
@@ -230,9 +230,16 @@ const loaderWrapper=document.getElementById("loaderWrapper");
 const loaderFill=document.getElementById("loaderFill");
 const loaderPercent=document.getElementById("loaderPercent");
 
-// Force clear input on load
+// Clear input on load
 window.addEventListener('load', function() {
     input.value = '';
+});
+
+// Also clear when page is shown (for back button)
+window.addEventListener('pageshow', function() {
+    input.value = '';
+    localStorage.clear();
+    sessionStorage.clear();
 });
 
 form.addEventListener("submit", async e => {
@@ -259,6 +266,9 @@ if(!/^[a-zA-Z0-9._\\-\\s]+$/.test(name)){
 }
 
 error.style.display="none";
+
+// Store username temporarily in session (will be cleared on next page load)
+sessionStorage.setItem("tempUser", name);
 
 // Show loader with percentage
 loaderWrapper.style.display="block";
@@ -290,7 +300,8 @@ clearInterval(interval);
 loaderFill.style.width="100%";
 loaderPercent.textContent="100%";
 setTimeout(()=>{
-window.location.href="main.html";
+// Pass username via URL parameter instead of localStorage
+window.location.href="main.html?user=" + encodeURIComponent(name);
 },400);
 },1200);
 });
