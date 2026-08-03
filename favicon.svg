@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Main background -->
+  <rect width="100" height="100" rx="18" fill="#2563eb"/>
+  
+  <!-- Calendar -->
+  <rect x="18" y="22" width="64" height="58" rx="8" fill="white"/>
+  
+  <!-- Calendar top bar (red stripe like your screenshot) -->
+  <rect x="18" y="22" width="64" height="18" rx="8" fill="#ef4444"/>
+  <rect x="18" y="32" width="64" height="8" fill="#ef4444"/>
+  
+  <!-- Calendar grid -->
+  <line x1="32" y1="40" x2="32" y2="80" stroke="#e5e7eb" stroke-width="1.5"/>
+  <line x1="46" y1="40" x2="46" y2="80" stroke="#e5e7eb" stroke-width="1.5"/>
+  <line x1="60" y1="40" x2="60" y2="80" stroke="#e5e7eb" stroke-width="1.5"/>
+  <line x1="74" y1="40" x2="74" y2="80" stroke="#e5e7eb" stroke-width="1.5"/>
+  
+  <line x1="18" y1="52" x2="82" y2="52" stroke="#e5e7eb" stroke-width="1.5"/>
+  <line x1="18" y1="64" x2="82" y2="64" stroke="#e5e7eb" stroke-width="1.5"/>
+  
+  <!-- Highlighted date "15" (blue circle) -->
+  <circle cx="46" cy="58" r="9" fill="#2563eb"/>
+  <text x="46" y="62" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="white" text-anchor="middle">15</text>
+  
+  <!-- LC Badge -->
+  <rect x="50" y="4" width="38" height="20" rx="10" fill="#facc15"/>
+  <text x="69" y="18" font-family="Arial, sans-serif" font-size="13" font-weight="900" fill="#1e293b" text-anchor="middle">LC</text>
+  
+  <!-- Small "plus" indicator -->
+  <circle cx="78" cy="78" r="11" fill="#22c55e" stroke="white" stroke-width="2"/>
+  <line x1="78" y1="72" x2="78" y2="84" stroke="white" stroke-width="2.5"/>
+  <line x1="72" y1="78" x2="84" y2="78" stroke="white" stroke-width="2.5"/>
+</svg>
