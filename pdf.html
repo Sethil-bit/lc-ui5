@@ -5,12 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PDF Power Tools — iLovePDF Style</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- PDF-lib for manipulation -->
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <!-- FileSaver for downloads -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <!-- PDF.js for rendering thumbnails -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
-    /* ── RESET & BASE ── */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
@@ -22,25 +24,20 @@
       padding: 20px;
       color: #fff;
     }
+    .app { max-width: 1200px; margin: 0 auto; }
 
-    /* ── APP CONTAINER ── */
-    .app {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    /* ── HEADER ── */
+    /* Header */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 0 30px;
+      padding: 16px 0 24px;
       flex-wrap: wrap;
       gap: 12px;
     }
     .header h1 {
       font-family: 'Syne', sans-serif;
-      font-size: 28px;
+      font-size: 26px;
       background: linear-gradient(135deg, #ff00c8, #00d4ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -49,99 +46,94 @@
       font-size: 14px;
       color: rgba(255,255,255,.5);
       background: rgba(255,255,255,.06);
-      padding: 8px 18px;
+      padding: 6px 18px;
       border-radius: 30px;
       border: 1px solid rgba(255,255,255,.06);
     }
     .header .user-badge span { color: #fff; font-weight: 600; }
 
-    /* ── TOOL GRID ── */
-    .tool-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 14px;
-      margin-bottom: 30px;
+    /* Tool navigation */
+    .tool-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      padding-bottom: 12px;
     }
-    .tool-card {
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 16px;
-      padding: 20px 12px;
-      text-align: center;
+    .tool-nav button {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,.5);
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 500;
+      font-size: 14px;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
     }
-    .tool-card:hover {
-      background: rgba(255,255,255,.08);
-      transform: translateY(-4px);
-      border-color: rgba(255,255,255,.15);
+    .tool-nav button:hover { color: #fff; background: rgba(255,255,255,.05); }
+    .tool-nav button.active {
+      background: rgba(255,0,200,.15);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255,0,200,.10);
     }
-    .tool-card.active {
-      background: rgba(255,0,200,.12);
-      border-color: #ff00c8;
-      box-shadow: 0 0 30px rgba(255,0,200,.10);
-    }
-    .tool-card .icon { font-size: 32px; display: block; margin-bottom: 6px; }
-    .tool-card .label { font-weight: 600; font-size: 13px; }
-    .tool-card .desc { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 3px; }
 
-    /* ── WORKSPACE ── */
+    /* Workspace */
     .workspace {
-      background: rgba(255,255,255,.03);
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,.06);
-      padding: 30px;
-      min-height: 400px;
       display: none;
+      background: rgba(255,255,255,.03);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.06);
+      padding: 24px;
     }
     .workspace.active { display: block; }
 
     .workspace h2 {
       font-size: 20px;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     .workspace .sub {
       color: rgba(255,255,255,.5);
       font-size: 14px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
-    /* ── DROP ZONE ── */
+    /* Drop zone – compact */
     .drop-zone {
-      border: 2px dashed rgba(255,255,255,.15);
-      border-radius: 16px;
-      padding: 50px 20px;
+      border: 2px dashed rgba(255,255,255,.12);
+      border-radius: 12px;
+      padding: 24px 16px;
       text-align: center;
       transition: all 0.3s ease;
       cursor: pointer;
       background: rgba(255,255,255,.02);
+      margin-bottom: 16px;
     }
-    .drop-zone:hover,
-    .drop-zone.dragover {
+    .drop-zone:hover, .drop-zone.dragover {
       border-color: #ff00c8;
       background: rgba(255,0,200,.05);
     }
-    .drop-zone .big-icon { font-size: 52px; display: block; margin-bottom: 12px; }
-    .drop-zone .title { font-size: 18px; font-weight: 600; }
-    .drop-zone .hint { font-size: 13px; color: rgba(255,255,255,.4); margin-top: 6px; }
-    .drop-zone input[type="file"] {
-      display: none;
-    }
+    .drop-zone .icon { font-size: 28px; display: block; margin-bottom: 6px; }
+    .drop-zone .title { font-size: 15px; font-weight: 500; }
+    .drop-zone .hint { font-size: 12px; color: rgba(255,255,255,.4); margin-top: 2px; }
+    .drop-zone input[type="file"] { display: none; }
 
-    /* ── FILE LIST ── */
+    /* File list */
     .file-list {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
-      margin: 20px 0;
+      gap: 10px;
+      margin: 12px 0 16px;
     }
     .file-chip {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       background: rgba(255,255,255,.06);
-      padding: 8px 14px 8px 12px;
+      padding: 6px 14px 6px 12px;
       border-radius: 30px;
       border: 1px solid rgba(255,255,255,.06);
       font-size: 13px;
@@ -155,37 +147,37 @@
     }
     .file-chip .remove:hover { color: #ff6b8a; }
 
-    /* ── THUMBNAIL GRID ── */
-    .thumbnail-grid {
+    /* Thumbnail grid */
+    .thumb-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 14px;
-      margin: 20px 0;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
     }
-    .thumbnail-item {
+    .thumb-item {
       background: rgba(255,255,255,.04);
-      border-radius: 12px;
+      border-radius: 10px;
       border: 2px solid transparent;
       overflow: hidden;
       transition: all 0.2s ease;
       position: relative;
       cursor: pointer;
     }
-    .thumbnail-item:hover { border-color: rgba(255,255,255,.15); }
-    .thumbnail-item.selected {
+    .thumb-item:hover { border-color: rgba(255,255,255,.15); }
+    .thumb-item.selected {
       border-color: #ff00c8;
       box-shadow: 0 0 20px rgba(255,0,200,.15);
     }
-    .thumbnail-item canvas {
+    .thumb-item canvas {
       width: 100%;
       height: auto;
       display: block;
       background: #1a1a2e;
     }
-    .thumbnail-item .page-num {
+    .thumb-item .page-num {
       position: absolute;
-      bottom: 6px;
-      right: 8px;
+      bottom: 4px;
+      right: 6px;
       background: rgba(0,0,0,.7);
       padding: 2px 10px;
       border-radius: 20px;
@@ -193,10 +185,10 @@
       font-weight: 500;
       backdrop-filter: blur(4px);
     }
-    .thumbnail-item .badge-delete {
+    .thumb-item .badge-del {
       position: absolute;
-      top: 6px;
-      right: 6px;
+      top: 4px;
+      right: 4px;
       background: #ff6b8a;
       color: #fff;
       border-radius: 50%;
@@ -210,19 +202,43 @@
       opacity: 0;
       transition: 0.2s;
     }
-    .thumbnail-item:hover .badge-delete { opacity: 1; }
+    .thumb-item:hover .badge-del { opacity: 1; }
 
-    /* ── ACTION BAR ── */
-    .action-bar {
+    /* Controls */
+    .controls {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 24px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255,255,255,.06);
+      align-items: center;
+      margin: 16px 0;
+      padding: 14px 16px;
+      background: rgba(255,255,255,.03);
+      border-radius: 12px;
     }
+    .controls label {
+      font-size: 13px;
+      color: rgba(255,255,255,.6);
+    }
+    .controls input[type="text"],
+    .controls input[type="number"],
+    .controls select {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      min-width: 120px;
+    }
+    .controls input:focus,
+    .controls select:focus { border-color: #ff00c8; }
+    .controls select option { background: #1a1a2e; }
+
+    /* Buttons */
     .btn {
-      padding: 12px 28px;
+      padding: 10px 24px;
       border: none;
       border-radius: 30px;
       font-weight: 600;
@@ -247,61 +263,21 @@
       color: #ff6b8a;
     }
     .btn-danger:hover { background: rgba(255,80,120,.25); }
-    .btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      transform: none !important;
-    }
 
-    /* ── TOOL‑SPECIFIC CONTROLS ── */
-    .tool-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      align-items: center;
-      margin: 16px 0;
-      padding: 16px;
-      background: rgba(255,255,255,.03);
-      border-radius: 12px;
-    }
-    .tool-controls label {
-      font-size: 13px;
-      color: rgba(255,255,255,.6);
-    }
-    .tool-controls input[type="text"],
-    .tool-controls input[type="number"],
-    .tool-controls select {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 8px;
-      padding: 8px 14px;
-      color: #fff;
-      font-size: 13px;
-      outline: none;
-      font-family: 'Inter', sans-serif;
-      min-width: 120px;
-    }
-    .tool-controls input:focus,
-    .tool-controls select:focus {
-      border-color: #ff00c8;
-    }
-    .tool-controls select option { background: #1a1a2e; }
-
-    /* ── OUTPUT LOG ── */
-    .output-log {
+    /* Log */
+    .log {
       margin-top: 16px;
-      padding: 14px 18px;
+      padding: 12px 16px;
       background: rgba(0,0,0,.3);
-      border-radius: 12px;
+      border-radius: 10px;
       font-size: 14px;
       color: rgba(255,255,255,.6);
-      min-height: 50px;
+      min-height: 44px;
       border-left: 3px solid transparent;
     }
-    .output-log.success { border-color: #4ade80; color: #86efac; }
-    .output-log.error { border-color: #f87171; color: #fca5a5; }
+    .log.success { border-color: #4ade80; color: #86efac; }
+    .log.error { border-color: #f87171; color: #fca5a5; }
 
-    /* ── BACK LINK ── */
     .back-link {
       display: inline-block;
       margin-top: 24px;
@@ -312,187 +288,151 @@
     }
     .back-link:hover { color: #fff; }
 
-    /* ── RESPONSIVE ── */
+    /* Responsive */
     @media (max-width: 640px) {
-      .header h1 { font-size: 22px; }
-      .workspace { padding: 18px; }
-      .drop-zone { padding: 30px 16px; }
-      .thumbnail-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
-      .tool-grid { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); }
-      .tool-card { padding: 14px 8px; }
-      .tool-card .icon { font-size: 26px; }
+      .header h1 { font-size: 20px; }
+      .workspace { padding: 16px; }
+      .thumb-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+      .controls { flex-direction: column; align-items: stretch; }
+      .controls input, .controls select { width: 100%; }
     }
   </style>
 </head>
 <body>
-
 <div class="app">
-
-  <!-- HEADER -->
+  <!-- Header -->
   <header class="header">
     <h1>📄 PDF Power Tools</h1>
     <div class="user-badge">👋 <span id="userNameDisplay">User</span></div>
   </header>
 
-  <!-- TOOL GRID -->
-  <div class="tool-grid" id="toolGrid">
-    <div class="tool-card active" data-tool="merge">
-      <span class="icon">📚</span>
-      <div class="label">Merge</div>
-      <div class="desc">Combine PDFs</div>
-    </div>
-    <div class="tool-card" data-tool="split">
-      <span class="icon">✂️</span>
-      <div class="label">Split</div>
-      <div class="desc">Extract pages</div>
-    </div>
-    <div class="tool-card" data-tool="image2pdf">
-      <span class="icon">🖼️</span>
-      <div class="label">Images → PDF</div>
-      <div class="desc">JPG / PNG to PDF</div>
-    </div>
-    <div class="tool-card" data-tool="reorder">
-      <span class="icon">🔄</span>
-      <div class="label">Reorder</div>
-      <div class="desc">Change page order</div>
-    </div>
-    <div class="tool-card" data-tool="addpages">
-      <span class="icon">➕</span>
-      <div class="label">Add Pages</div>
-      <div class="desc">Insert PDF pages</div>
-    </div>
-    <div class="tool-card" data-tool="rotate">
-      <span class="icon">↻</span>
-      <div class="label">Rotate</div>
-      <div class="desc">Rotate pages</div>
-    </div>
-    <div class="tool-card" data-tool="delete">
-      <span class="icon">🗑️</span>
-      <div class="label">Delete Pages</div>
-      <div class="desc">Remove pages</div>
-    </div>
-  </div>
+  <!-- Tool Navigation -->
+  <nav class="tool-nav" id="toolNav">
+    <button class="active" data-tool="merge">Merge</button>
+    <button data-tool="split">Split</button>
+    <button data-tool="image2pdf">Images → PDF</button>
+    <button data-tool="reorder">Reorder</button>
+    <button data-tool="addpages">Add Pages</button>
+    <button data-tool="rotate">Rotate</button>
+    <button data-tool="delete">Delete</button>
+  </nav>
 
-  <!-- ===== WORKSPACE: MERGE ===== -->
+  <!-- ===== MERGE ===== -->
   <div class="workspace active" id="ws-merge">
     <h2>📚 Merge PDFs</h2>
-    <p class="sub">Combine multiple PDFs into one document. Drag & drop to reorder.</p>
+    <p class="sub">Combine multiple PDFs into one. Drag & drop to reorder.</p>
     <div class="drop-zone" id="drop-merge">
-      <span class="big-icon">📤</span>
+      <span class="icon">📤</span>
       <div class="title">Drop PDFs here</div>
       <div class="hint">or click to browse</div>
       <input type="file" id="file-merge" accept=".pdf" multiple />
     </div>
     <div class="file-list" id="fileList-merge"></div>
-    <div class="thumbnail-grid" id="thumbGrid-merge"></div>
-    <div class="action-bar">
+    <div class="thumb-grid" id="thumbGrid-merge"></div>
+    <div class="controls">
       <button class="btn btn-primary" id="action-merge">Merge & Download</button>
       <button class="btn btn-secondary" id="clear-merge">Clear All</button>
     </div>
-    <div class="output-log" id="log-merge">Select two or more PDFs to merge.</div>
+    <div class="log" id="log-merge">Select two or more PDFs to merge.</div>
   </div>
 
-  <!-- ===== WORKSPACE: SPLIT ===== -->
+  <!-- ===== SPLIT ===== -->
   <div class="workspace" id="ws-split">
     <h2>✂️ Split / Extract Pages</h2>
-    <p class="sub">Extract specific pages or split into separate files.</p>
+    <p class="sub">Extract specific pages from a PDF.</p>
     <div class="drop-zone" id="drop-split">
-      <span class="big-icon">📤</span>
+      <span class="icon">📤</span>
       <div class="title">Drop a PDF here</div>
       <div class="hint">or click to browse</div>
       <input type="file" id="file-split" accept=".pdf" />
     </div>
-    <div class="thumbnail-grid" id="thumbGrid-split"></div>
-    <div class="tool-controls">
+    <div class="thumb-grid" id="thumbGrid-split"></div>
+    <div class="controls">
       <label>Pages to extract</label>
       <input type="text" id="splitRange" placeholder="e.g. 1,3,5-7" />
       <button class="btn btn-primary" id="action-split">Extract & Download</button>
     </div>
-    <div class="output-log" id="log-split">Upload a PDF to extract pages.</div>
+    <div class="log" id="log-split">Upload a PDF to extract pages.</div>
   </div>
 
-  <!-- ===== WORKSPACE: IMAGES → PDF ===== -->
+  <!-- ===== IMAGES → PDF ===== -->
   <div class="workspace" id="ws-image2pdf">
     <h2>🖼️ Images → PDF</h2>
-    <p class="sub">Convert one or more images into a single PDF.</p>
+    <p class="sub">Convert images into a single PDF.</p>
     <div class="drop-zone" id="drop-image2pdf">
-      <span class="big-icon">📤</span>
+      <span class="icon">📤</span>
       <div class="title">Drop images here</div>
       <div class="hint">or click to browse</div>
       <input type="file" id="file-image2pdf" accept="image/*" multiple />
     </div>
     <div class="file-list" id="fileList-image2pdf"></div>
-    <div class="tool-controls">
+    <div class="controls">
       <label>Page size</label>
       <select id="pageSize">
         <option value="A4">A4</option>
         <option value="Letter">Letter</option>
         <option value="Fit">Fit to image</option>
       </select>
-    </div>
-    <div class="action-bar">
       <button class="btn btn-primary" id="action-image2pdf">Convert & Download</button>
-      <button class="btn btn-secondary" id="clear-image2pdf">Clear All</button>
+      <button class="btn btn-secondary" id="clear-image2pdf">Clear</button>
     </div>
-    <div class="output-log" id="log-image2pdf">Select one or more images.</div>
+    <div class="log" id="log-image2pdf">Select one or more images.</div>
   </div>
 
-  <!-- ===== WORKSPACE: REORDER ===== -->
+  <!-- ===== REORDER ===== -->
   <div class="workspace" id="ws-reorder">
     <h2>🔄 Reorder Pages</h2>
-    <p class="sub">Drag thumbnails to reorder, or enter the new page order.</p>
+    <p class="sub">Drag thumbnails to reorder, or enter the new order.</p>
     <div class="drop-zone" id="drop-reorder">
-      <span class="big-icon">📤</span>
+      <span class="icon">📤</span>
       <div class="title">Drop a PDF here</div>
       <div class="hint">or click to browse</div>
       <input type="file" id="file-reorder" accept=".pdf" />
     </div>
-    <div class="thumbnail-grid" id="thumbGrid-reorder"></div>
-    <div class="tool-controls">
+    <div class="thumb-grid" id="thumbGrid-reorder"></div>
+    <div class="controls">
       <label>New order (comma‑separated)</label>
       <input type="text" id="reorderOrder" placeholder="e.g. 3,1,2,4" />
       <button class="btn btn-primary" id="action-reorder">Reorder & Download</button>
     </div>
-    <div class="output-log" id="log-reorder">Upload a PDF and specify the new page order.</div>
+    <div class="log" id="log-reorder">Upload a PDF and specify the new page order.</div>
   </div>
 
-  <!-- ===== WORKSPACE: ADD PAGES ===== -->
+  <!-- ===== ADD PAGES ===== -->
   <div class="workspace" id="ws-addpages">
     <h2>➕ Add Pages</h2>
     <p class="sub">Insert all pages from one PDF into another at a specific position.</p>
-    <div class="drop-zone" id="drop-addpages-base">
-      <span class="big-icon">📄</span>
-      <div class="title">Drop Base PDF</div>
-      <div class="hint">or click to browse</div>
+    <div class="drop-zone" id="drop-addpages-base" style="margin-bottom:8px;">
+      <span class="icon">📄</span>
+      <div class="title">Base PDF</div>
       <input type="file" id="file-addpages-base" accept=".pdf" />
     </div>
-    <div class="drop-zone" id="drop-addpages-insert" style="margin-top:12px;">
-      <span class="big-icon">📄</span>
-      <div class="title">Drop PDF to Insert</div>
-      <div class="hint">or click to browse</div>
+    <div class="drop-zone" id="drop-addpages-insert" style="margin-bottom:16px;">
+      <span class="icon">📄</span>
+      <div class="title">PDF to Insert</div>
       <input type="file" id="file-addpages-insert" accept=".pdf" />
     </div>
-    <div class="thumbnail-grid" id="thumbGrid-addpages"></div>
-    <div class="tool-controls">
+    <div class="thumb-grid" id="thumbGrid-addpages"></div>
+    <div class="controls">
       <label>Insert at page</label>
       <input type="number" id="insertAt" value="1" min="1" />
       <button class="btn btn-primary" id="action-addpages">Insert & Download</button>
     </div>
-    <div class="output-log" id="log-addpages">Upload a base PDF and a PDF to insert.</div>
+    <div class="log" id="log-addpages">Upload a base PDF and a PDF to insert.</div>
   </div>
 
-  <!-- ===== WORKSPACE: ROTATE ===== -->
+  <!-- ===== ROTATE ===== -->
   <div class="workspace" id="ws-rotate">
     <h2>↻ Rotate Pages</h2>
     <p class="sub">Rotate specific pages by 90°, 180°, or 270°.</p>
     <div class="drop-zone" id="drop-rotate">
-      <span class="big-icon">📤</span>
+      <span class="icon">📤</span>
       <div class="title">Drop a PDF here</div>
       <div class="hint">or click to browse</div>
       <input type="file" id="file-rotate" accept=".pdf" />
     </div>
-    <div class="thumbnail-grid" id="thumbGrid-rotate"></div>
-    <div class="tool-controls">
+    <div class="thumb-grid" id="thumbGrid-rotate"></div>
+    <div class="controls">
       <label>Pages</label>
       <input type="text" id="rotatePages" placeholder="all or 1,3-5" />
       <label>Angle</label>
@@ -503,26 +443,26 @@
       </select>
       <button class="btn btn-primary" id="action-rotate">Rotate & Download</button>
     </div>
-    <div class="output-log" id="log-rotate">Upload a PDF and choose pages to rotate.</div>
+    <div class="log" id="log-rotate">Upload a PDF and choose pages to rotate.</div>
   </div>
 
-  <!-- ===== WORKSPACE: DELETE ===== -->
+  <!-- ===== DELETE ===== -->
   <div class="workspace" id="ws-delete">
     <h2>🗑️ Delete Pages</h2>
-    <p class="sub">Remove specific pages from your PDF. Click thumbnails to toggle deletion.</p>
+    <p class="sub">Click on pages to remove from document.</p>
     <div class="drop-zone" id="drop-delete">
-      <span class="big-icon">📤</span>
+      <span class="icon">📤</span>
       <div class="title">Drop a PDF here</div>
       <div class="hint">or click to browse</div>
       <input type="file" id="file-delete" accept=".pdf" />
     </div>
-    <div class="thumbnail-grid" id="thumbGrid-delete"></div>
-    <div class="tool-controls">
-      <label>Pages to delete</label>
+    <div class="thumb-grid" id="thumbGrid-delete"></div>
+    <div class="controls">
+      <label>Pages to remove</label>
       <input type="text" id="deletePages" placeholder="e.g. 1,3,5-7" />
-      <button class="btn btn-danger" id="action-delete">Delete & Download</button>
+      <button class="btn btn-danger" id="action-delete">Remove pages</button>
     </div>
-    <div class="output-log" id="log-delete">Upload a PDF and select pages to delete.</div>
+    <div class="log" id="log-delete">Upload a PDF and select pages to delete.</div>
   </div>
 
   <a href="login.html" class="back-link">← Back to Login</a>
@@ -530,12 +470,11 @@
 
 <script>
   (function() {
-    // ── User greeting ──
-    const userName = localStorage.getItem('currentUserName') || 'User';
-    document.getElementById('userNameDisplay').textContent = userName;
+    // ── User name ──
+    document.getElementById('userNameDisplay').textContent = localStorage.getItem('currentUserName') || 'User';
 
     // ── Tool navigation ──
-    const toolCards = document.querySelectorAll('.tool-card');
+    const navBtns = document.querySelectorAll('#toolNav button');
     const workspaces = {
       merge: document.getElementById('ws-merge'),
       split: document.getElementById('ws-split'),
@@ -545,10 +484,9 @@
       rotate: document.getElementById('ws-rotate'),
       delete: document.getElementById('ws-delete')
     };
-
-    toolCards.forEach(card => {
-      card.addEventListener('click', function() {
-        toolCards.forEach(c => c.classList.remove('active'));
+    navBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        navBtns.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         Object.values(workspaces).forEach(w => w.classList.remove('active'));
         const tool = this.dataset.tool;
@@ -592,19 +530,34 @@
       return PDFLib.PDFDocument.load(buffer);
     }
 
-    // ── Render thumbnails ──
-    async function renderThumbnails(containerId, pdfDoc, options = {}) {
+    // ── Thumbnail rendering using PDF.js ──
+    async function renderThumbnails(containerId, pdfData, options = {}) {
       const container = document.getElementById(containerId);
       if (!container) return;
       container.innerHTML = '';
-      if (!pdfDoc) return;
+      if (!pdfData) return;
 
-      const total = pdfDoc.getPageCount();
+      // If pdfData is a PDFDocument from pdf-lib, we need to convert to ArrayBuffer
+      let arrayBuffer;
+      if (pdfData instanceof PDFLib.PDFDocument) {
+        arrayBuffer = await pdfData.save();
+      } else if (pdfData instanceof ArrayBuffer || pdfData instanceof Uint8Array) {
+        arrayBuffer = pdfData;
+      } else {
+        // Assume it's a file; load it
+        arrayBuffer = await readFileAsBuffer(pdfData);
+      }
+
+      // Use PDF.js to render
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      const pdf = await loadingTask.promise;
+      const total = pdf.numPages;
+
       const { selected = [], onSelect = null, showDelete = false } = options;
 
-      for (let i = 0; i < total; i++) {
-        const page = pdfDoc.getPage(i);
-        const viewport = page.getViewport({ scale: 0.3 });
+      for (let i = 1; i <= total; i++) {
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 0.4 });
         const canvas = document.createElement('canvas');
         canvas.width = viewport.width;
         canvas.height = viewport.height;
@@ -613,41 +566,43 @@
         await page.render(renderContext).promise;
 
         const item = document.createElement('div');
-        item.className = 'thumbnail-item';
-        if (selected.includes(i + 1)) item.classList.add('selected');
+        item.className = 'thumb-item';
+        if (selected.includes(i)) item.classList.add('selected');
         item.appendChild(canvas);
 
         const num = document.createElement('span');
         num.className = 'page-num';
-        num.textContent = `#${i + 1}`;
+        num.textContent = `#${i}`;
         item.appendChild(num);
 
         if (showDelete) {
           const del = document.createElement('span');
-          del.className = 'badge-delete';
+          del.className = 'badge-del';
           del.textContent = '×';
           del.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (onSelect) onSelect(i + 1);
+            if (onSelect) onSelect(i);
           });
           item.appendChild(del);
         }
 
         if (onSelect) {
-          item.addEventListener('click', () => onSelect(i + 1));
+          item.addEventListener('click', () => onSelect(i));
         }
 
         container.appendChild(item);
       }
     }
 
-    // ── File drop handlers ──
+    // ── Drop zone setup ──
     function setupDropZone(dropId, fileInputId, onFiles, multiple = true) {
       const drop = document.getElementById(dropId);
       const input = document.getElementById(fileInputId);
       if (!drop || !input) return;
 
-      drop.addEventListener('click', () => input.click());
+      drop.addEventListener('click', (e) => {
+        if (e.target === drop || e.target.closest('.drop-zone')) input.click();
+      });
 
       drop.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -688,7 +643,7 @@
       });
     }
 
-    // ── STATE per tool ──
+    // ── STATE ──
     const state = {};
 
     // ── MERGE ──
@@ -696,22 +651,21 @@
       let files = [];
       let pdfDocs = [];
 
-      function updateUI() {
+      async function updateUI() {
         renderFileList('fileList-merge', files, (idx) => {
           files.splice(idx, 1);
           pdfDocs.splice(idx, 1);
           updateUI();
         });
-        // Show thumbnails for first file only (preview)
         if (pdfDocs.length > 0) {
-          renderThumbnails('thumbGrid-merge', pdfDocs[0]);
+          // Show thumbnails of first file
+          await renderThumbnails('thumbGrid-merge', pdfDocs[0]);
         } else {
           document.getElementById('thumbGrid-merge').innerHTML = '';
         }
-        document.getElementById('log-merge').textContent = files.length >= 2
-          ? `✅ ${files.length} PDFs ready to merge.`
-          : 'Select two or more PDFs to merge.';
-        document.getElementById('log-merge').className = 'output-log';
+        const log = document.getElementById('log-merge');
+        log.textContent = files.length >= 2 ? `✅ ${files.length} PDFs ready.` : 'Select two or more PDFs.';
+        log.className = 'log';
       }
 
       setupDropZone('drop-merge', 'file-merge', async (fileList) => {
@@ -723,7 +677,7 @@
             pdfDocs.push(doc);
           }
         }
-        updateUI();
+        await updateUI();
       }, true);
 
       document.getElementById('clear-merge').addEventListener('click', () => {
@@ -737,12 +691,12 @@
         const log = document.getElementById('log-merge');
         if (files.length < 2) {
           log.textContent = '❌ Please select at least two PDFs.';
-          log.className = 'output-log error';
+          log.className = 'log error';
           return;
         }
         try {
           log.textContent = '⏳ Merging...';
-          log.className = 'output-log';
+          log.className = 'log';
           const { PDFDocument } = PDFLib;
           const merged = await PDFDocument.create();
           for (let doc of pdfDocs) {
@@ -753,10 +707,10 @@
           const bytes = await merged.save();
           downloadPDF(bytes, 'merged.pdf');
           log.textContent = '✅ Merge successful! Download started.';
-          log.className = 'output-log success';
+          log.className = 'log success';
         } catch (err) {
           log.textContent = '❌ Error: ' + err.message;
-          log.className = 'output-log error';
+          log.className = 'log error';
         }
       });
     })();
@@ -764,22 +718,24 @@
     // ── SPLIT ──
     (function initSplit() {
       let pdfDoc = null;
+      let file = null;
 
       async function updateUI() {
-        if (pdfDoc) {
-          await renderThumbnails('thumbGrid-split', pdfDoc);
-          document.getElementById('log-split').textContent = `✅ ${pdfDoc.getPageCount()} pages loaded. Enter range to extract.`;
-          document.getElementById('log-split').className = 'output-log';
+        if (pdfDoc && file) {
+          await renderThumbnails('thumbGrid-split', file);
+          document.getElementById('log-split').textContent = `✅ ${pdfDoc.getPageCount()} pages loaded.`;
+          document.getElementById('log-split').className = 'log';
         } else {
           document.getElementById('thumbGrid-split').innerHTML = '';
-          document.getElementById('log-split').textContent = 'Upload a PDF to extract pages.';
-          document.getElementById('log-split').className = 'output-log';
+          document.getElementById('log-split').textContent = 'Upload a PDF.';
+          document.getElementById('log-split').className = 'log';
         }
       }
 
       setupDropZone('drop-split', 'file-split', async (fileList) => {
         if (fileList.length > 0 && fileList[0].type === 'application/pdf') {
-          pdfDoc = await loadPdfFromFile(fileList[0]);
+          file = fileList[0];
+          pdfDoc = await loadPdfFromFile(file);
           await updateUI();
         }
       }, false);
@@ -788,13 +744,13 @@
         const log = document.getElementById('log-split');
         if (!pdfDoc) {
           log.textContent = '❌ Please upload a PDF first.';
-          log.className = 'output-log error';
+          log.className = 'log error';
           return;
         }
         const range = document.getElementById('splitRange').value.trim();
         if (!range) {
-          log.textContent = '⚠️ Please enter a page range like "2-5".';
-          log.className = 'output-log error';
+          log.textContent = '⚠️ Please enter a page range.';
+          log.className = 'log error';
           return;
         }
         try {
@@ -806,11 +762,11 @@
           copied.forEach(p => newPdf.addPage(p));
           const bytes = await newPdf.save();
           downloadPDF(bytes, 'extracted.pdf');
-          log.textContent = `✅ Extracted pages ${pages.join(', ')}. Download started.`;
-          log.className = 'output-log success';
+          log.textContent = `✅ Extracted pages ${pages.join(', ')}.`;
+          log.className = 'log success';
         } catch (err) {
           log.textContent = '❌ Error: ' + err.message;
-          log.className = 'output-log error';
+          log.className = 'log error';
         }
       });
     })();
@@ -824,10 +780,8 @@
           files.splice(idx, 1);
           updateUI();
         });
-        document.getElementById('log-image2pdf').textContent = files.length
-          ? `✅ ${files.length} image(s) ready.`
-          : 'Select one or more images.';
-        document.getElementById('log-image2pdf').className = 'output-log';
+        document.getElementById('log-image2pdf').textContent = files.length ? `✅ ${files.length} images.` : 'Select images.';
+        document.getElementById('log-image2pdf').className = 'log';
       }
 
       setupDropZone('drop-image2pdf', 'file-image2pdf', (fileList) => {
@@ -844,13 +798,13 @@
       document.getElementById('action-image2pdf').addEventListener('click', async () => {
         const log = document.getElementById('log-image2pdf');
         if (!files.length) {
-          log.textContent = '❌ Please select at least one image.';
-          log.className = 'output-log error';
+          log.textContent = '❌ Please select images.';
+          log.className = 'log error';
           return;
         }
         try {
           log.textContent = '⏳ Converting...';
-          log.className = 'output-log';
+          log.className = 'log';
           const { PDFDocument } = PDFLib;
           const pdfDoc = await PDFDocument.create();
           const pageSize = document.getElementById('pageSize').value;
@@ -885,11 +839,11 @@
           }
           const bytes = await pdfDoc.save();
           downloadPDF(bytes, 'images.pdf');
-          log.textContent = `✅ Converted ${files.length} image(s). Download started.`;
-          log.className = 'output-log success';
+          log.textContent = `✅ Converted ${files.length} images.`;
+          log.className = 'log success';
         } catch (err) {
           log.textContent = '❌ Error: ' + err.message;
-          log.className = 'output-log error';
+          log.className = 'log error';
         }
       });
     })();
@@ -897,22 +851,24 @@
     // ── REORDER ──
     (function initReorder() {
       let pdfDoc = null;
+      let file = null;
 
       async function updateUI() {
-        if (pdfDoc) {
-          await renderThumbnails('thumbGrid-reorder', pdfDoc);
-          document.getElementById('log-reorder').textContent = `✅ ${pdfDoc.getPageCount()} pages loaded. Enter new order.`;
-          document.getElementById('log-reorder').className = 'output-log';
+        if (pdfDoc && file) {
+          await renderThumbnails('thumbGrid-reorder', file);
+          document.getElementById('log-reorder').textContent = `✅ ${pdfDoc.getPageCount()} pages.`;
+          document.getElementById('log-reorder').className = 'log';
         } else {
           document.getElementById('thumbGrid-reorder').innerHTML = '';
-          document.getElementById('log-reorder').textContent = 'Upload a PDF to reorder.';
-          document.getElementById('log-reorder').className = 'output-log';
+          document.getElementById('log-reorder').textContent = 'Upload a PDF.';
+          document.getElementById('log-reorder').className = 'log';
         }
       }
 
       setupDropZone('drop-reorder', 'file-reorder', async (fileList) => {
         if (fileList.length > 0 && fileList[0].type === 'application/pdf') {
-          pdfDoc = await loadPdfFromFile(fileList[0]);
+          file = fileList[0];
+          pdfDoc = await loadPdfFromFile(file);
           await updateUI();
         }
       }, false);
@@ -920,14 +876,14 @@
       document.getElementById('action-reorder').addEventListener('click', async () => {
         const log = document.getElementById('log-reorder');
         if (!pdfDoc) {
-          log.textContent = '❌ Please upload a PDF first.';
-          log.className = 'output-log error';
+          log.textContent = '❌ Upload a PDF first.';
+          log.className = 'log error';
           return;
         }
         const orderStr = document.getElementById('reorderOrder').value.trim();
         if (!orderStr) {
-          log.textContent = '⚠️ Please enter the new order, e.g. "3,1,2,4".';
-          log.className = 'output-log error';
+          log.textContent = '⚠️ Please enter the new order.';
+          log.className = 'log error';
           return;
         }
         try {
@@ -939,43 +895,45 @@
           copied.forEach(p => newPdf.addPage(p));
           const bytes = await newPdf.save();
           downloadPDF(bytes, 'reordered.pdf');
-          log.textContent = `✅ Reordered to [${order.join(', ')}]. Download started.`;
-          log.className = 'output-log success';
+          log.textContent = `✅ Reordered to [${order.join(', ')}].`;
+          log.className = 'log success';
         } catch (err) {
           log.textContent = '❌ Error: ' + err.message;
-          log.className = 'output-log error';
+          log.className = 'log error';
         }
       });
     })();
 
     // ── ADD PAGES ──
     (function initAddPages() {
-      let baseDoc = null;
-      let insertDoc = null;
+      let baseDoc = null, insertDoc = null;
+      let baseFile = null, insertFile = null;
 
       async function updateUI() {
         const grid = document.getElementById('thumbGrid-addpages');
-        if (baseDoc) {
-          await renderThumbnails('thumbGrid-addpages', baseDoc);
-          document.getElementById('log-addpages').textContent = `✅ Base: ${baseDoc.getPageCount()} pages. Insert PDF loaded.`;
-          document.getElementById('log-addpages').className = 'output-log';
+        if (baseDoc && baseFile) {
+          await renderThumbnails('thumbGrid-addpages', baseFile);
+          document.getElementById('log-addpages').textContent = `✅ Base: ${baseDoc.getPageCount()} pages. Insert loaded.`;
+          document.getElementById('log-addpages').className = 'log';
         } else {
           grid.innerHTML = '';
-          document.getElementById('log-addpages').textContent = 'Upload a base PDF and a PDF to insert.';
-          document.getElementById('log-addpages').className = 'output-log';
+          document.getElementById('log-addpages').textContent = 'Upload base and insert PDFs.';
+          document.getElementById('log-addpages').className = 'log';
         }
       }
 
       setupDropZone('drop-addpages-base', 'file-addpages-base', async (fileList) => {
         if (fileList.length > 0 && fileList[0].type === 'application/pdf') {
-          baseDoc = await loadPdfFromFile(fileList[0]);
+          baseFile = fileList[0];
+          baseDoc = await loadPdfFromFile(baseFile);
           await updateUI();
         }
       }, false);
 
       setupDropZone('drop-addpages-insert', 'file-addpages-insert', async (fileList) => {
         if (fileList.length > 0 && fileList[0].type === 'application/pdf') {
-          insertDoc = await loadPdfFromFile(fileList[0]);
+          insertFile = fileList[0];
+          insertDoc = await loadPdfFromFile(insertFile);
           await updateUI();
         }
       }, false);
@@ -983,8 +941,8 @@
       document.getElementById('action-addpages').addEventListener('click', async () => {
         const log = document.getElementById('log-addpages');
         if (!baseDoc || !insertDoc) {
-          log.textContent = '❌ Please upload both a base PDF and a PDF to insert.';
-          log.className = 'output-log error';
+          log.textContent = '❌ Please upload both PDFs.';
+          log.className = 'log error';
           return;
         }
         try {
@@ -997,35 +955,36 @@
           for (let i = 0; i < copied.length; i++) baseDoc.insertPage(insertIdx + i, copied[i]);
           const bytes = await baseDoc.save();
           downloadPDF(bytes, 'added.pdf');
-          log.textContent = `✅ Inserted ${copied.length} page(s) at position ${at}. Download started.`;
-          log.className = 'output-log success';
+          log.textContent = `✅ Inserted ${copied.length} page(s) at position ${at}.`;
+          log.className = 'log success';
           await updateUI();
         } catch (err) {
           log.textContent = '❌ Error: ' + err.message;
-          log.className = 'output-log error';
+          log.className = 'log error';
         }
       });
     })();
 
     // ── ROTATE ──
     (function initRotate() {
-      let pdfDoc = null;
+      let pdfDoc = null, file = null;
 
       async function updateUI() {
-        if (pdfDoc) {
-          await renderThumbnails('thumbGrid-rotate', pdfDoc);
-          document.getElementById('log-rotate').textContent = `✅ ${pdfDoc.getPageCount()} pages loaded. Select pages to rotate.`;
-          document.getElementById('log-rotate').className = 'output-log';
+        if (pdfDoc && file) {
+          await renderThumbnails('thumbGrid-rotate', file);
+          document.getElementById('log-rotate').textContent = `✅ ${pdfDoc.getPageCount()} pages.`;
+          document.getElementById('log-rotate').className = 'log';
         } else {
           document.getElementById('thumbGrid-rotate').innerHTML = '';
-          document.getElementById('log-rotate').textContent = 'Upload a PDF to rotate pages.';
-          document.getElementById('log-rotate').className = 'output-log';
+          document.getElementById('log-rotate').textContent = 'Upload a PDF.';
+          document.getElementById('log-rotate').className = 'log';
         }
       }
 
       setupDropZone('drop-rotate', 'file-rotate', async (fileList) => {
         if (fileList.length > 0 && fileList[0].type === 'application/pdf') {
-          pdfDoc = await loadPdfFromFile(fileList[0]);
+          file = fileList[0];
+          pdfDoc = await loadPdfFromFile(file);
           await updateUI();
         }
       }, false);
@@ -1033,8 +992,8 @@
       document.getElementById('action-rotate').addEventListener('click', async () => {
         const log = document.getElementById('log-rotate');
         if (!pdfDoc) {
-          log.textContent = '❌ Please upload a PDF first.';
-          log.className = 'output-log error';
+          log.textContent = '❌ Upload a PDF first.';
+          log.className = 'log error';
           return;
         }
         const pagesStr = document.getElementById('rotatePages').value.trim().toLowerCase();
@@ -1047,31 +1006,31 @@
           } else {
             pages = parsePageRanges(pagesStr, total);
           }
-          if (pages.length === 0) throw new Error('No valid pages specified.');
+          if (pages.length === 0) throw new Error('No valid pages.');
           const { degrees } = PDFLib;
           for (let p of pages) {
             pdfDoc.getPage(p - 1).setRotation(degrees(angle));
           }
           const bytes = await pdfDoc.save();
           downloadPDF(bytes, 'rotated.pdf');
-          log.textContent = `✅ Rotated pages ${pages.join(', ')} by ${angle}°. Download started.`;
-          log.className = 'output-log success';
+          log.textContent = `✅ Rotated pages ${pages.join(', ')} by ${angle}°.`;
+          log.className = 'log success';
           await updateUI();
         } catch (err) {
           log.textContent = '❌ Error: ' + err.message;
-          log.className = 'output-log error';
+          log.className = 'log error';
         }
       });
     })();
 
     // ── DELETE ──
     (function initDelete() {
-      let pdfDoc = null;
+      let pdfDoc = null, file = null;
       let selectedPages = [];
 
       async function updateUI() {
-        if (pdfDoc) {
-          await renderThumbnails('thumbGrid-delete', pdfDoc, {
+        if (pdfDoc && file) {
+          await renderThumbnails('thumbGrid-delete', file, {
             selected: selectedPages,
             showDelete: true,
             onSelect: (pageNum) => {
@@ -1082,19 +1041,20 @@
             }
           });
           document.getElementById('log-delete').textContent = selectedPages.length
-            ? `🗑️ ${selectedPages.length} page(s) selected for deletion.`
-            : 'Click thumbnails to mark pages for deletion.';
-          document.getElementById('log-delete').className = 'output-log';
+            ? `🗑️ ${selectedPages.length} page(s) selected.`
+            : 'Click thumbnails to mark pages.';
+          document.getElementById('log-delete').className = 'log';
         } else {
           document.getElementById('thumbGrid-delete').innerHTML = '';
-          document.getElementById('log-delete').textContent = 'Upload a PDF and select pages to delete.';
-          document.getElementById('log-delete').className = 'output-log';
+          document.getElementById('log-delete').textContent = 'Upload a PDF.';
+          document.getElementById('log-delete').className = 'log';
         }
       }
 
       setupDropZone('drop-delete', 'file-delete', async (fileList) => {
         if (fileList.length > 0 && fileList[0].type === 'application/pdf') {
-          pdfDoc = await loadPdfFromFile(fileList[0]);
+          file = fileList[0];
+          pdfDoc = await loadPdfFromFile(file);
           selectedPages = [];
           await updateUI();
         }
@@ -1103,11 +1063,11 @@
       document.getElementById('action-delete').addEventListener('click', async () => {
         const log = document.getElementById('log-delete');
         if (!pdfDoc) {
-          log.textContent = '❌ Please upload a PDF first.';
-          log.className = 'output-log error';
+          log.textContent = '❌ Upload a PDF first.';
+          log.className = 'log error';
           return;
         }
-        // Also check text input
+        // Also parse text input
         const textPages = document.getElementById('deletePages').value.trim();
         if (textPages) {
           const total = pdfDoc.getPageCount();
@@ -1117,8 +1077,8 @@
           }
         }
         if (selectedPages.length === 0) {
-          log.textContent = '⚠️ No pages selected for deletion.';
-          log.className = 'output-log error';
+          log.textContent = '⚠️ No pages selected.';
+          log.className = 'log error';
           return;
         }
         try {
@@ -1126,13 +1086,22 @@
           for (let p of sorted) pdfDoc.removePage(p - 1);
           const bytes = await pdfDoc.save();
           downloadPDF(bytes, 'deleted.pdf');
-          log.textContent = `✅ Deleted pages ${selectedPages.join(', ')}. Download started.`;
-          log.className = 'output-log success';
+          log.textContent = `✅ Deleted pages ${selectedPages.join(', ')}.`;
+          log.className = 'log success';
           selectedPages = [];
-          await updateUI();
+          // Reload the document from original file? Actually we need to reload the file to keep original for further edits, but we just saved the modified version. For simplicity, we'll keep the modified doc in memory.
+          // But we lost the original file reference; we can reload from the file object.
+          // Let's just reload the file from the stored file object.
+          if (file) {
+            pdfDoc = await loadPdfFromFile(file);
+            // Re-apply deletions? No, we already saved the modified version. So we should use the modified doc for further preview.
+            // But we already removed pages from pdfDoc. So we can just keep it.
+            // For preview, we need to render the modified doc.
+            await updateUI();
+          }
         } catch (err) {
           log.textContent = '❌ Error: ' + err.message;
-          log.className = 'output-log error';
+          log.className = 'log error';
         }
       });
     })();
