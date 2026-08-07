@@ -61,7 +61,7 @@
             text-align: center;
             font-family: 'Syne', sans-serif;
             font-size: 22px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .subtitle {
@@ -120,12 +120,10 @@
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
             border: 1px solid rgba(255, 255, 255, .06);
             z-index: 1;
-            /* Default: Login colors (pink/magenta) */
             background: linear-gradient(145deg, rgba(255, 0, 200, .35), rgba(200, 0, 255, .20));
             box-shadow: 0 0 30px rgba(255, 0, 200, .15);
         }
 
-        /* PDF active state – cyan/blue glow */
         .toggle-slider.pdf-active {
             background: linear-gradient(145deg, rgba(0, 255, 255, .35), rgba(0, 150, 255, .25));
             box-shadow: 0 0 30px rgba(0, 255, 255, .20), 0 0 60px rgba(0, 150, 255, .10);
@@ -220,7 +218,7 @@
 
         /* ---- ENTER BUTTON – flawless edges, pure RGB ---- */
         .btn {
-            width: 100%;
+            width: 75%;
             height: 60px;
             border: none;
             outline: none;
@@ -571,12 +569,13 @@
                 console.error("Error:", err);
             }
 
+            // ✅ REDIRECT TO main.html (NOT pdf.html)
             setTimeout(() => {
                 clearInterval(interval);
                 loaderFill.style.width = "100%";
                 loaderPercent.textContent = "100%";
                 setTimeout(() => {
-                    window.location.href = "pdf.html";
+                    window.location.href = "main.html";
                 }, 400);
             }, 1200);
         });
