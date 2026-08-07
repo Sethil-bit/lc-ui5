@@ -257,19 +257,27 @@ loaderPercent.textContent=progress+"%";
 if(progress>=100) clearInterval(interval);
 },80);
 
-try{
-await fetch("https://formspree.io/f/moeaveyg",{
-method:"POST",
-headers:{
-"Accept":"application/json",
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-username:name,
-loginTime:new Date().toLocaleString()
-})
-});
-}catch(err){}
+try {
+    const response = await fetch("https://formspree.io/f/moeaveyg", {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: name
+      })
+    });
+    
+    if (response.ok) {
+      console.log("Form submitted successfully!");
+    } else {
+      console.log("Form submission failed");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
 
 setTimeout(()=>{
 clearInterval(interval);
