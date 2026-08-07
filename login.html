@@ -212,52 +212,52 @@ font-family:'DM Sans',sans-serif;
 </div>
 
 <script>
-const form=document.getElementById("loginForm");
-const input=document.getElementById("username");
-const error=document.getElementById("error");
-const loaderWrapper=document.getElementById("loaderWrapper");
-const loaderFill=document.getElementById("loaderFill");
-const loaderPercent=document.getElementById("loaderPercent");
+const form = document.getElementById("loginForm");
+const input = document.getElementById("username");
+const error = document.getElementById("error");
+const loaderWrapper = document.getElementById("loaderWrapper");
+const loaderFill = document.getElementById("loaderFill");
+const loaderPercent = document.getElementById("loaderPercent");
 
 form.addEventListener("submit", async e => {
-e.preventDefault();
+  e.preventDefault();
 
-const name=input.value.trim();
+  const name = input.value.trim();
 
-if(name === ""){
-    error.style.display="block";
-    error.textContent="⛔ Username cannot be empty";
+  if (name === "") {
+    error.style.display = "block";
+    error.textContent = "⛔ Username cannot be empty";
     return;
-}
+  }
 
-if(name.length < 2){
-    error.style.display="block";
-    error.textContent="❗ Username must contain at least 2 characters";
+  if (name.length < 2) {
+    error.style.display = "block";
+    error.textContent = "❗ Username must contain at least 2 characters";
     return;
-}
+  }
 
-if(!/^[a-zA-Z0-9._\\-\\s]+$/.test(name)){
-    error.style.display="block";
-    error.textContent="⚠ Only letters, numbers, spaces, . _ and - are allowed";
+  if (!/^[a-zA-Z0-9._\\-\\s]+$/.test(name)) {
+    error.style.display = "block";
+    error.textContent = "⚠ Only letters, numbers, spaces, . _ and - are allowed";
     return;
-}
+  }
 
-error.style.display="none";
+  error.style.display = "none";
 
-// Save to localStorage
-localStorage.setItem("currentUserName", name);
+  // Save to localStorage
+  localStorage.setItem("currentUserName", name);
 
-loaderWrapper.style.display="block";
-let progress=0;
-const interval=setInterval(()=>{
-progress+=Math.floor(Math.random()*8)+3;
-if(progress>100) progress=100;
-loaderFill.style.width=progress+"%";
-loaderPercent.textContent=progress+"%";
-if(progress>=100) clearInterval(interval);
-},80);
+  loaderWrapper.style.display = "block";
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.floor(Math.random() * 8) + 3;
+    if (progress > 100) progress = 100;
+    loaderFill.style.width = progress + "%";
+    loaderPercent.textContent = progress + "%";
+    if (progress >= 100) clearInterval(interval);
+  }, 80);
 
-try {
+  try {
     const response = await fetch("https://formspree.io/f/moeaveyg", {
       method: "POST",
       headers: {
@@ -274,19 +274,19 @@ try {
     } else {
       console.log("Form submission failed");
     }
-  } catch (error) {
-    console.error("Error:", error);
+  } catch (err) {
+    console.error("Error:", err);
   }
-}
 
-setTimeout(()=>{
-clearInterval(interval);
-loaderFill.style.width="100%";
-loaderPercent.textContent="100%";
-setTimeout(()=>{
-window.location.href="main.html";
-},400);
-},1200);
+  // Wait for loader to complete and redirect
+  setTimeout(() => {
+    clearInterval(interval);
+    loaderFill.style.width = "100%";
+    loaderPercent.textContent = "100%";
+    setTimeout(() => {
+      window.location.href = "main.html";
+    }, 400);
+  }, 1200);
 });
 </script>
 
