@@ -1,313 +1,598 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="shortcut icon" href="/favicon.svg">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LC Date Calculator — Premium Login</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="shortcut icon" href="/favicon.svg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LC Date Calculator — Premium Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body{
-font-family:'DM Sans',sans-serif;
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-overflow:hidden;
-background:
-radial-gradient(circle at 20% 20%, rgba(255,0,128,.12), transparent 25%),
-radial-gradient(circle at 80% 30%, rgba(0,255,255,.10), transparent 25%),
-radial-gradient(circle at 50% 80%, rgba(128,0,255,.12), transparent 30%),
-linear-gradient(135deg,#050510,#09091a,#0d1020);
-}
+        body {
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 0, 128, .12), transparent 25%),
+                radial-gradient(circle at 80% 30%, rgba(0, 255, 255, .10), transparent 25%),
+                radial-gradient(circle at 50% 80%, rgba(128, 0, 255, .12), transparent 30%),
+                linear-gradient(135deg, #050510, #09091a, #0d1020);
+        }
 
-body::before{
-content:"";
-position:fixed;
-inset:-50%;
-background:conic-gradient(from 0deg,transparent,rgba(255,0,200,.15),transparent,rgba(0,255,255,.15),transparent);
-animation:spin 40s linear infinite;
-pointer-events:none;
-}
+        body::before {
+            content: "";
+            position: fixed;
+            inset: -50%;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 0, 200, .15), transparent, rgba(0, 255, 255, .15), transparent);
+            animation: spin 40s linear infinite;
+            pointer-events: none;
+        }
 
-@keyframes spin{
-to{transform:rotate(360deg);}
-}
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
-.card{
-position:relative;
-z-index:2;
-width:420px;
-max-width:92vw;
-padding:42px;
-border-radius:28px;
-background:rgba(15,15,30,.45);
-backdrop-filter:blur(30px);
-border:1px solid rgba(255,255,255,.08);
-box-shadow:0 0 50px rgba(255,0,200,.08),0 0 80px rgba(0,255,255,.08),0 40px 100px rgba(0,0,0,.65);
-}
+        .card {
+            position: relative;
+            z-index: 2;
+            width: 420px;
+            max-width: 92vw;
+            padding: 42px;
+            border-radius: 28px;
+            background: rgba(15, 15, 30, .45);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, .08);
+            box-shadow: 0 0 50px rgba(255, 0, 200, .08), 0 0 80px rgba(0, 255, 255, .08), 0 40px 100px rgba(0, 0, 0, .65);
+        }
 
-h1{
-color:#fff;
-text-align:center;
-font-family:'Syne',sans-serif;
-font-size:22px;
-margin-bottom:8px;
-}
+        h1 {
+            color: #fff;
+            text-align: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
 
-.subtitle{
-text-align:center;
-color:rgba(255,255,255,.65);
-margin-bottom:30px;
-font-size:13px;
-}
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, .65);
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
 
-.field{margin-bottom:20px;}
+        /* ---- Toggle (segmented control) ---- */
+        .toggle-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
 
-input{
-width:100%;
-padding:16px;
-border:none;
-border-radius:14px;
-background:rgba(255,255,255,.05);
-color:white;
-outline:none;
-font-size:14px;
-}
+        .toggle {
+            position: relative;
+            display: inline-flex;
+            background: rgba(255, 255, 255, .06);
+            border-radius: 40px;
+            padding: 4px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, .06);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, .3);
+            overflow: visible;
+        }
 
-input:focus{
-box-shadow:0 0 20px rgba(255,0,200,.15),0 0 40px rgba(0,255,255,.08);
-}
+        .toggle-option {
+            position: relative;
+            padding: 8px 22px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: rgba(255, 255, 255, .45);
+            transition: color 0.3s ease;
+            z-index: 2;
+            user-select: none;
+            font-family: 'DM Sans', sans-serif;
+            border-radius: 30px;
+            cursor: pointer;
+        }
 
-input::placeholder{
-color:rgba(255,255,255,.35);
-}
+        .toggle-option.active {
+            color: #fff;
+        }
 
-.error{
-display:none;
-margin-top:10px;
-padding:10px 14px;
-background:rgba(255,80,120,.12);
-border:1px solid rgba(255,80,120,.25);
-border-left:3px solid #ff6b8a;
-border-radius:12px;
-color:#ff8ca5;
-font-size:13px;
-font-weight:500;
-backdrop-filter:blur(10px);
-}
+        .toggle-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            height: calc(100% - 8px);
+            width: calc(50% - 4px);
+            border-radius: 30px;
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.5s ease, box-shadow 0.5s ease;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .06);
+            z-index: 1;
+            /* Default: Login colors (pink/magenta) */
+            background: linear-gradient(145deg, rgba(255, 0, 200, .35), rgba(200, 0, 255, .20));
+            box-shadow: 0 0 30px rgba(255, 0, 200, .15);
+        }
 
-.btn{
-width:100%;
-height:60px;
-border:none;
-cursor:pointer;
-position:relative;
-border-radius:16px;
-font-weight:700;
-letter-spacing:1px;
-text-transform:uppercase;
-color:white;
-background:transparent;
-z-index:1;
-transition: all 0.25s ease;
-font-size:14px;
-}
+        /* PDF active state – cyan/blue glow */
+        .toggle-slider.pdf-active {
+            background: linear-gradient(145deg, rgba(0, 255, 255, .35), rgba(0, 150, 255, .25));
+            box-shadow: 0 0 30px rgba(0, 255, 255, .20), 0 0 60px rgba(0, 150, 255, .10);
+        }
 
-.btn:hover {
-    filter: drop-shadow(0 0 20px rgba(255, 0, 200, 0.5)) drop-shadow(0 0 40px rgba(0, 255, 255, 0.3));
-    transform: scale(1.02);
-}
+        .toggle-slider.right {
+            transform: translateX(100%);
+        }
 
-.btn:active {
-    transform: scale(0.97);
-}
+        .toggle-option:first-child {
+            border-radius: 30px 0 0 30px;
+        }
+        .toggle-option:last-child {
+            border-radius: 0 30px 30px 0;
+        }
 
-.btn::after{
-content:"";
-position:absolute;
-inset:0;
-background:linear-gradient(145deg,rgba(10,10,20,.95),rgba(25,25,40,.9));
-border-radius:16px;
-z-index:-1;
-}
+        /* ---- Content area ---- */
+        .content-area {
+            position: relative;
+            overflow: hidden;
+            min-height: 220px;
+            transition: min-height 0.5s ease;
+        }
 
-.btn::before{
-content:"";
-position:absolute;
-top:-3px;
-left:-3px;
-width:calc(100% + 6px);
-height:calc(100% + 6px);
-background:linear-gradient(45deg,#ff0000,#ff7300,#fffb00,#48ff00,#00ffd5,#002bff,#7a00ff,#ff00c8,#ff0000);
-background-size:600%;
-filter:blur(12px);
-animation:glow 30s linear infinite;
-border-radius:18px;
-z-index:-2;
-}
+        .panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(18px) scale(0.97);
+            transition: opacity 0.45s cubic-bezier(0.34, 1.2, 0.64, 1), transform 0.45s cubic-bezier(0.34, 1.2, 0.64, 1);
+            pointer-events: none;
+            visibility: hidden;
+        }
 
-@keyframes glow{
-0%{background-position:0 0}
-50%{background-position:400% 0}
-100%{background-position:0 0}
-}
+        .panel.active {
+            position: relative;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+            visibility: visible;
+        }
 
-.loader-wrapper{
-margin-top:20px;
-display:none;
-}
+        .panel.exit {
+            opacity: 0;
+            transform: translateY(-18px) scale(0.97);
+            pointer-events: none;
+            visibility: hidden;
+            position: absolute;
+        }
 
-.loader-track{
-height:4px;
-background:rgba(255,255,255,.08);
-border-radius:30px;
-overflow:hidden;
-position:relative;
-}
+        /* ---- Login form ---- */
+        .field {
+            margin-bottom: 20px;
+        }
 
-.loader-fill{
-height:100%;
-width:0%;
-background:linear-gradient(90deg,#ff00c8,#00ffd5);
-border-radius:30px;
-transition: width 0.15s ease;
-}
+        input {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .05);
+            color: white;
+            outline: none;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            transition: box-shadow 0.3s ease;
+        }
 
-.loader-percent{
-text-align:center;
-color:rgba(255,255,255,.5);
-font-size:12px;
-margin-top:8px;
-font-weight:400;
-letter-spacing:0.5px;
-font-family:'DM Sans',sans-serif;
-}
+        input:focus {
+            box-shadow: 0 0 20px rgba(255, 0, 200, .15), 0 0 40px rgba(0, 255, 255, .08);
+        }
 
-/* ---- PDF Editor button (skip login) ---- */
-.editor-link {
-  display: block;
-  margin-top: 16px;
-  text-align: center;
-  color: rgba(255,255,255,0.5);
-  font-size: 14px;
-  text-decoration: none;
-  transition: 0.2s;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-  background: rgba(255,255,255,0.04);
-  padding: 14px;
-  border-radius: 30px;
-  border: 1px solid rgba(255,255,255,0.06);
-}
-.editor-link:hover {
-  color: white;
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.15);
-}
-</style>
+        input::placeholder {
+            color: rgba(255, 255, 255, .35);
+        }
+
+        .error {
+            display: none;
+            margin-top: 10px;
+            padding: 10px 14px;
+            background: rgba(255, 80, 120, .12);
+            border: 1px solid rgba(255, 80, 120, .25);
+            border-left: 3px solid #ff6b8a;
+            border-radius: 12px;
+            color: #ff8ca5;
+            font-size: 13px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        /* ---- ENTER BUTTON – flawless edges, pure RGB ---- */
+        .btn {
+            width: 100%;
+            height: 60px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            border-radius: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #ff0080, #ff8c00, #40e0d0, #8a2be2, #ff0080);
+            background-size: 300% 300%;
+            animation: rgbFlow 6s ease-in-out infinite;
+            transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1), filter 0.3s ease, box-shadow 0.3s ease;
+            text-shadow: 0 0 8px rgba(0, 0, 0, .4);
+            will-change: transform;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            -webkit-font-smoothing: antialiased;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .3);
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, .3);
+            outline-offset: 2px;
+        }
+
+        @keyframes rgbFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .btn:hover {
+            transform: scale(1.03) translateZ(0);
+            filter: brightness(1.1) drop-shadow(0 0 30px rgba(255, 0, 200, .15));
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .4);
+        }
+
+        .btn:active {
+            transform: scale(0.96) translateZ(0);
+            transition-duration: 0.08s;
+        }
+
+        /* ---- PDF Editor panel ---- */
+        .pdf-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+            gap: 12px;
+        }
+
+        .pdf-panel .pdf-icon {
+            font-size: 32px;
+            opacity: 0.6;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .pdf-panel .pdf-label {
+            color: rgba(255, 255, 255, .35);
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        /* ---- Small PDF Editor button ---- */
+        .pdf-btn-small {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 22px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .08);
+            color: rgba(255, 255, 255, .7);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, .04);
+            cursor: pointer;
+        }
+
+        .pdf-btn-small:hover {
+            background: rgba(255, 255, 255, .10);
+            border-color: rgba(255, 255, 255, .20);
+            color: #fff;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 40px rgba(255, 0, 200, .12), 0 0 60px rgba(0, 255, 255, .08);
+        }
+
+        .pdf-btn-small:active {
+            transform: scale(0.96);
+        }
+
+        .pdf-btn-small .arrow {
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .pdf-btn-small:hover .arrow {
+            transform: translateX(4px);
+        }
+
+        /* ---- Loader ---- */
+        .loader-wrapper {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .loader-track {
+            height: 4px;
+            background: rgba(255, 255, 255, .08);
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loader-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff00c8, #00ffd5);
+            border-radius: 30px;
+            transition: width 0.15s ease;
+        }
+
+        .loader-percent {
+            text-align: center;
+            color: rgba(255, 255, 255, .5);
+            font-size: 12px;
+            margin-top: 8px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 480px) {
+            .card {
+                padding: 28px 20px;
+            }
+            .toggle-option {
+                padding: 6px 16px;
+                font-size: 12px;
+            }
+            .pdf-btn-small {
+                padding: 8px 18px;
+                font-size: 12px;
+            }
+            .btn {
+                height: 52px;
+                font-size: 13px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="card">
-<h1>LC Date Calculator</h1>
-<p class="subtitle">Sign in to continue</p>
+    <div class="card">
+        <h1>LC Date Calculator</h1>
+        <p class="subtitle">Sign in to continue</p>
 
-<form id="loginForm" autocomplete="off">
-<div class="field">
-<input id="username" placeholder="Username" required autocomplete="off">
-<div id="error" class="error"></div>
-</div>
+        <!-- Toggle: Login / PDF Editor -->
+        <div class="toggle-wrap">
+            <div class="toggle" id="toggle" role="tablist">
+                <span class="toggle-option active" data-tab="login" role="tab">Login</span>
+                <span class="toggle-option" data-tab="pdf" role="tab">PDF Editor</span>
+                <span class="toggle-slider" id="toggleSlider"></span>
+            </div>
+        </div>
 
-<button class="btn" id="enterBtn" type="submit">Enter</button>
-</form>
+        <!-- Content -->
+        <div class="content-area" id="contentArea">
+            <!-- Login Panel -->
+            <div class="panel active" id="panelLogin" role="tabpanel">
+                <form id="loginForm" autocomplete="off">
+                    <div class="field">
+                        <input id="username" placeholder="Username" required autocomplete="off">
+                        <div id="error" class="error"></div>
+                    </div>
+                    <button class="btn" id="enterBtn" type="submit">Enter</button>
+                </form>
+                <div class="loader-wrapper" id="loaderWrapper">
+                    <div class="loader-track">
+                        <div class="loader-fill" id="loaderFill"></div>
+                    </div>
+                    <div class="loader-percent" id="loaderPercent">0%</div>
+                </div>
+            </div>
 
-<!-- PDF Editor button – skip login and go directly to tools -->
-<a href="pdf.html" class="editor-link">📎PDF Editor</a>
+            <!-- PDF Editor Panel -->
+            <div class="panel" id="panelPdf" role="tabpanel">
+                <div class="pdf-panel">
+                    <div class="pdf-icon">📄</div>
+                    <div class="pdf-label">Open the PDF editor tool</div>
+                    <a href="pdf.html" class="pdf-btn-small">
+                        <span>📎</span> Open PDF Editor
+                        <span class="arrow">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="loader-wrapper" id="loaderWrapper">
-<div class="loader-track">
-<div class="loader-fill" id="loaderFill"></div>
-</div>
-<div class="loader-percent" id="loaderPercent">0%</div>
-</div>
-</div>
+    <script>
+        // ---- DOM refs ----
+        const toggle = document.getElementById('toggle');
+        const options = toggle.querySelectorAll('.toggle-option');
+        const slider = document.getElementById('toggleSlider');
+        const panelLogin = document.getElementById('panelLogin');
+        const panelPdf = document.getElementById('panelPdf');
+        let currentTab = 'login';
 
-<script>
-const form = document.getElementById("loginForm");
-const input = document.getElementById("username");
-const error = document.getElementById("error");
-const loaderWrapper = document.getElementById("loaderWrapper");
-const loaderFill = document.getElementById("loaderFill");
-const loaderPercent = document.getElementById("loaderPercent");
+        function setTab(tab) {
+            if (tab === currentTab) return;
+            currentTab = tab;
 
-form.addEventListener("submit", async e => {
-  e.preventDefault();
+            // Update toggle UI
+            options.forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.tab === tab);
+            });
 
-  const name = input.value.trim();
+            // Move slider + change color
+            const isPdf = tab === 'pdf';
+            slider.classList.toggle('right', isPdf);
+            slider.classList.toggle('pdf-active', isPdf);
 
-  if (name === "") {
-    error.style.display = "block";
-    error.textContent = "⛔ Username cannot be empty";
-    return;
-  }
+            // Update panels with animation
+            const panels = [panelLogin, panelPdf];
+            panels.forEach(p => {
+                const isActive = p.id === (tab === 'login' ? 'panelLogin' : 'panelPdf');
+                if (isActive) {
+                    p.classList.remove('exit');
+                    p.classList.add('active');
+                } else {
+                    p.classList.remove('active');
+                    p.classList.add('exit');
+                    setTimeout(() => {
+                        p.classList.remove('exit');
+                    }, 500);
+                }
+            });
 
-  if (name.length < 2) {
-    error.style.display = "block";
-    error.textContent = "❗ Username must contain at least 2 characters";
-    return;
-  }
+            // Adjust content area height smoothly
+            const area = document.getElementById('contentArea');
+            const activePanel = tab === 'login' ? panelLogin : panelPdf;
+            area.style.minHeight = activePanel.scrollHeight + 40 + 'px';
+        }
 
-  if (!/^[a-zA-Z0-9._\\-\\s]+$/.test(name)) {
-    error.style.display = "block";
-    error.textContent = "⚠ Only letters, numbers, spaces, . _ and - are allowed";
-    return;
-  }
+        // ---- Click on toggle options ----
+        options.forEach(opt => {
+            opt.addEventListener('click', () => {
+                setTab(opt.dataset.tab);
+            });
+        });
 
-  error.style.display = "none";
+        // ---- Keyboard support ----
+        toggle.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                const next = e.key === 'ArrowRight' ? 'pdf' : 'login';
+                setTab(next);
+                const target = Array.from(options).find(o => o.dataset.tab === next);
+                if (target) target.focus();
+            }
+        });
 
-  // Save to localStorage
-  localStorage.setItem("currentUserName", name);
+        // ---- Login form logic ----
+        const form = document.getElementById("loginForm");
+        const input = document.getElementById("username");
+        const error = document.getElementById("error");
+        const loaderWrapper = document.getElementById("loaderWrapper");
+        const loaderFill = document.getElementById("loaderFill");
+        const loaderPercent = document.getElementById("loaderPercent");
 
-  loaderWrapper.style.display = "block";
-  let progress = 0;
-  const interval = setInterval(() => {
-    progress += Math.floor(Math.random() * 8) + 3;
-    if (progress > 100) progress = 100;
-    loaderFill.style.width = progress + "%";
-    loaderPercent.textContent = progress + "%";
-    if (progress >= 100) clearInterval(interval);
-  }, 80);
+        form.addEventListener("submit", async e => {
+            e.preventDefault();
 
-  // Send to Formspree (optional)
-  try {
-    const response = await fetch("https://formspree.io/f/moeaveyg", {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username: name })
-    });
-    if (response.ok) console.log("Form submitted successfully!");
-    else console.log("Form submission failed");
-  } catch (err) {
-    console.error("Error:", err);
-  }
+            const name = input.value.trim();
 
-  // Redirect to pdf.html after loader completes
-  setTimeout(() => {
-    clearInterval(interval);
-    loaderFill.style.width = "100%";
-    loaderPercent.textContent = "100%";
-    setTimeout(() => {
-      window.location.href = "pdf.html";
-    }, 400);
-  }, 1200);
-});
-</script>
+            if (name === "") {
+                error.style.display = "block";
+                error.textContent = "⛔ Username cannot be empty";
+                return;
+            }
+
+            if (name.length < 2) {
+                error.style.display = "block";
+                error.textContent = "❗ Username must contain at least 2 characters";
+                return;
+            }
+
+            if (!/^[a-zA-Z0-9._\\-\\s]+$/.test(name)) {
+                error.style.display = "block";
+                error.textContent = "⚠ Only letters, numbers, spaces, . _ and - are allowed";
+                return;
+            }
+
+            error.style.display = "none";
+
+            localStorage.setItem("currentUserName", name);
+
+            loaderWrapper.style.display = "block";
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 8) + 3;
+                if (progress > 100) progress = 100;
+                loaderFill.style.width = progress + "%";
+                loaderPercent.textContent = progress + "%";
+                if (progress >= 100) clearInterval(interval);
+            }, 80);
+
+            try {
+                const response = await fetch("https://formspree.io/f/moeaveyg", {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username: name })
+                });
+                if (response.ok) console.log("Form submitted successfully!");
+                else console.log("Form submission failed");
+            } catch (err) {
+                console.error("Error:", err);
+            }
+
+            setTimeout(() => {
+                clearInterval(interval);
+                loaderFill.style.width = "100%";
+                loaderPercent.textContent = "100%";
+                setTimeout(() => {
+                    window.location.href = "pdf.html";
+                }, 400);
+            }, 1200);
+        });
+
+        // ---- Init: set initial height ----
+        setTimeout(() => {
+            const area = document.getElementById('contentArea');
+            area.style.minHeight = panelLogin.scrollHeight + 40 + 'px';
+        }, 50);
+
+        // Recalculate height on window resize
+        window.addEventListener('resize', () => {
+            const area = document.getElementById('contentArea');
+            const activePanel = currentTab === 'login' ? panelLogin : panelPdf;
+            area.style.minHeight = activePanel.scrollHeight + 40 + 'px';
+        });
+    </script>
 </body>
 </html>
