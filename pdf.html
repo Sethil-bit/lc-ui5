@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LC Date Calculator – PDF Tools</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <!-- PDF-lib + FileSaver (CDN) -->
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'DM Sans',sans-serif;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,0,128,.12), transparent 25%),
+        radial-gradient(circle at 80% 30%, rgba(0,255,255,.10), transparent 25%),
+        radial-gradient(circle at 50% 80%, rgba(128,0,255,.12), transparent 30%),
+        linear-gradient(135deg,#050510,#09091a,#0d1020);
+      padding:20px;
+    }
+    .card {
+      width:900px;
+      max-width:98vw;
+      padding:35px;
+      border-radius:28px;
+      background:rgba(15,15,30,.45);
+      backdrop-filter:blur(30px);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 0 50px rgba(255,0,200,.08),0 0 80px rgba(0,255,255,.08),0 40px 100px rgba(0,0,0,.65);
+      color:white;
+    }
+    h1 {
+      font-family:'Syne',sans-serif;
+      font-size:26px;
+      margin-bottom:4px;
+    }
+    .subtitle {
+      color:rgba(255,255,255,.6);
+      margin-bottom:25px;
+      font-size:14px;
+    }
+    .tool-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+      gap:15px;
+      margin-bottom:25px;
+    }
+    .tool-card {
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:18px 14px;
+      text-align:center;
+      cursor:pointer;
+      transition:0.2s;
+    }
+    .tool-card:hover { background:rgba(255,255,255,.1); transform:translateY(-3px); }
+    .tool-card .icon { font-size:28px; display:block; margin-bottom:6px; }
+    .tool-card .label { font-weight:500; font-size:14px; }
+    .tool-card .desc { font-size:11px; color:rgba(255,255,255,.5); margin-top:4px; }
+
+    .panel {
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:20px;
+      margin-top:10px;
+      border:1px solid rgba(255,255,255,.06);
+      display:none;
+    }
+    .panel.active { display:block; }
+
+    .panel h3 { font-weight:400; font-size:16px; margin-bottom:12px; color:rgba(255,255,255,.8); }
+    .panel input[type="file"] {
+      display:block;
+      width:100%;
+      padding:12px;
+      background:rgba(255,255,255,.05);
+      border:1px dashed rgba(255,255,255,.2);
+      border-radius:12px;
+      color:white;
+      font-size:13px;
+      cursor:pointer;
+      margin-bottom:12px;
+    }
+    .panel input[type="file"]::file-selector-button {
+      background:rgba(255,255,255,.1);
+      border:none;
+      padding:8px 16px;
+      border-radius:8px;
+      color:white;
+      font-weight:500;
+      cursor:pointer;
+      margin-right:12px;
+    }
+    .panel .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
+    .panel .row label { font-size:13px; color:rgba(255,255,255,.7); min-width:60px; }
+    .panel .row input[type="text"], .panel .row input[type="number"] {
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:8px;
+      padding:8px 12px;
+      color:white;
+      font-size:13px;
+      width:120px;
+      outline:none;
+    }
+    .panel .row input:focus { border-color:#ff00c8; }
+    .btn {
+      background:linear-gradient(145deg,#ff00c8,#c800ff);
+      border:none;
+      padding:10px 22px;
+      border-radius:30px;
+      color:white;
+      font-weight:600;
+      font-size:13px;
+      cursor:pointer;
+      transition:0.2s;
+      letter-spacing:0.5px;
+      box-shadow:0 0 20px rgba(255,0,200,.2);
+    }
+    .btn:hover { transform:scale(1.03); filter:brightness(1.2); }
+    .btn-secondary {
+      background:rgba(255,255,255,.08);
+      box-shadow:none;
+    }
+    .btn-secondary:hover { background:rgba(255,255,255,.15); }
+    .output-area {
+      margin-top:15px;
+      padding:12px;
+      background:rgba(0,0,0,.3);
+      border-radius:10px;
+      font-size:13px;
+      color:rgba(255,255,255,.7);
+      min-height:40px;
+      word-break:break-all;
+    }
+    .output-area.success { color:#8cffb0; border-left:3px solid #8cffb0; padding-left:12px; }
+    .output-area.error { color:#ff8ca5; border-left:3px solid #ff6b8a; padding-left:12px; }
+    .flex { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .mt-10 { margin-top:10px; }
+    .badge {
+      background:rgba(255,255,255,.06);
+      border-radius:30px;
+      padding:2px 10px;
+      font-size:11px;
+      color:rgba(255,255,255,.5);
+      margin-left:6px;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>📄 PDF Power Tools</h1>
+  <div class="subtitle">
+    Welcome, <span id="userNameDisplay">User</span>! 
+    <span class="badge">Merge · Split · Convert · Reorder</span>
+  </div>
+
+  <div class="tool-grid">
+    <div class="tool-card" data-tool="merge">
+      <span class="icon">📚</span>
+      <div class="label">Merge PDFs</div>
+      <div class="desc">Combine multiple PDFs into one</div>
+    </div>
+    <div class="tool-card" data-tool="split">
+      <span class="icon">✂️</span>
+      <div class="label">Delete / Extract</div>
+      <div class="desc">Remove pages or extract a range</div>
+    </div>
+    <div class="tool-card" data-tool="image2pdf">
+      <span class="icon">🖼️</span>
+      <div class="label">Images → PDF</div>
+      <div class="desc">Convert JPG/PNG to PDF</div>
+    </div>
+    <div class="tool-card" data-tool="reorder">
+      <span class="icon">🔄</span>
+      <div class="label">Reorder Pages</div>
+      <div class="desc">Change page order</div>
+    </div>
+    <div class="tool-card" data-tool="addpages">
+      <span class="icon">➕</span>
+      <div class="label">Add Pages</div>
+      <div class="desc">Insert PDF pages into another</div>
+    </div>
+    <div class="tool-card" data-tool="rotate">
+      <span class="icon">🔄</span>
+      <div class="label">Rotate Pages</div>
+      <div class="desc">Rotate specific pages</div>
+    </div>
+  </div>
+
+  <!-- Panel: Merge -->
+  <div class="panel" id="panel-merge">
+    <h3>📚 Merge PDFs</h3>
+    <input type="file" id="mergeFiles" accept=".pdf" multiple />
+    <button class="btn" id="mergeBtn">Merge & Download</button>
+    <div class="output-area" id="mergeOutput">Select two or more PDFs to merge.</div>
+  </div>
+
+  <!-- Panel: Delete / Extract -->
+  <div class="panel" id="panel-split">
+    <h3>✂️ Delete or Extract Pages</h3>
+    <input type="file" id="splitFile" accept=".pdf" />
+    <div class="row">
+      <label>Pages to delete</label>
+      <input type="text" id="deletePages" placeholder="e.g. 1,3,5-7" />
+      <button class="btn btn-secondary" id="deleteBtn">Delete</button>
+    </div>
+    <div class="row">
+      <label>Extract range</label>
+      <input type="text" id="extractRange" placeholder="e.g. 2-5" />
+      <button class="btn btn-secondary" id="extractBtn">Extract</button>
+    </div>
+    <div class="output-area" id="splitOutput">Upload a PDF to modify.</div>
+  </div>
+
+  <!-- Panel: Images to PDF -->
+  <div class="panel" id="panel-image2pdf">
+    <h3>🖼️ Images → PDF</h3>
+    <input type="file" id="imageFiles" accept="image/*" multiple />
+    <div class="row">
+      <label>Page size</label>
+      <select id="pageSize" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px;color:white;font-size:13px;">
+        <option value="A4">A4</option>
+        <option value="Letter">Letter</option>
+        <option value="Fit">Fit to image</option>
+      </select>
+    </div>
+    <button class="btn" id="image2pdfBtn">Convert to PDF</button>
+    <div class="output-area" id="imageOutput">Select one or more images.</div>
+  </div>
+
+  <!-- Panel: Reorder -->
+  <div class="panel" id="panel-reorder">
+    <h3>🔄 Reorder Pages</h3>
+    <input type="file" id="reorderFile" accept=".pdf" />
+    <div class="row">
+      <label>New order</label>
+      <input type="text" id="newOrder" placeholder="e.g. 3,1,2,4" />
+      <button class="btn" id="reorderBtn">Reorder & Download</button>
+    </div>
+    <div class="output-area" id="reorderOutput">Upload a PDF and specify the new page order.</div>
+  </div>
+
+  <!-- Panel: Add Pages -->
+  <div class="panel" id="panel-addpages">
+    <h3>➕ Add Pages from another PDF</h3>
+    <input type="file" id="addBaseFile" accept=".pdf" />
+    <input type="file" id="addInsertFile" accept=".pdf" />
+    <div class="row">
+      <label>Insert at page</label>
+      <input type="number" id="insertAt" value="1" min="1" />
+      <button class="btn" id="addPagesBtn">Insert & Download</button>
+    </div>
+    <div class="output-area" id="addPagesOutput">Upload base PDF and the PDF to insert.</div>
+  </div>
+
+  <!-- Panel: Rotate -->
+  <div class="panel" id="panel-rotate">
+    <h3>🔄 Rotate Pages</h3>
+    <input type="file" id="rotateFile" accept=".pdf" />
+    <div class="row">
+      <label>Pages</label>
+      <input type="text" id="rotatePages" placeholder="e.g. all, 1,3-5" />
+      <label>Angle</label>
+      <select id="rotateAngle" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px;color:white;font-size:13px;">
+        <option value="90">90°</option>
+        <option value="180">180°</option>
+        <option value="270">270°</option>
+      </select>
+      <button class="btn" id="rotateBtn">Rotate & Download</button>
+    </div>
+    <div class="output-area" id="rotateOutput">Upload a PDF and choose pages to rotate.</div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ----- UI helpers -----
+    const userName = localStorage.getItem('currentUserName') || 'User';
+    document.getElementById('userNameDisplay').textContent = userName;
+
+    // Panel switching
+    const toolCards = document.querySelectorAll('.tool-card');
+    const panels = {
+      merge: document.getElementById('panel-merge'),
+      split: document.getElementById('panel-split'),
+      image2pdf: document.getElementById('panel-image2pdf'),
+      reorder: document.getElementById('panel-reorder'),
+      addpages: document.getElementById('panel-addpages'),
+      rotate: document.getElementById('panel-rotate')
+    };
+    // Initially hide all panels
+    Object.values(panels).forEach(p => p.classList.remove('active'));
+
+    toolCards.forEach(card => {
+      card.addEventListener('click', function() {
+        const tool = this.dataset.tool;
+        // Hide all panels
+        Object.values(panels).forEach(p => p.classList.remove('active'));
+        // Show selected panel
+        if (panels[tool]) panels[tool].classList.add('active');
+      });
+    });
+
+    // Helper: read file as ArrayBuffer
+    function readFileAsBuffer(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    // Helper: download PDF
+    function downloadPDF(pdfBytes, filename = 'output.pdf') {
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      saveAs(blob, filename);
+    }
+
+    // Helper: parse page ranges (e.g. "1,3,5-7" -> [1,3,5,6,7])
+    function parsePageRanges(str, maxPages) {
+      if (!str.trim()) return [];
+      const parts = str.split(',').map(s => s.trim());
+      const pages = new Set();
+      for (let part of parts) {
+        if (part.includes('-')) {
+          const [start, end] = part.split('-').map(Number);
+          for (let i = start; i <= end; i++) pages.add(i);
+        } else {
+          const num = Number(part);
+          if (!isNaN(num)) pages.add(num);
+        }
+      }
+      // Filter valid page numbers
+      return Array.from(pages).filter(p => p >= 1 && p <= maxPages).sort((a,b)=>a-b);
+    }
+
+    // ----- 1. MERGE -----
+    document.getElementById('mergeBtn').addEventListener('click', async function() {
+      const input = document.getElementById('mergeFiles');
+      const files = input.files;
+      const output = document.getElementById('mergeOutput');
+      if (files.length < 2) {
+        output.textContent = '❌ Please select at least two PDFs.';
+        output.className = 'output-area error';
+        return;
+      }
+      try {
+        output.textContent = '⏳ Merging...';
+        output.className = 'output-area';
+        const { PDFDocument } = PDFLib;
+        const mergedPdf = await PDFDocument.create();
+        for (let file of files) {
+          const buffer = await readFileAsBuffer(file);
+          const pdf = await PDFDocument.load(buffer);
+          const indices = pdf.getPageIndices();
+          const copiedPages = await mergedPdf.copyPages(pdf, indices);
+          copiedPages.forEach(page => mergedPdf.addPage(page));
+        }
+        const pdfBytes = await mergedPdf.save();
+        downloadPDF(pdfBytes, 'merged.pdf');
+        output.textContent = '✅ Merge successful! Download started.';
+        output.className = 'output-area success';
+      } catch (err) {
+        output.textContent = '❌ Error: ' + err.message;
+        output.className = 'output-area error';
+      }
+    });
+
+    // ----- 2. SPLIT (Delete / Extract) -----
+    async function loadPdfFromInput(inputId) {
+      const input = document.getElementById(inputId);
+      if (!input.files || input.files.length === 0) throw new Error('No file selected.');
+      const buffer = await readFileAsBuffer(input.files[0]);
+      return PDFLib.PDFDocument.load(buffer);
+    }
+
+    document.getElementById('deleteBtn').addEventListener('click', async function() {
+      const output = document.getElementById('splitOutput');
+      try {
+        const pdfDoc = await loadPdfFromInput('splitFile');
+        const total = pdfDoc.getPageCount();
+        const pagesToDelete = parsePageRanges(document.getElementById('deletePages').value, total);
+        if (pagesToDelete.length === 0) {
+          output.textContent = '⚠️ No valid pages to delete. Please specify pages like "1,3,5-7".';
+          output.className = 'output-area error';
+          return;
+        }
+        // Delete pages in reverse order
+        const sorted = pagesToDelete.sort((a,b)=>b-a);
+        for (let p of sorted) {
+          pdfDoc.removePage(p - 1);
+        }
+        const pdfBytes = await pdfDoc.save();
+        downloadPDF(pdfBytes, 'deleted.pdf');
+        output.textContent = `✅ Deleted pages ${pagesToDelete.join(', ')}. Download started.`;
+        output.className = 'output-area success';
+      } catch (err) {
+        output.textContent = '❌ Error: ' + err.message;
+        output.className = 'output-area error';
+      }
+    });
+
+    document.getElementById('extractBtn').addEventListener('click', async function() {
+      const output = document.getElementById('splitOutput');
+      try {
+        const pdfDoc = await loadPdfFromInput('splitFile');
+        const total = pdfDoc.getPageCount();
+        const range = document.getElementById('extractRange').value.trim();
+        if (!range) {
+          output.textContent = '⚠️ Please enter a range like "2-5".';
+          output.className = 'output-area error';
+          return;
+        }
+        const pages = parsePageRanges(range, total);
+        if (pages.length === 0) {
+          output.textContent = '⚠️ Invalid range.';
+          output.className = 'output-area error';
+          return;
+        }
+        const newPdf = await PDFLib.PDFDocument.create();
+        const copied = await newPdf.copyPages(pdfDoc, pages.map(p => p-1));
+        copied.forEach(page => newPdf.addPage(page));
+        const pdfBytes = await newPdf.save();
+        downloadPDF(pdfBytes, 'extracted.pdf');
+        output.textContent = `✅ Extracted pages ${pages.join(', ')}. Download started.`;
+        output.className = 'output-area success';
+      } catch (err) {
+        output.textContent = '❌ Error: ' + err.message;
+        output.className = 'output-area error';
+      }
+    });
+
+    // ----- 3. IMAGES to PDF -----
+    document.getElementById('image2pdfBtn').addEventListener('click', async function() {
+      const input = document.getElementById('imageFiles');
+      const files = input.files;
+      const output = document.getElementById('imageOutput');
+      if (!files.length) {
+        output.textContent = '❌ Select at least one image.';
+        output.className = 'output-area error';
+        return;
+      }
+      try {
+        output.textContent = '⏳ Converting...';
+        output.className = 'output-area';
+        const { PDFDocument, degrees } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        const pageSize = document.getElementById('pageSize').value;
+        for (let file of files) {
+          const imageBytes = await readFileAsBuffer(file);
+          let image;
+          const ext = file.name.split('.').pop().toLowerCase();
+          if (ext === 'png') {
+            image = await pdfDoc.embedPng(imageBytes);
+          } else if (ext === 'jpg' || ext === 'jpeg') {
+            image = await pdfDoc.embedJpg(imageBytes);
+          } else {
+            throw new Error(`Unsupported image format: ${ext}`);
+          }
+          const { width, height } = image;
+          let page;
+          if (pageSize === 'Fit') {
+            page = pdfDoc.addPage([width, height]);
+          } else {
+            let w, h;
+            if (pageSize === 'A4') { w = 595; h = 842; }
+            else if (pageSize === 'Letter') { w = 612; h = 792; }
+            else { w = width; h = height; }
+            page = pdfDoc.addPage([w, h]);
+          }
+          const { width: pW, height: pH } = page.getSize();
+          // Scale image to fit page, preserving aspect ratio
+          const scale = Math.min(pW / width, pH / height);
+          const scaledW = width * scale;
+          const scaledH = height * scale;
+          const x = (pW - scaledW) / 2;
+          const y = (pH - scaledH) / 2;
+          page.drawImage(image, { x, y, width: scaledW, height: scaledH });
+        }
+        const pdfBytes = await pdfDoc.save();
+        downloadPDF(pdfBytes, 'images.pdf');
+        output.textContent = `✅ Converted ${files.length} image(s) to PDF. Download started.`;
+        output.className = 'output-area success';
+      } catch (err) {
+        output.textContent = '❌ Error: ' + err.message;
+        output.className = 'output-area error';
+      }
+    });
+
+    // ----- 4. REORDER -----
+    document.getElementById('reorderBtn').addEventListener('click', async function() {
+      const output = document.getElementById('reorderOutput');
+      try {
+        const pdfDoc = await loadPdfFromInput('reorderFile');
+        const total = pdfDoc.getPageCount();
+        const orderStr = document.getElementById('newOrder').value.trim();
+        if (!orderStr) {
+          output.textContent = '⚠️ Please enter the new order, e.g. "3,1,2,4".';
+          output.className = 'output-area error';
+          return;
+        }
+        const newOrder = orderStr.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n) && n>=1 && n<=total);
+        if (newOrder.length !== total) {
+          output.textContent = `⚠️ New order must contain exactly ${total} page numbers (1-${total}).`;
+          output.className = 'output-area error';
+          return;
+        }
+        const newPdf = await PDFLib.PDFDocument.create();
+        const copied = await newPdf.copyPages(pdfDoc, newOrder.map(p => p-1));
+        copied.forEach(page => newPdf.addPage(page));
+        const pdfBytes = await newPdf.save();
+        downloadPDF(pdfBytes, 'reordered.pdf');
+        output.textContent = `✅ Reordered to [${newOrder.join(', ')}]. Download started.`;
+        output.className = 'output-area success';
+      } catch (err) {
+        output.textContent = '❌ Error: ' + err.message;
+        output.className = 'output-area error';
+      }
+    });
+
+    // ----- 5. ADD PAGES (insert) -----
+    document.getElementById('addPagesBtn').addEventListener('click', async function() {
+      const output = document.getElementById('addPagesOutput');
+      try {
+        const baseFile = document.getElementById('addBaseFile');
+        const insertFile = document.getElementById('addInsertFile');
+        if (!baseFile.files.length || !insertFile.files.length) {
+          output.textContent = '❌ Please select both a base PDF and a PDF to insert.';
+          output.className = 'output-area error';
+          return;
+        }
+        const baseBuf = await readFileAsBuffer(baseFile.files[0]);
+        const insertBuf = await readFileAsBuffer(insertFile.files[0]);
+        const basePdf = await PDFLib.PDFDocument.load(baseBuf);
+        const insertPdf = await PDFLib.PDFDocument.load(insertBuf);
+        let insertAt = parseInt(document.getElementById('insertAt').value) || 1;
+        if (insertAt < 1) insertAt = 1;
+        if (insertAt > basePdf.getPageCount()) insertAt = basePdf.getPageCount() + 1;
+        // Copy all pages from insert PDF
+        const indices = insertPdf.getPageIndices();
+        const copied = await basePdf.copyPages(insertPdf, indices);
+        // Insert pages at the given position (0-indexed)
+        const insertIndex = insertAt - 1;
+        for (let i = 0; i < copied.length; i++) {
+          basePdf.insertPage(insertIndex + i, copied[i]);
+        }
+        const pdfBytes = await basePdf.save();
+        downloadPDF(pdfBytes, 'added.pdf');
+        output.textContent = `✅ Inserted ${copied.length} page(s) at position ${insertAt}. Download started.`;
+        output.className = 'output-area success';
+      } catch (err) {
+        output.textContent = '❌ Error: ' + err.message;
+        output.className = 'output-area error';
+      }
+    });
+
+    // ----- 6. ROTATE -----
+    document.getElementById('rotateBtn').addEventListener('click', async function() {
+      const output = document.getElementById('rotateOutput');
+      try {
+        const pdfDoc = await loadPdfFromInput('rotateFile');
+        const total = pdfDoc.getPageCount();
+        const pagesStr = document.getElementById('rotatePages').value.trim().toLowerCase();
+        const angle = parseInt(document.getElementById('rotateAngle').value);
+        let pagesToRotate = [];
+        if (pagesStr === 'all') {
+          pagesToRotate = Array.from({length: total}, (_,i) => i+1);
+        } else {
+          pagesToRotate = parsePageRanges(pagesStr, total);
+        }
+        if (pagesToRotate.length === 0) {
+          output.textContent = '⚠️ No valid pages specified. Use "all" or a range like "1,3-5".';
+          output.className = 'output-area error';
+          return;
+        }
+        const { degrees } = PDFLib;
+        for (let p of pagesToRotate) {
+          const page = pdfDoc.getPage(p - 1);
+          page.setRotation(degrees(angle));
+        }
+        const pdfBytes = await pdfDoc.save();
+        downloadPDF(pdfBytes, 'rotated.pdf');
+        output.textContent = `✅ Rotated pages ${pagesToRotate.join(', ')} by ${angle}°. Download started.`;
+        output.className = 'output-area success';
+      } catch (err) {
+        output.textContent = '❌ Error: ' + err.message;
+        output.className = 'output-area error';
+      }
+    });
+  })();
+</script>
+</body>
+</html>
