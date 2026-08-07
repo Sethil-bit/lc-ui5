@@ -216,9 +216,15 @@
             backdrop-filter: blur(10px);
         }
 
-        /* ---- ENTER BUTTON – flawless edges, pure RGB ---- */
+        /* ---- ENTER BUTTON – 95% width, centered, flawless edges, pure RGB ---- */
+        .btn-wrap {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
         .btn {
-            width: 75%;
+            width: 95%;
             height: 60px;
             border: none;
             outline: none;
@@ -241,6 +247,8 @@
             transform: translateZ(0);
             -webkit-font-smoothing: antialiased;
             box-shadow: 0 4px 20px rgba(0, 0, 0, .3);
+            display: block;
+            margin: 0 auto;
         }
 
         .btn:focus-visible {
@@ -394,6 +402,7 @@
             .btn {
                 height: 52px;
                 font-size: 13px;
+                width: 95%;
             }
         }
     </style>
@@ -422,7 +431,9 @@
                         <input id="username" placeholder="Username" required autocomplete="off">
                         <div id="error" class="error"></div>
                     </div>
-                    <button class="btn" id="enterBtn" type="submit">Enter</button>
+                    <div class="btn-wrap">
+                        <button class="btn" id="enterBtn" type="submit">Enter</button>
+                    </div>
                 </form>
                 <div class="loader-wrapper" id="loaderWrapper">
                     <div class="loader-track">
@@ -569,7 +580,7 @@
                 console.error("Error:", err);
             }
 
-            // ✅ REDIRECT TO main.html (NOT pdf.html)
+            // Redirect to main.html
             setTimeout(() => {
                 clearInterval(interval);
                 loaderFill.style.width = "100%";
