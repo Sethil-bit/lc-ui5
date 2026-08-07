@@ -187,22 +187,100 @@
     }
     .thumb-item .badge-del {
       position: absolute;
-      top: 4px;
-      right: 4px;
-      background: #ff6b8a;
-      color: #fff;
+      top: 7px;
+      right: 7px;
+      width: 30px;
+      height: 30px;
+      border: 1px solid rgba(255,255,255,.18);
       border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      font-size: 12px;
+      background: rgba(255, 65, 105, .92);
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 15px;
       font-weight: 700;
+      cursor: pointer;
       opacity: 0;
-      transition: 0.2s;
+      transform: scale(.86);
+      transition: .18s ease;
+      z-index: 4;
+      box-shadow: 0 6px 18px rgba(0,0,0,.28);
     }
-    .thumb-item:hover .badge-del { opacity: 1; }
+
+    .thumb-item:hover .badge-del,
+    .thumb-item:focus-within .badge-del,
+    .thumb-item.selected .badge-del {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .thumb-item .badge-del:hover {
+      filter: brightness(1.12);
+      transform: scale(1.08);
+    }
+
+    .thumb-item .page-check {
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      min-width: 28px;
+      height: 28px;
+      padding: 0 7px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.68);
+      border: 1px solid rgba(255,255,255,.15);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .thumb-item.selected .page-check {
+      display: flex;
+      background: rgba(255,0,200,.92);
+    }
+
+    .preview-toolbar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 14px 0 4px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .preview-toolbar.visible { display: flex; }
+
+    .preview-toolbar .preview-info {
+      font-size: 12px;
+      color: rgba(255,255,255,.58);
+    }
+
+    .preview-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preview-actions .btn {
+      padding: 8px 13px;
+      font-size: 12px;
+    }
+
+    .preview-hint {
+      margin: 7px 0 0;
+      color: rgba(255,255,255,.38);
+      font-size: 12px;
+    }
 
     /* Controls */
     .controls {
@@ -295,6 +373,10 @@
       .thumb-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
       .controls { flex-direction: column; align-items: stretch; }
       .controls input, .controls select { width: 100%; }
+      .preview-toolbar { align-items: stretch; }
+      .preview-actions { width: 100%; }
+      .preview-actions .btn { flex: 1; }
+      .thumb-item .badge-del { opacity: 1; transform: scale(1); }
     }
   </style>
 </head>
@@ -456,11 +538,20 @@
       <div class="hint">or click to browse</div>
       <input type="file" id="file-delete" accept=".pdf" />
     </div>
+    <div class="preview-toolbar" id="deletePreviewToolbar">
+      <div class="preview-info" id="deletePreviewInfo">Preview loaded pages</div>
+      <div class="preview-actions">
+        <button class="btn btn-secondary" id="deleteSelectAll" type="button">Select All</button>
+        <button class="btn btn-secondary" id="deleteClearSelection" type="button">Clear Selection</button>
+        <button class="btn btn-danger" id="deleteRemoveSelectedTop" type="button">🗑 Remove Selected</button>
+      </div>
+    </div>
+    <div class="preview-hint">Tip: click a page to select it. Use the 🗑 button directly on any preview page to delete it.</div>
     <div class="thumb-grid" id="thumbGrid-delete"></div>
     <div class="controls">
       <label>Pages to remove</label>
       <input type="text" id="deletePages" placeholder="e.g. 1,3,5-7" />
-      <button class="btn btn-danger" id="action-delete">Remove pages</button>
+      <button class="btn btn-danger" id="action-delete">Remove Selected</button>
     </div>
     <div class="log" id="log-delete">Upload a PDF and select pages to delete.</div>
   </div>
@@ -537,57 +628,74 @@
       container.innerHTML = '';
       if (!pdfData) return;
 
-      // If pdfData is a PDFDocument from pdf-lib, we need to convert to ArrayBuffer
       let arrayBuffer;
       if (pdfData instanceof PDFLib.PDFDocument) {
         arrayBuffer = await pdfData.save();
       } else if (pdfData instanceof ArrayBuffer || pdfData instanceof Uint8Array) {
         arrayBuffer = pdfData;
       } else {
-        // Assume it's a file; load it
         arrayBuffer = await readFileAsBuffer(pdfData);
       }
 
-      // Use PDF.js to render
-      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-      const pdf = await loadingTask.promise;
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       const total = pdf.numPages;
-
-      const { selected = [], onSelect = null, showDelete = false } = options;
+      const { selected = [], onSelect = null, showDelete = false, onDelete = null } = options;
 
       for (let i = 1; i <= total; i++) {
         const page = await pdf.getPage(i);
-        const viewport = page.getViewport({ scale: 0.4 });
+        const viewport = page.getViewport({ scale: 0.48 });
         const canvas = document.createElement('canvas');
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        const ctx = canvas.getContext('2d');
-        const renderContext = { canvasContext: ctx, viewport };
-        await page.render(renderContext).promise;
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
+
+        await page.render({
+          canvasContext: canvas.getContext('2d', { alpha: false }),
+          viewport
+        }).promise;
 
         const item = document.createElement('div');
         item.className = 'thumb-item';
+        item.dataset.page = i;
+        item.tabIndex = 0;
         if (selected.includes(i)) item.classList.add('selected');
         item.appendChild(canvas);
 
         const num = document.createElement('span');
         num.className = 'page-num';
-        num.textContent = `#${i}`;
+        num.textContent = `Page ${i}`;
         item.appendChild(num);
 
         if (showDelete) {
-          const del = document.createElement('span');
+          const check = document.createElement('span');
+          check.className = 'page-check';
+          check.textContent = '✓';
+          item.appendChild(check);
+
+          const del = document.createElement('button');
+          del.type = 'button';
           del.className = 'badge-del';
+          del.title = `Delete page ${i}`;
+          del.setAttribute('aria-label', `Delete page ${i}`);
           del.textContent = '×';
           del.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
-            if (onSelect) onSelect(i);
+            if (onDelete) onDelete(i);
           });
           item.appendChild(del);
         }
 
         if (onSelect) {
-          item.addEventListener('click', () => onSelect(i));
+          const toggle = () => onSelect(i);
+          item.addEventListener('click', (e) => {
+            if (!e.target.closest('.badge-del')) toggle();
+          });
+          item.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggle();
+            }
+          });
         }
 
         container.appendChild(item);
@@ -1025,83 +1133,182 @@
 
     // ── DELETE ──
     (function initDelete() {
-      let pdfDoc = null, file = null;
-      let selectedPages = [];
+      let pdfDoc = null;
+      let file = null;
+      let selectedPages = new Set();
 
-      async function updateUI() {
-        if (pdfDoc && file) {
-          await renderThumbnails('thumbGrid-delete', file, {
-            selected: selectedPages,
-            showDelete: true,
-            onSelect: (pageNum) => {
-              const idx = selectedPages.indexOf(pageNum);
-              if (idx > -1) selectedPages.splice(idx, 1);
-              else selectedPages.push(pageNum);
-              updateUI();
+      const grid = document.getElementById('thumbGrid-delete');
+      const log = document.getElementById('log-delete');
+      const rangeInput = document.getElementById('deletePages');
+      const toolbar = document.getElementById('deletePreviewToolbar');
+      const info = document.getElementById('deletePreviewInfo');
+
+      function setLog(message, type = '') {
+        log.textContent = message;
+        log.className = 'log' + (type ? ` ${type}` : '');
+      }
+
+      function syncRangeInput() {
+        rangeInput.value = Array.from(selectedPages).sort((a, b) => a - b).join(',');
+      }
+
+      function updateInfo() {
+        if (!pdfDoc) {
+          toolbar.classList.remove('visible');
+          return;
+        }
+        toolbar.classList.add('visible');
+        const total = pdfDoc.getPageCount();
+        const count = selectedPages.size;
+        info.textContent = count
+          ? `${count} selected • ${total} page${total === 1 ? '' : 's'} in preview`
+          : `${total} page${total === 1 ? '' : 's'} in preview • click a page or 🗑 to edit`;
+      }
+
+      async function renderDeletePreview() {
+        if (!pdfDoc) {
+          grid.innerHTML = '';
+          toolbar.classList.remove('visible');
+          return;
+        }
+
+        await renderThumbnails('thumbGrid-delete', pdfDoc, {
+          selected: Array.from(selectedPages),
+          showDelete: true,
+
+          onSelect: async (pageNum) => {
+            if (selectedPages.has(pageNum)) selectedPages.delete(pageNum);
+            else selectedPages.add(pageNum);
+
+            syncRangeInput();
+            await renderDeletePreview();
+
+            setLog(
+              selectedPages.size
+                ? `🗑️ ${selectedPages.size} page(s) selected.`
+                : 'No pages selected. Click a page or use 🗑 to edit.'
+            );
+          },
+
+          onDelete: async (pageNum) => {
+            if (pdfDoc.getPageCount() <= 1) {
+              setLog('⚠️ You must keep at least one page.', 'error');
+              return;
             }
-          });
-          document.getElementById('log-delete').textContent = selectedPages.length
-            ? `🗑️ ${selectedPages.length} page(s) selected.`
-            : 'Click thumbnails to mark pages.';
-          document.getElementById('log-delete').className = 'log';
-        } else {
-          document.getElementById('thumbGrid-delete').innerHTML = '';
-          document.getElementById('log-delete').textContent = 'Upload a PDF.';
-          document.getElementById('log-delete').className = 'log';
+
+            if (!confirm(`Delete Page ${pageNum} from the preview?`)) return;
+
+            try {
+              pdfDoc.removePage(pageNum - 1);
+
+              const next = new Set();
+              selectedPages.forEach(p => {
+                if (p < pageNum) next.add(p);
+                else if (p > pageNum) next.add(p - 1);
+              });
+              selectedPages = next;
+
+              syncRangeInput();
+              await renderDeletePreview();
+              setLog(`✅ Page ${pageNum} removed from the preview. Continue editing before downloading.`, 'success');
+            } catch (err) {
+              setLog('❌ Could not delete page: ' + err.message, 'error');
+            }
+          }
+        });
+
+        updateInfo();
+
+        if (!selectedPages.size) {
+          setLog(`✅ ${pdfDoc.getPageCount()} pages loaded. Click a page or use 🗑 on the preview.`);
         }
       }
 
       setupDropZone('drop-delete', 'file-delete', async (fileList) => {
-        if (fileList.length > 0 && fileList[0].type === 'application/pdf') {
+        if (!fileList.length || fileList[0].type !== 'application/pdf') return;
+
+        try {
           file = fileList[0];
           pdfDoc = await loadPdfFromFile(file);
-          selectedPages = [];
-          await updateUI();
+          selectedPages = new Set();
+          rangeInput.value = '';
+          await renderDeletePreview();
+          setLog(`✅ ${pdfDoc.getPageCount()} pages loaded.`, 'success');
+        } catch (err) {
+          setLog('❌ Could not open PDF: ' + err.message, 'error');
         }
       }, false);
 
+      document.getElementById('deleteSelectAll').addEventListener('click', () => {
+        if (!pdfDoc) return;
+        const total = pdfDoc.getPageCount();
+
+        if (total <= 1) {
+          setLog('⚠️ You cannot select the only page for deletion.', 'error');
+          return;
+        }
+
+        selectedPages = new Set(Array.from({ length: total - 1 }, (_, i) => i + 1));
+        syncRangeInput();
+        renderDeletePreview();
+        setLog(`🗑️ ${selectedPages.size} pages selected. Page ${total} is kept.`);
+      });
+
+      document.getElementById('deleteClearSelection').addEventListener('click', () => {
+        selectedPages.clear();
+        syncRangeInput();
+        renderDeletePreview();
+        setLog('Selection cleared.');
+      });
+
+      document.getElementById('deleteRemoveSelectedTop').addEventListener('click', () => {
+        document.getElementById('action-delete').click();
+      });
+
+      rangeInput.addEventListener('input', () => {
+        if (!pdfDoc) return;
+        selectedPages = new Set(parsePageRanges(rangeInput.value, pdfDoc.getPageCount()));
+        renderDeletePreview();
+      });
+
       document.getElementById('action-delete').addEventListener('click', async () => {
-        const log = document.getElementById('log-delete');
         if (!pdfDoc) {
-          log.textContent = '❌ Upload a PDF first.';
-          log.className = 'log error';
+          setLog('❌ Upload a PDF first.', 'error');
           return;
         }
-        // Also parse text input
-        const textPages = document.getElementById('deletePages').value.trim();
-        if (textPages) {
-          const total = pdfDoc.getPageCount();
-          const parsed = parsePageRanges(textPages, total);
-          for (let p of parsed) {
-            if (!selectedPages.includes(p)) selectedPages.push(p);
-          }
+
+        if (rangeInput.value.trim()) {
+          selectedPages = new Set(parsePageRanges(rangeInput.value, pdfDoc.getPageCount()));
         }
-        if (selectedPages.length === 0) {
-          log.textContent = '⚠️ No pages selected.';
-          log.className = 'log error';
+
+        if (!selectedPages.size) {
+          setLog('⚠️ Select at least one page to remove.', 'error');
           return;
         }
+
+        const total = pdfDoc.getPageCount();
+        if (selectedPages.size >= total) {
+          setLog('⚠️ At least one page must remain.', 'error');
+          return;
+        }
+
+        const pages = Array.from(selectedPages).sort((a, b) => b - a);
+
+        if (!confirm(`Remove ${pages.length} page(s) and download the edited PDF?`)) return;
+
         try {
-          const sorted = selectedPages.sort((a,b) => b - a);
-          for (let p of sorted) pdfDoc.removePage(p - 1);
+          setLog('⏳ Creating your edited PDF...');
+          pages.forEach(p => pdfDoc.removePage(p - 1));
+
           const bytes = await pdfDoc.save();
-          downloadPDF(bytes, 'deleted.pdf');
-          log.textContent = `✅ Deleted pages ${selectedPages.join(', ')}.`;
-          log.className = 'log success';
-          selectedPages = [];
-          // Reload the document from original file? Actually we need to reload the file to keep original for further edits, but we just saved the modified version. For simplicity, we'll keep the modified doc in memory.
-          // But we lost the original file reference; we can reload from the file object.
-          // Let's just reload the file from the stored file object.
-          if (file) {
-            pdfDoc = await loadPdfFromFile(file);
-            // Re-apply deletions? No, we already saved the modified version. So we should use the modified doc for further preview.
-            // But we already removed pages from pdfDoc. So we can just keep it.
-            // For preview, we need to render the modified doc.
-            await updateUI();
-          }
+          downloadPDF(bytes, 'deleted-pages.pdf');
+
+          selectedPages.clear();
+          rangeInput.value = '';
+          await renderDeletePreview();
+          setLog('✅ Done! Your edited PDF download has started.', 'success');
         } catch (err) {
-          log.textContent = '❌ Error: ' + err.message;
-          log.className = 'log error';
+          setLog('❌ Error: ' + err.message, 'error');
         }
       });
     })();
