@@ -187,7 +187,7 @@ letter-spacing:0.5px;
 font-family:'DM Sans',sans-serif;
 }
 
-/* ---- New "PDF Editor" button (no login) ---- */
+/* ---- PDF Editor button (skip login) ---- */
 .editor-link {
   display: block;
   margin-top: 16px;
@@ -208,9 +208,6 @@ font-family:'DM Sans',sans-serif;
   background: rgba(255,255,255,0.08);
   border-color: rgba(255,255,255,0.15);
 }
-.editor-link i {
-  margin-right: 8px;
-}
 </style>
 </head>
 <body>
@@ -228,8 +225,8 @@ font-family:'DM Sans',sans-serif;
 <button class="btn" id="enterBtn" type="submit">Enter</button>
 </form>
 
-<!-- NEW: PDF Editor button – skip login and go directly to tools -->
-<a href="main.html" class="editor-link">📄 PDF Editor (no login required)</a>
+<!-- PDF Editor button – skip login and go directly to tools -->
+<a href="pdf.html" class="editor-link">📄 PDF Editor (no login required)</a>
 
 <div class="loader-wrapper" id="loaderWrapper">
 <div class="loader-track">
@@ -301,13 +298,13 @@ form.addEventListener("submit", async e => {
     console.error("Error:", err);
   }
 
-  // Wait for loader to complete and redirect to the tools app
+  // Redirect to pdf.html after loader completes
   setTimeout(() => {
     clearInterval(interval);
     loaderFill.style.width = "100%";
     loaderPercent.textContent = "100%";
     setTimeout(() => {
-      window.location.href = "main.html";
+      window.location.href = "pdf.html";
     }, 400);
   }, 1200);
 });
