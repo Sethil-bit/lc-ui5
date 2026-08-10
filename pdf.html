@@ -12,7 +12,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
   </script>
   <style>
-    /* ── base ── */
+    /* ── CSS (same as before, but included for completeness) ── */
     * {
       margin: 0;
       padding: 0;
@@ -63,8 +63,6 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(255, 255, 255, 0.25);
     }
-
-    /* header */
     .header {
       display: flex;
       justify-content: space-between;
@@ -96,8 +94,6 @@
       color: #fff;
       font-weight: 600;
     }
-
-    /* nav */
     .tool-nav {
       display: flex;
       flex-wrap: wrap;
@@ -139,8 +135,6 @@
       border-radius: 4px;
       background: linear-gradient(90deg, var(--primary), var(--secondary));
     }
-
-    /* workspace */
     .workspace {
       display: none;
       background: var(--glass);
@@ -174,8 +168,6 @@
       font-size: 14px;
       margin-bottom: 22px;
     }
-
-    /* drop zone */
     .drop-zone {
       border: 2px dashed var(--border);
       border-radius: var(--radius-sm);
@@ -226,8 +218,6 @@
     .drop-zone input[type="file"] {
       display: none;
     }
-
-    /* file list */
     .file-list {
       display: flex;
       flex-wrap: wrap;
@@ -273,12 +263,10 @@
       color: #ff6b8a;
       background: rgba(255, 80, 120, 0.15);
     }
-
-    /* thumbnail grid */
     .thumb-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 16px;
       margin: 16px 0 20px;
     }
     .thumb-item {
@@ -299,14 +287,14 @@
       cursor: grabbing;
     }
     .thumb-item.dragging {
-      opacity: 0.4;
-      transform: scale(0.95);
+      opacity: 0.3;
+      transform: scale(0.92);
       border-color: var(--primary);
     }
     .thumb-item.drag-over {
       border-color: var(--secondary);
-      transform: scale(1.02);
-      box-shadow: 0 0 30px rgba(0, 212, 255, 0.15);
+      transform: scale(1.04);
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
     }
     .thumb-item:hover {
       border-color: rgba(255, 255, 255, 0.15);
@@ -329,7 +317,7 @@
       position: absolute;
       bottom: 6px;
       right: 6px;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.75);
       padding: 2px 10px;
       border-radius: 20px;
       font-size: 10px;
@@ -339,7 +327,6 @@
       border: 1px solid rgba(255, 255, 255, 0.06);
       pointer-events: none;
     }
-    /* rotate button on thumb */
     .thumb-item .thumb-rotate-btn {
       position: absolute;
       bottom: 6px;
@@ -367,7 +354,6 @@
       background: rgba(255, 0, 200, 0.4);
       border-color: var(--primary);
     }
-
     .thumb-item .badge-del {
       position: absolute;
       top: 6px;
@@ -425,9 +411,7 @@
       background: rgba(255, 0, 200, 0.85);
       border-color: var(--primary);
     }
-
-    /* preview toolbar */
-    .preview-toolbar {
+    .organize-toolbar {
       display: none;
       align-items: center;
       justify-content: space-between;
@@ -440,31 +424,29 @@
       background: rgba(255, 255, 255, 0.025);
       backdrop-filter: blur(4px);
     }
-    .preview-toolbar.visible {
+    .organize-toolbar.visible {
       display: flex;
       animation: fadeSlideUp 0.3s ease;
     }
-    .preview-toolbar .preview-info {
+    .organize-toolbar .org-info {
       font-size: 13px;
       color: var(--text-dim);
     }
-    .preview-actions {
+    .organize-actions {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
     }
-    .preview-actions .btn {
+    .organize-actions .btn {
       padding: 7px 16px;
       font-size: 12px;
     }
-    .preview-hint {
+    .org-hint {
       margin: 6px 0 0;
       color: var(--text-dim);
       font-size: 12px;
       opacity: 0.7;
     }
-
-    /* controls */
     .controls {
       display: flex;
       flex-wrap: wrap;
@@ -503,36 +485,133 @@
     .controls select option {
       background: #1a1a2e;
     }
-
-    /* buttons */
-    .btn {
-      padding: 10px 26px;
+    /* ── RGB ANIMATED BUTTONS ── */
+    @keyframes rgbBorder {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+    .btn-rgb {
+      position: relative;
+      color: #fff;
+      font-weight: 700;
       border: none;
+      padding: 10px 28px;
       border-radius: 40px;
-      font-weight: 600;
-      font-size: 14px;
       cursor: pointer;
-      transition: var(--transition);
+      transition: all 0.3s ease;
       font-family: 'Inter', sans-serif;
+      font-size: 14px;
       display: inline-flex;
       align-items: center;
       gap: 8px;
       justify-content: center;
-      position: relative;
-      overflow: hidden;
+      background: linear-gradient(135deg, #ff0066, #ff6600, #ffcc00, #00cc66, #0066ff, #6600ff, #ff0066);
+      background-size: 400% 400%;
+      animation: rgbBorder 4s ease infinite;
+      box-shadow: 0 0 20px rgba(255, 0, 100, 0.3);
     }
-    .btn:active {
+    .btn-rgb::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 42px;
+      padding: 2px;
+      background: linear-gradient(135deg, #ff0066, #ff6600, #ffcc00, #00cc66, #0066ff, #6600ff, #ff0066);
+      background-size: 400% 400%;
+      animation: rgbBorder 4s ease infinite;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .btn-rgb span {
+      position: relative;
+      z-index: 1;
+    }
+    .btn-rgb:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 0 40px rgba(255, 0, 100, 0.5);
+    }
+    .btn-rgb:active {
       transform: scale(0.96);
     }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), #c800ff);
-      color: #fff;
-      box-shadow: 0 4px 30px rgba(255, 0, 200, 0.25);
+    .btn-rgb-merge {
+      background: linear-gradient(135deg, #ff0066, #ff3366, #ff6699, #ff0066);
+      background-size: 300% 300%;
+      animation: rgbBorder 3s ease infinite;
     }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-      box-shadow: 0 8px 40px rgba(255, 0, 200, 0.30);
+    .btn-rgb-merge::before {
+      background: linear-gradient(135deg, #ff0066, #ff3366, #ff6699, #ff0066);
+      background-size: 300% 300%;
+      animation: rgbBorder 3s ease infinite;
+    }
+    .btn-rgb-split {
+      background: linear-gradient(135deg, #00ccff, #0066ff, #6633ff, #00ccff);
+      background-size: 300% 300%;
+      animation: rgbBorder 3.5s ease infinite;
+    }
+    .btn-rgb-split::before {
+      background: linear-gradient(135deg, #00ccff, #0066ff, #6633ff, #00ccff);
+      background-size: 300% 300%;
+      animation: rgbBorder 3.5s ease infinite;
+    }
+    .btn-rgb-image {
+      background: linear-gradient(135deg, #00ff66, #66ff33, #ccff00, #00ff66);
+      background-size: 300% 300%;
+      animation: rgbBorder 4s ease infinite;
+    }
+    .btn-rgb-image::before {
+      background: linear-gradient(135deg, #00ff66, #66ff33, #ccff00, #00ff66);
+      background-size: 300% 300%;
+      animation: rgbBorder 4s ease infinite;
+    }
+    .btn-rgb-reorder {
+      background: linear-gradient(135deg, #ff6600, #ff9900, #ffcc00, #ff6600);
+      background-size: 300% 300%;
+      animation: rgbBorder 3.2s ease infinite;
+    }
+    .btn-rgb-reorder::before {
+      background: linear-gradient(135deg, #ff6600, #ff9900, #ffcc00, #ff6600);
+      background-size: 300% 300%;
+      animation: rgbBorder 3.2s ease infinite;
+    }
+    .btn-rgb-organize {
+      background: linear-gradient(135deg, #00ffcc, #00cc99, #009966, #00ffcc);
+      background-size: 300% 300%;
+      animation: rgbBorder 3.8s ease infinite;
+    }
+    .btn-rgb-organize::before {
+      background: linear-gradient(135deg, #00ffcc, #00cc99, #009966, #00ffcc);
+      background-size: 300% 300%;
+      animation: rgbBorder 3.8s ease infinite;
+    }
+    .btn-rgb-rotate {
+      background: linear-gradient(135deg, #cc33ff, #9933ff, #6633ff, #cc33ff);
+      background-size: 300% 300%;
+      animation: rgbBorder 3s ease infinite;
+    }
+    .btn-rgb-rotate::before {
+      background: linear-gradient(135deg, #cc33ff, #9933ff, #6633ff, #cc33ff);
+      background-size: 300% 300%;
+      animation: rgbBorder 3s ease infinite;
+    }
+    .btn-rgb-delete {
+      background: linear-gradient(135deg, #ff0033, #ff3366, #ff6699, #ff0033);
+      background-size: 300% 300%;
+      animation: rgbBorder 3.6s ease infinite;
+    }
+    .btn-rgb-delete::before {
+      background: linear-gradient(135deg, #ff0033, #ff3366, #ff6699, #ff0033);
+      background-size: 300% 300%;
+      animation: rgbBorder 3.6s ease infinite;
     }
     .btn-secondary {
       background: rgba(255, 255, 255, 0.07);
@@ -552,79 +631,6 @@
       background: rgba(255, 80, 120, 0.30);
       transform: translateY(-2px);
     }
-    .btn-success {
-      background: rgba(74, 222, 128, 0.15);
-      color: #4ade80;
-      border: 1px solid rgba(74, 222, 128, 0.15);
-    }
-    .btn-success:hover {
-      background: rgba(74, 222, 128, 0.25);
-      transform: translateY(-2px);
-    }
-    /* Colored download buttons */
-    .btn-merge {
-      background: linear-gradient(135deg, #ff00c8, #ff6b8a);
-      color: #fff;
-      box-shadow: 0 4px 30px rgba(255, 0, 200, 0.25);
-    }
-    .btn-merge:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-    }
-    .btn-split {
-      background: linear-gradient(135deg, #00d4ff, #0099ff);
-      color: #fff;
-      box-shadow: 0 4px 30px rgba(0, 212, 255, 0.25);
-    }
-    .btn-split:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-    }
-    .btn-image {
-      background: linear-gradient(135deg, #4ade80, #22c55e);
-      color: #fff;
-      box-shadow: 0 4px 30px rgba(74, 222, 128, 0.25);
-    }
-    .btn-image:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-    }
-    .btn-reorder {
-      background: linear-gradient(135deg, #f97316, #fb923c);
-      color: #fff;
-      box-shadow: 0 4px 30px rgba(249, 115, 22, 0.25);
-    }
-    .btn-reorder:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-    }
-    .btn-addpages {
-      background: linear-gradient(135deg, #14b8a6, #2dd4bf);
-      color: #fff;
-      box-shadow: 0 4px 30px rgba(20, 184, 166, 0.25);
-    }
-    .btn-addpages:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-    }
-    .btn-rotate {
-      background: linear-gradient(135deg, #a855f7, #7c3aed);
-      color: #fff;
-      box-shadow: 0 4px 30px rgba(168, 85, 247, 0.25);
-    }
-    .btn-rotate:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-    }
-    .btn-delete {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      color: #fff;
-      box-shadow: 0 4px 30px rgba(239, 68, 68, 0.25);
-    }
-    .btn-delete:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-    }
     .btn:disabled {
       opacity: 0.4;
       pointer-events: none;
@@ -643,8 +649,6 @@
         transform: rotate(360deg);
       }
     }
-
-    /* log */
     .log {
       margin-top: 18px;
       padding: 12px 18px;
@@ -678,7 +682,6 @@
       font-size: 18px;
       flex-shrink: 0;
     }
-
     .back-link {
       display: inline-block;
       margin-top: 28px;
@@ -692,7 +695,6 @@
       color: #fff;
       opacity: 1;
     }
-
     .empty-state {
       text-align: center;
       padding: 30px 10px;
@@ -707,8 +709,6 @@
     .empty-state p {
       font-size: 14px;
     }
-
-    /* toast */
     .toast-container {
       position: fixed;
       bottom: 30px;
@@ -773,8 +773,6 @@
     .toast.toast-info .toast-icon {
       color: #60a5fa;
     }
-
-    /* responsive */
     @media (max-width: 720px) {
       .workspace {
         padding: 18px 16px 24px;
@@ -795,14 +793,14 @@
         width: 100%;
         min-width: unset;
       }
-      .preview-toolbar {
+      .organize-toolbar {
         flex-direction: column;
         align-items: stretch;
       }
-      .preview-actions {
+      .organize-actions {
         width: 100%;
       }
-      .preview-actions .btn {
+      .organize-actions .btn {
         flex: 1;
       }
       .tool-nav button {
@@ -862,7 +860,7 @@
       <button data-tool="split">Split</button>
       <button data-tool="image2pdf">Images → PDF</button>
       <button data-tool="reorder">Reorder</button>
-      <button data-tool="addpages">Add Pages</button>
+      <button data-tool="organize">Organize</button>
       <button data-tool="rotate">Rotate</button>
       <button data-tool="delete">Delete</button>
     </nav>
@@ -880,7 +878,7 @@
       <div class="file-list" id="fileList-merge"></div>
       <div class="thumb-grid" id="thumbGrid-merge"></div>
       <div class="controls">
-        <button class="btn btn-merge" id="action-merge">✨ Merge &amp; Download</button>
+        <button class="btn btn-rgb btn-rgb-merge" id="action-merge"><span>✨ Merge &amp; Download</span></button>
         <button class="btn btn-secondary" id="clear-merge">Clear All</button>
       </div>
       <div class="log" id="log-merge"><span class="log-icon">ℹ️</span> Select two or more PDFs to merge.</div>
@@ -900,7 +898,7 @@
       <div class="controls">
         <label>Pages to extract</label>
         <input type="text" id="splitRange" placeholder="e.g. 1,3,5-7" />
-        <button class="btn btn-split" id="action-split">Extract &amp; Download</button>
+        <button class="btn btn-rgb btn-rgb-split" id="action-split"><span>Extract &amp; Download</span></button>
       </div>
       <div class="log" id="log-split"><span class="log-icon">ℹ️</span> Upload a PDF to extract pages.</div>
     </div>
@@ -923,13 +921,13 @@
           <option value="Letter">Letter</option>
           <option value="Fit">Fit to image</option>
         </select>
-        <button class="btn btn-image" id="action-image2pdf">Convert &amp; Download</button>
+        <button class="btn btn-rgb btn-rgb-image" id="action-image2pdf"><span>Convert &amp; Download</span></button>
         <button class="btn btn-secondary" id="clear-image2pdf">Clear</button>
       </div>
       <div class="log" id="log-image2pdf"><span class="log-icon">ℹ️</span> Select one or more images.</div>
     </div>
 
-    <!-- ===== REORDER (drag & drop) ===== -->
+    <!-- ===== REORDER ===== -->
     <div class="workspace" id="ws-reorder">
       <h2>🔄 Reorder Pages</h2>
       <p class="sub">Drag thumbnails to reorder, or enter the new order.</p>
@@ -943,37 +941,53 @@
       <div class="controls">
         <label>New order (comma‑separated)</label>
         <input type="text" id="reorderOrder" placeholder="e.g. 3,1,2,4" />
-        <button class="btn btn-reorder" id="action-reorder">Reorder &amp; Download</button>
+        <button class="btn btn-rgb btn-rgb-reorder" id="action-reorder"><span>Reorder &amp; Download</span></button>
       </div>
       <div class="log" id="log-reorder"><span class="log-icon">ℹ️</span> Upload a PDF and drag thumbnails to reorder.</div>
     </div>
 
-    <!-- ===== ADD PAGES (replace) ===== -->
-    <div class="workspace" id="ws-addpages">
-      <h2>➕ Replace Pages</h2>
-      <p class="sub">Remove pages and insert a new PDF at that position (e.g., replace page 3).</p>
-      <div class="drop-zone" id="drop-addpages-base" style="margin-bottom:8px;">
+    <!-- ===== ORGANIZE (simplified & robust) ===== -->
+    <div class="workspace" id="ws-organize">
+      <h2>📂 Organize PDF</h2>
+      <p class="sub">Drag to reorder, click × to delete, or insert pages from another PDF.</p>
+
+      <div class="drop-zone" id="drop-organize-base" style="margin-bottom:12px;">
         <span class="icon">📄</span>
-        <div class="title">Base PDF</div>
-        <input type="file" id="file-addpages-base" accept=".pdf" />
+        <div class="title">Upload PDF to Organize</div>
+        <div class="hint">or click to browse</div>
+        <input type="file" id="file-organize-base" accept=".pdf" />
       </div>
-      <div class="drop-zone" id="drop-addpages-insert" style="margin-bottom:16px;">
-        <span class="icon">📄</span>
-        <div class="title">PDF to Insert (replacement)</div>
-        <input type="file" id="file-addpages-insert" accept=".pdf" />
+
+      <div class="drop-zone" id="drop-organize-insert" style="margin-bottom:16px; border-style:dotted;">
+        <span class="icon">📎</span>
+        <div class="title">Optional: PDF to Insert</div>
+        <div class="hint">upload a PDF to insert pages into the main document</div>
+        <input type="file" id="file-organize-insert" accept=".pdf" />
       </div>
-      <div class="thumb-grid" id="thumbGrid-addpages"></div>
+
+      <div class="organize-toolbar" id="organizeToolbar">
+        <div class="org-info" id="organizeInfo">Pages: 0</div>
+        <div class="organize-actions">
+          <button class="btn btn-secondary" id="orgInsertBefore" type="button">📥 Insert Before</button>
+          <button class="btn btn-secondary" id="orgInsertAfter" type="button">📥 Insert After</button>
+          <button class="btn btn-danger" id="orgDeleteSelected" type="button">🗑 Delete Selected</button>
+          <button class="btn btn-secondary" id="orgClearSelection" type="button">Clear</button>
+        </div>
+      </div>
+      <div class="org-hint">💡 Click a page to select it. Drag to reorder. Use × on a thumbnail to delete it instantly.</div>
+
+      <div class="thumb-grid" id="thumbGrid-organize"></div>
+
       <div class="controls">
-        <label>Remove pages (optional)</label>
-        <input type="text" id="removePages" placeholder="e.g. 3 or 3-5" />
         <label>Insert at page</label>
-        <input type="number" id="insertAt" value="1" min="1" />
-        <button class="btn btn-addpages" id="action-addpages">Replace &amp; Download</button>
+        <input type="number" id="orgInsertAt" value="1" min="1" />
+        <button class="btn btn-rgb btn-rgb-organize" id="action-organize"><span>📥 Apply &amp; Download</span></button>
+        <button class="btn btn-secondary" id="clear-organize">Clear</button>
       </div>
-      <div class="log" id="log-addpages"><span class="log-icon">ℹ️</span> Upload a base PDF and a PDF to insert.</div>
+      <div class="log" id="log-organize"><span class="log-icon">ℹ️</span> Upload a PDF to organize pages.</div>
     </div>
 
-    <!-- ===== ROTATE (with per‑page rotate buttons) ===== -->
+    <!-- ===== ROTATE ===== -->
     <div class="workspace" id="ws-rotate">
       <h2>↻ Rotate Pages</h2>
       <p class="sub">Click the 🔄 button on any thumbnail to rotate that page by 90°.</p>
@@ -993,7 +1007,7 @@
           <option value="180">180°</option>
           <option value="270">270°</option>
         </select>
-        <button class="btn btn-rotate" id="action-rotate">Rotate &amp; Download</button>
+        <button class="btn btn-rgb btn-rgb-rotate" id="action-rotate"><span>Rotate &amp; Download</span></button>
       </div>
       <div class="log" id="log-rotate"><span class="log-icon">ℹ️</span> Upload a PDF and click 🔄 on any page to rotate individually.</div>
     </div>
@@ -1021,7 +1035,7 @@
       <div class="controls">
         <label>Pages to remove</label>
         <input type="text" id="deletePages" placeholder="e.g. 1,3,5-7" />
-        <button class="btn btn-delete" id="action-delete">Remove Selected</button>
+        <button class="btn btn-rgb btn-rgb-delete" id="action-delete"><span>Remove Selected</span></button>
       </div>
       <div class="log" id="log-delete"><span class="log-icon">ℹ️</span> Upload a PDF and select pages to delete.</div>
     </div>
@@ -1029,7 +1043,6 @@
     <a href="login.html" class="back-link">← Back to Login</a>
   </div>
 
-  <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
   <script>
@@ -1062,7 +1075,7 @@
         split: document.getElementById('ws-split'),
         image2pdf: document.getElementById('ws-image2pdf'),
         reorder: document.getElementById('ws-reorder'),
-        addpages: document.getElementById('ws-addpages'),
+        organize: document.getElementById('ws-organize'),
         rotate: document.getElementById('ws-rotate'),
         delete: document.getElementById('ws-delete')
       };
@@ -1112,7 +1125,7 @@
         return PDFLib.PDFDocument.load(buffer);
       }
 
-      // ── Thumbnail rendering with extended options ──
+      // ── Thumbnail rendering ──
       async function renderThumbnails(containerId, fileOrBuffer, options = {}) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -1178,7 +1191,7 @@
             item.className = 'thumb-item';
             item.dataset.page = i;
             item.tabIndex = 0;
-            if (selected.includes(i)) item.classList.add('selected');
+            if (selected && selected.includes(i)) item.classList.add('selected');
             item.appendChild(canvas);
 
             const num = document.createElement('span');
@@ -1186,7 +1199,6 @@
             num.textContent = `Page ${i}`;
             item.appendChild(num);
 
-            // Rotate button
             if (showRotate && onRotate) {
               const rotBtn = document.createElement('button');
               rotBtn.type = 'button';
@@ -1201,7 +1213,6 @@
               item.appendChild(rotBtn);
             }
 
-            // Delete badge
             if (showDelete) {
               const check = document.createElement('span');
               check.className = 'page-check';
@@ -1222,22 +1233,22 @@
               item.appendChild(del);
             }
 
-            // Drag & drop support
             if (dragEnabled) {
               item.draggable = true;
               item.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', i);
+                e.dataTransfer.setData('text/plain', String(i));
                 item.classList.add('dragging');
                 if (onDragStart) onDragStart(i);
               });
               item.addEventListener('dragend', (e) => {
                 item.classList.remove('dragging');
+                document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('drag-over'));
                 if (onDragEnd) onDragEnd();
               });
               item.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                const dragged = document.querySelector('.thumb-item.dragging');
-                if (dragged && dragged !== item) {
+                const dragging = document.querySelector('.thumb-item.dragging');
+                if (dragging && dragging !== item) {
                   document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('drag-over'));
                   item.classList.add('drag-over');
                 }
@@ -1250,11 +1261,12 @@
                 e.preventDefault();
                 item.classList.remove('drag-over');
                 const from = parseInt(e.dataTransfer.getData('text/plain'));
-                if (onDrop) onDrop(from, i);
+                if (!isNaN(from) && onDrop) {
+                  onDrop(from, i);
+                }
               });
             }
 
-            // Selection click
             if (onSelect) {
               const toggle = () => onSelect(i);
               item.addEventListener('click', (e) => {
@@ -1569,21 +1581,19 @@
       })();
 
       // ──────────────────────────────────────────────
-      // ── REORDER (drag & drop) ──
+      // ── REORDER ──
       // ──────────────────────────────────────────────
       (function initReorder() {
         let pdfDoc = null;
         let file = null;
-        let pageOrder = []; // array of page numbers in current order
+        let pageOrder = [];
 
-        // Re-render thumbnails in current order
         async function renderReorderThumbs() {
           if (!pdfDoc || !file) {
             document.getElementById('thumbGrid-reorder').innerHTML =
               `<div class="empty-state"><span class="big-icon">📄</span><p>No PDF loaded</p></div>`;
             return;
           }
-          // We need to generate a temp PDF with pages in current order
           try {
             const { PDFDocument } = PDFLib;
             const newDoc = await PDFDocument.create();
@@ -1596,24 +1606,22 @@
 
             await renderThumbnails('thumbGrid-reorder', tempFile, {
               dragEnabled: true,
-              onDragStart: (from) => { /* store from */ },
-              onDragOver: (to) => { /* optional */ },
               onDrop: (from, to) => {
                 if (from === to) return;
                 const fromIdx = pageOrder.indexOf(from);
                 const toIdx = pageOrder.indexOf(to);
                 if (fromIdx === -1 || toIdx === -1) return;
-                // Move from to to position
                 const [removed] = pageOrder.splice(fromIdx, 1);
-                pageOrder.splice(toIdx, 0, removed);
+                const insertIdx = fromIdx < toIdx ? toIdx - 1 : toIdx;
+                pageOrder.splice(insertIdx, 0, removed);
                 document.getElementById('reorderOrder').value = pageOrder.join(',');
                 renderReorderThumbs();
+                setLog('log-reorder', `Moved page ${from} to position ${insertIdx + 1}`, 'info');
               },
               onDragEnd: () => {
                 document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('drag-over'));
               }
             });
-            setLog('log-reorder', `Current order: ${pageOrder.join(', ')}`, 'info');
           } catch (err) {
             console.warn('Reorder preview error:', err);
           }
@@ -1642,14 +1650,13 @@
           }
         }, false);
 
-        // Update order from text input
         document.getElementById('reorderOrder').addEventListener('input', function() {
           if (!pdfDoc) return;
           const str = this.value.trim();
           if (!str) return;
-          const order = str.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= pdfDoc
-            .getPageCount());
-          if (order.length === pdfDoc.getPageCount()) {
+          const total = pdfDoc.getPageCount();
+          const order = str.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= total);
+          if (order.length === total) {
             pageOrder = order;
             renderReorderThumbs();
           }
@@ -1685,95 +1692,352 @@
       })();
 
       // ──────────────────────────────────────────────
-      // ── ADD PAGES (replace) ──
+      // ── ORGANIZE (simplified & robust) ──
       // ──────────────────────────────────────────────
-      (function initAddPages() {
-        let baseDoc = null,
-          insertDoc = null;
-        let baseFile = null,
-          insertFile = null;
+      (function initOrganize() {
+        let baseDoc = null;
+        let insertDoc = null;
+        let baseFile = null;
+        let insertFile = null;
+        let pageOrder = []; // array of original page numbers (1‑based)
+        let selectedPages = new Set();
 
-        async function updateUI() {
-          const grid = document.getElementById('thumbGrid-addpages');
-          if (baseDoc && baseFile) {
-            await renderThumbnails('thumbGrid-addpages', baseFile);
-            setLog('log-addpages', `Base: ${baseDoc.getPageCount()} pages. Insert loaded.`, 'success');
-          } else {
+        const grid = document.getElementById('thumbGrid-organize');
+        const toolbar = document.getElementById('organizeToolbar');
+        const info = document.getElementById('organizeInfo');
+
+        function updateInfo() {
+          if (!baseDoc) {
+            toolbar.classList.remove('visible');
+            return;
+          }
+          toolbar.classList.add('visible');
+          const total = pageOrder.length;
+          const count = selectedPages.size;
+          info.textContent = count ?
+            `${count} selected • ${total} page${total === 1 ? '' : 's'} total` :
+            `${total} page${total === 1 ? '' : 's'} • click a page to select`;
+        }
+
+        // Generate a temporary PDF from the current pageOrder and insertDoc (if any)
+        async function generateTempPDF() {
+          if (!baseDoc) return null;
+          const { PDFDocument } = PDFLib;
+          const newDoc = await PDFDocument.create();
+
+          // Copy pages from baseDoc in the order of pageOrder
+          const baseIndices = pageOrder.map(p => p - 1);
+          const basePages = await newDoc.copyPages(baseDoc, baseIndices);
+          basePages.forEach(p => newDoc.addPage(p));
+
+          // If insertDoc is loaded, we don't automatically insert; we only insert on demand via buttons
+          // So temp PDF is just the baseDoc in the current order
+          return newDoc;
+        }
+
+        async function renderOrganizeThumbs() {
+          if (!baseDoc || !baseFile) {
             grid.innerHTML =
-              `<div class="empty-state"><span class="big-icon">📄</span><p>Upload base and insert PDFs</p></div>`;
-            setLog('log-addpages', 'Upload a base PDF and a PDF to insert.', 'info');
+              `<div class="empty-state"><span class="big-icon">📄</span><p>Upload a PDF to organize</p></div>`;
+            toolbar.classList.remove('visible');
+            setLog('log-organize', 'Upload a PDF to organize pages.', 'info');
+            return;
+          }
+
+          try {
+            const tempDoc = await generateTempPDF();
+            if (!tempDoc) return;
+            const bytes = await tempDoc.save();
+            const blob = new Blob([bytes], { type: 'application/pdf' });
+            const tempFile = new File([blob], 'organize_temp.pdf', { type: 'application/pdf' });
+
+            await renderThumbnails('thumbGrid-organize', tempFile, {
+              selected: Array.from(selectedPages),
+              showDelete: true,
+              dragEnabled: true,
+              onSelect: (displayPageNum) => {
+                const actualPage = pageOrder[displayPageNum - 1];
+                if (!actualPage) return;
+                if (selectedPages.has(actualPage)) {
+                  selectedPages.delete(actualPage);
+                } else {
+                  selectedPages.add(actualPage);
+                }
+                renderOrganizeThumbs();
+                updateInfo();
+                if (selectedPages.size) {
+                  setLog('log-organize', `${selectedPages.size} page(s) selected.`, 'info');
+                } else {
+                  setLog('log-organize', 'No pages selected.', 'info');
+                }
+              },
+              onDelete: (displayPageNum) => {
+                const actualPage = pageOrder[displayPageNum - 1];
+                if (!actualPage) return;
+                if (pageOrder.length <= 1) {
+                  setLog('log-organize', 'Cannot delete the only page.', 'error');
+                  showToast('Cannot delete the only page', 'error');
+                  return;
+                }
+                if (!confirm(`Delete page ${displayPageNum} from the document?`)) return;
+                const idx = pageOrder.indexOf(actualPage);
+                if (idx !== -1) {
+                  pageOrder.splice(idx, 1);
+                  selectedPages.delete(actualPage);
+                  renderOrganizeThumbs();
+                  updateInfo();
+                  setLog('log-organize', `Page ${displayPageNum} deleted.`, 'success');
+                  showToast(`Page ${displayPageNum} deleted`, 'success');
+                }
+              },
+              onDrop: (fromDisplay, toDisplay) => {
+                if (fromDisplay === toDisplay) return;
+                const fromPage = pageOrder[fromDisplay - 1];
+                const toPage = pageOrder[toDisplay - 1];
+                if (!fromPage || !toPage) return;
+                const fromIdx = pageOrder.indexOf(fromPage);
+                const toIdx = pageOrder.indexOf(toPage);
+                if (fromIdx === -1 || toIdx === -1) return;
+                const [removed] = pageOrder.splice(fromIdx, 1);
+                const insertIdx = fromIdx < toIdx ? toIdx - 1 : toIdx;
+                pageOrder.splice(insertIdx, 0, removed);
+                renderOrganizeThumbs();
+                updateInfo();
+                setLog('log-organize', `Moved page ${fromDisplay} to position ${insertIdx + 1}`, 'info');
+              },
+              onDragEnd: () => {
+                document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('drag-over'));
+              }
+            });
+            updateInfo();
+            if (!selectedPages.size) {
+              setLog('log-organize', `${pageOrder.length} pages loaded. Drag to reorder, click to select.`, 'info');
+            }
+          } catch (err) {
+            console.warn('Organize preview error:', err);
+            grid.innerHTML =
+              `<div class="empty-state"><span class="big-icon">⚠️</span><p>Preview unavailable: ${err.message}</p></div>`;
           }
         }
 
-        setupDropZone('drop-addpages-base', 'file-addpages-base', async (fileList) => {
+        async function loadBase(file) {
+          try {
+            baseFile = file;
+            baseDoc = await loadPdfFromFile(file);
+            const total = baseDoc.getPageCount();
+            pageOrder = Array.from({ length: total }, (_, i) => i + 1);
+            selectedPages = new Set();
+            await renderOrganizeThumbs();
+            setLog('log-organize', `${total} pages loaded. Drag to reorder, click to select.`, 'success');
+            showToast('PDF loaded for organizing', 'success');
+          } catch (err) {
+            setLog('log-organize', 'Error loading PDF: ' + err.message, 'error');
+            showToast('Failed to load PDF', 'error');
+          }
+        }
+
+        setupDropZone('drop-organize-base', 'file-organize-base', async (fileList) => {
           if (fileList.length > 0 && fileList[0].type === 'application/pdf') {
-            baseFile = fileList[0];
-            baseDoc = await loadPdfFromFile(baseFile);
-            await updateUI();
-            showToast('Base PDF loaded', 'success');
+            await loadBase(fileList[0]);
           }
         }, false);
 
-        setupDropZone('drop-addpages-insert', 'file-addpages-insert', async (fileList) => {
+        setupDropZone('drop-organize-insert', 'file-organize-insert', async (fileList) => {
           if (fileList.length > 0 && fileList[0].type === 'application/pdf') {
             insertFile = fileList[0];
             insertDoc = await loadPdfFromFile(insertFile);
-            await updateUI();
+            setLog('log-organize', `Insert PDF loaded (${insertDoc.getPageCount()} pages). Select a page to insert before/after.`,
+              'success');
             showToast('Insert PDF loaded', 'success');
           }
         }, false);
 
-        document.getElementById('action-addpages').addEventListener('click', async () => {
+        // Insert Before
+        document.getElementById('orgInsertBefore').addEventListener('click', async () => {
           if (!baseDoc || !insertDoc) {
-            setLog('log-addpages', 'Please upload both PDFs.', 'error');
+            setLog('log-organize', 'Please load both the base PDF and an insert PDF.', 'error');
+            return;
+          }
+          if (selectedPages.size !== 1) {
+            setLog('log-organize', 'Please select exactly one page to insert before.', 'error');
+            return;
+          }
+          const targetPage = Array.from(selectedPages)[0];
+          const idx = pageOrder.indexOf(targetPage);
+          if (idx === -1) return;
+          await insertPagesAtIndex(idx);
+        });
+
+        // Insert After
+        document.getElementById('orgInsertAfter').addEventListener('click', async () => {
+          if (!baseDoc || !insertDoc) {
+            setLog('log-organize', 'Please load both the base PDF and an insert PDF.', 'error');
+            return;
+          }
+          if (selectedPages.size !== 1) {
+            setLog('log-organize', 'Please select exactly one page to insert after.', 'error');
+            return;
+          }
+          const targetPage = Array.from(selectedPages)[0];
+          const idx = pageOrder.indexOf(targetPage);
+          if (idx === -1) return;
+          await insertPagesAtIndex(idx + 1);
+        });
+
+        async function insertPagesAtIndex(index) {
+          try {
+            // We'll insert into the pageOrder array by adding new page numbers at the end
+            // But we need to actually insert pages into the final document, which we'll do on download.
+            // For preview, we just update pageOrder with placeholders (we'll use negative numbers to indicate inserted pages)
+            // But we need to keep track of which pages are from insertDoc.
+            // Simpler: we store the insertDoc and the insertion position, and when we generate the final PDF, we build it accordingly.
+            // However, for preview we want to show the inserted pages immediately.
+            // We'll create a new temporary document that includes the inserted pages.
+            // We'll rebuild the pageOrder to include the new pages.
+            // We'll generate new page numbers for the inserted pages (they will be appended to the original baseDoc's pages).
+            // But baseDoc doesn't have these pages yet, so we need to create a combined document for preview.
+            // For simplicity, we'll rebuild the document on the fly.
+            // We'll generate a new baseDoc that includes the inserted pages.
+            const { PDFDocument } = PDFLib;
+            const newDoc = await PDFDocument.create();
+
+            // Copy pages from baseDoc up to index
+            const beforeIndices = pageOrder.slice(0, index).map(p => p - 1);
+            const beforePages = await newDoc.copyPages(baseDoc, beforeIndices);
+            beforePages.forEach(p => newDoc.addPage(p));
+
+            // Copy all pages from insertDoc
+            const insertIndices = insertDoc.getPageIndices();
+            const insertPages = await newDoc.copyPages(insertDoc, insertIndices);
+            const insertCount = insertPages.length;
+            insertPages.forEach(p => newDoc.addPage(p));
+
+            // Copy remaining pages from baseDoc after index
+            const afterIndices = pageOrder.slice(index).map(p => p - 1);
+            const afterPages = await newDoc.copyPages(baseDoc, afterIndices);
+            afterPages.forEach(p => newDoc.addPage(p));
+
+            // Now we have a new document with inserted pages.
+            // Replace baseDoc with this new document, and update pageOrder.
+            baseDoc = newDoc;
+            // Save to update baseFile
+            const bytes = await baseDoc.save();
+            baseFile = new File([bytes], 'base.pdf', { type: 'application/pdf' });
+
+            // Update pageOrder: we now have original pages + new pages.
+            // The new pages are at positions index to index+insertCount-1.
+            // We need to assign them new numbers (they will be the last pages originally, but we need to assign sequential numbers)
+            // Since we rebuilt the document, all pages have new indices. We'll just regenerate pageOrder.
+            const total = baseDoc.getPageCount();
+            pageOrder = Array.from({ length: total }, (_, i) => i + 1);
+            selectedPages.clear();
+
+            await renderOrganizeThumbs();
+            setLog('log-organize', `Inserted ${insertCount} page(s) at position ${index + 1}.`, 'success');
+            showToast(`${insertCount} page(s) inserted`, 'success');
+          } catch (err) {
+            setLog('log-organize', 'Error inserting pages: ' + err.message, 'error');
+            showToast('Insert failed: ' + err.message, 'error');
+          }
+        }
+
+        // Delete selected
+        document.getElementById('orgDeleteSelected').addEventListener('click', async () => {
+          if (!baseDoc) {
+            setLog('log-organize', 'No document loaded.', 'error');
+            return;
+          }
+          if (selectedPages.size === 0) {
+            setLog('log-organize', 'Select at least one page to delete.', 'error');
+            return;
+          }
+          if (pageOrder.length <= selectedPages.size) {
+            setLog('log-organize', 'Cannot delete all pages. Keep at least one.', 'error');
+            return;
+          }
+          if (!confirm(`Delete ${selectedPages.size} selected page(s)?`)) return;
+
+          try {
+            // Remove pages from pageOrder and rebuild the document
+            const toDelete = Array.from(selectedPages).sort((a, b) => b - a);
+            for (let p of toDelete) {
+              const idx = pageOrder.indexOf(p);
+              if (idx !== -1) {
+                pageOrder.splice(idx, 1);
+              }
+            }
+            selectedPages.clear();
+
+            // Rebuild baseDoc from pageOrder
+            const { PDFDocument } = PDFLib;
+            const newDoc = await PDFDocument.create();
+            const indices = pageOrder.map(p => p - 1);
+            const pages = await newDoc.copyPages(baseDoc, indices);
+            pages.forEach(p => newDoc.addPage(p));
+            baseDoc = newDoc;
+            const bytes = await baseDoc.save();
+            baseFile = new File([bytes], 'base.pdf', { type: 'application/pdf' });
+
+            // Regenerate pageOrder (now pages are in order 1..N)
+            const total = baseDoc.getPageCount();
+            pageOrder = Array.from({ length: total }, (_, i) => i + 1);
+
+            await renderOrganizeThumbs();
+            setLog('log-organize', `Deleted ${toDelete.length} page(s).`, 'success');
+            showToast(`${toDelete.length} page(s) deleted`, 'success');
+          } catch (err) {
+            setLog('log-organize', 'Error deleting pages: ' + err.message, 'error');
+            showToast('Delete failed: ' + err.message, 'error');
+          }
+        });
+
+        document.getElementById('orgClearSelection').addEventListener('click', () => {
+          selectedPages.clear();
+          renderOrganizeThumbs();
+          setLog('log-organize', 'Selection cleared.', 'info');
+        });
+
+        // Download final organized PDF
+        document.getElementById('action-organize').addEventListener('click', async () => {
+          if (!baseDoc) {
+            setLog('log-organize', 'No document to download.', 'error');
             return;
           }
           try {
-            // Remove pages if specified
-            const removeStr = document.getElementById('removePages').value.trim();
-            let removePages = [];
-            if (removeStr) {
-              const total = baseDoc.getPageCount();
-              removePages = parsePageRanges(removeStr, total);
-              if (removePages.length === 0) throw new Error('Invalid remove range.');
-              // Remove from highest to lowest
-              const sorted = removePages.sort((a, b) => b - a);
-              for (let p of sorted) {
-                baseDoc.removePage(p - 1);
-              }
-            }
-
-            // Insert at position (after removal)
-            let at = parseInt(document.getElementById('insertAt').value) || 1;
-            if (at < 1) at = 1;
-            if (at > baseDoc.getPageCount()) at = baseDoc.getPageCount() + 1;
-
-            const indices = insertDoc.getPageIndices();
-            const copied = await baseDoc.copyPages(insertDoc, indices);
-            const insertIdx = at - 1;
-            for (let i = 0; i < copied.length; i++) baseDoc.insertPage(insertIdx + i, copied[i]);
-
             const bytes = await baseDoc.save();
-            downloadPDF(bytes, 'replaced.pdf');
-            let msg = `Inserted ${copied.length} page(s) at position ${at}.`;
-            if (removePages.length) msg += ` Removed pages ${removePages.join(', ')}.`;
-            setLog('log-addpages', msg, 'success');
-            showToast('Pages replaced successfully!', 'success');
-            await updateUI();
+            downloadPDF(bytes, 'organized.pdf');
+            setLog('log-organize', 'Download started!', 'success');
+            showToast('PDF downloaded!', 'success');
           } catch (err) {
-            setLog('log-addpages', 'Error: ' + err.message, 'error');
-            showToast('Replace failed: ' + err.message, 'error');
+            setLog('log-organize', 'Error: ' + err.message, 'error');
+            showToast('Download failed: ' + err.message, 'error');
           }
+        });
+
+        document.getElementById('clear-organize').addEventListener('click', () => {
+          baseDoc = null;
+          insertDoc = null;
+          baseFile = null;
+          insertFile = null;
+          pageOrder = [];
+          selectedPages = new Set();
+          document.getElementById('file-organize-base').value = '';
+          document.getElementById('file-organize-insert').value = '';
+          grid.innerHTML =
+            `<div class="empty-state"><span class="big-icon">📄</span><p>Upload a PDF to organize</p></div>`;
+          toolbar.classList.remove('visible');
+          setLog('log-organize', 'Cleared all documents.', 'info');
+          showToast('Cleared', 'info');
         });
       })();
 
       // ──────────────────────────────────────────────
-      // ── ROTATE (with per‑page rotate) ──
+      // ── ROTATE ──
       // ──────────────────────────────────────────────
       (function initRotate() {
         let pdfDoc = null,
           file = null;
-        let pageRotations = {}; // key: page number, value: degrees (0,90,180,270)
+        let pageRotations = {};
 
         async function renderRotateThumbs() {
           if (!pdfDoc || !file) {
@@ -1781,7 +2045,6 @@
               `<div class="empty-state"><span class="big-icon">📄</span><p>No PDF loaded</p></div>`;
             return;
           }
-          // Create a temp PDF with rotations applied for preview
           try {
             const { PDFDocument, degrees } = PDFLib;
             const newDoc = await PDFDocument.create();
@@ -1800,10 +2063,10 @@
             await renderThumbnails('thumbGrid-rotate', tempFile, {
               showRotate: true,
               onRotate: (pageNum) => {
-                // Rotate by 90° clockwise
                 const current = pageRotations[pageNum] || 0;
                 const newRot = (current + 90) % 360;
                 pageRotations[pageNum] = newRot;
+                pdfDoc.getPage(pageNum - 1).setRotation(degrees(newRot));
                 renderRotateThumbs();
                 setLog('log-rotate', `Page ${pageNum} rotated to ${newRot}°`, 'info');
               }
@@ -1834,7 +2097,6 @@
           }
         }, false);
 
-        // Global rotate action (apply to selected pages)
         document.getElementById('action-rotate').addEventListener('click', async () => {
           if (!pdfDoc) {
             setLog('log-rotate', 'Upload a PDF first.', 'error');
@@ -1860,7 +2122,7 @@
             downloadPDF(bytes, 'rotated.pdf');
             setLog('log-rotate', `Rotated pages ${pages.join(', ')} by ${angle}°.`, 'success');
             showToast(`${pages.length} page(s) rotated`, 'success');
-            await renderRotateThumbs(); // update preview
+            await renderRotateThumbs();
           } catch (err) {
             setLog('log-rotate', 'Error: ' + err.message, 'error');
             showToast('Rotation failed: ' + err.message, 'error');
@@ -1869,7 +2131,7 @@
       })();
 
       // ──────────────────────────────────────────────
-      // ── DELETE ── (unchanged, but with colored button)
+      // ── DELETE ──
       // ──────────────────────────────────────────────
       (function initDelete() {
         let pdfDoc = null;
