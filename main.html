@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ADVANCED UI WITH LC DATE CALCULATION</title>
+<title>TradeFlow LC</title>
 <style>
 /* Your existing CSS styles remain exactly the same */
 :root {
@@ -1057,7 +1057,7 @@ select {
 <button class="admin-toggle" onclick="showAdmin()">🔒</button>
 
 <div class="container" id="mainContainer">
-  <h1>ADVANCED UI WITH LC DATE CALCULATION</h1>
+  <h1>TradeFlow LC</h1>
   
   <div class="input-group">
     <label>LC OPEN DATE:</label>
@@ -1619,7 +1619,7 @@ function exportResults() {
   const includeNumberWords = document.getElementById('exportNumberWords').checked;
   const includeInputData = document.getElementById('exportInputData').checked;
   
-  let content = 'ADVANCED UI WITH LC DATE CALCULATION Results\n';
+  let content = 'TradeFlow LC Results\n';
   content += '================================\n\n';
   
   if (includeInputData) {
@@ -1644,7 +1644,7 @@ function exportResults() {
   }
   
   content += `\nGenerated on: ${new Date().toLocaleString()}\n`;
-  content += `Tool: ADVANCED UI WITH LC DATE CALCULATION by Sethil Yaddehige\n`;
+  content += `Tool: TradeFlow LC by Sethil Yaddehige\n`;
   
   if (exportFormat === 'pdf') {
     showNotification('PDF export would be generated here');
