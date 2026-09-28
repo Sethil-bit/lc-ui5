@@ -1040,6 +1040,72 @@ select {
 .notification.show {
   transform: translateX(0);
 }
+
+/* Daily Ocean Themes + Manual Theme Selector */
+body[data-ocean-theme="deep"] {
+  --primary:#42c9ff; --secondary:#00e5c7; --accent:#8aa8ff;
+  --border:rgba(66,201,255,.34); --input-bg:rgba(10,45,73,.72);
+  --card:rgba(8,31,55,.82); --glow:0 0 20px rgba(66,201,255,.45);
+  --bg:linear-gradient(135deg,#031321 0%,#073451 52%,#061b35 100%);
+}
+body[data-ocean-theme="lagoon"] {
+  --primary:#43e6d0; --secondary:#38bdf8; --accent:#a7f3d0;
+  --border:rgba(67,230,208,.34); --input-bg:rgba(5,61,70,.72);
+  --card:rgba(5,42,52,.84); --glow:0 0 20px rgba(67,230,208,.42);
+  --bg:linear-gradient(135deg,#032a35 0%,#07545a 52%,#073344 100%);
+}
+body[data-ocean-theme="coral"] {
+  --primary:#ff8b75; --secondary:#43d9e8; --accent:#ffc2a6;
+  --border:rgba(255,139,117,.34); --input-bg:rgba(64,36,48,.74);
+  --card:rgba(43,28,43,.85); --glow:0 0 20px rgba(255,139,117,.4);
+  --bg:linear-gradient(135deg,#24152a 0%,#653746 52%,#12394b 100%);
+}
+body[data-ocean-theme="arctic"] {
+  --primary:#a8e7ff; --secondary:#7dd3fc; --accent:#c4b5fd;
+  --border:rgba(168,231,255,.38); --input-bg:rgba(30,61,91,.7);
+  --card:rgba(22,46,73,.84); --glow:0 0 20px rgba(168,231,255,.45);
+  --bg:linear-gradient(135deg,#10283f 0%,#285b7c 52%,#182e52 100%);
+}
+body[data-ocean-theme="sunset"] {
+  --primary:#ffb86b; --secondary:#ff7e9d; --accent:#ffd6a5;
+  --border:rgba(255,184,107,.35); --input-bg:rgba(69,43,61,.72);
+  --card:rgba(43,29,51,.85); --glow:0 0 20px rgba(255,184,107,.42);
+  --bg:linear-gradient(135deg,#261b39 0%,#75465a 52%,#173d57 100%);
+}
+body[data-ocean-theme="midnight"] {
+  --primary:#9b9dff; --secondary:#5eead4; --accent:#c084fc;
+  --border:rgba(155,157,255,.35); --input-bg:rgba(27,25,68,.75);
+  --card:rgba(20,19,53,.86); --glow:0 0 20px rgba(155,157,255,.45);
+  --bg:linear-gradient(135deg,#090b2b 0%,#191b55 52%,#071d38 100%);
+}
+body[data-ocean-theme="seafoam"] {
+  --primary:#70e1c1; --secondary:#67c9ff; --accent:#b8f2e6;
+  --border:rgba(112,225,193,.35); --input-bg:rgba(20,66,68,.72);
+  --card:rgba(18,48,53,.84); --glow:0 0 20px rgba(112,225,193,.42);
+  --bg:linear-gradient(135deg,#123b3c 0%,#286c70 52%,#163e59 100%);
+}
+body[data-ocean-theme] { background:var(--bg); }
+body[data-ocean-theme]::before {
+  background:
+    radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--secondary) 27%, transparent) 0%, transparent 30%),
+    radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--primary) 26%, transparent) 0%, transparent 32%),
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent) 15%, transparent) 0%, transparent 42%),
+    radial-gradient(circle at 30% 80%, color-mix(in srgb, var(--secondary) 14%, transparent) 0%, transparent 35%);
+}
+.ocean-theme-selector {
+  position:fixed; top:27px; right:88px; z-index:101;
+  width:174px; padding:10px 34px 10px 13px;
+  border:1px solid rgba(255,255,255,.25); border-radius:18px;
+  color:#fff; background:rgba(255,255,255,.11);
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 8px 25px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.15);
+  font:600 13px 'Segoe UI',system-ui,sans-serif; cursor:pointer;
+}
+.ocean-theme-selector option { color:#102033; background:#f4fbff; }
+@media (max-width:600px) {
+  .ocean-theme-selector { top:20px; right:68px; width:145px; padding:9px 27px 9px 10px; font-size:12px; }
+}
+
 </style>
 </head>
 <body>
@@ -1051,6 +1117,16 @@ select {
 
 <div class="particles" id="particles"></div>
 
+<select class="ocean-theme-selector" id="oceanThemeSelect" aria-label="Ocean color theme" onchange="setOceanTheme(this.value)">
+  <option value="auto">🌊 Daily Ocean Theme</option>
+  <option value="deep">🌌 Deep Ocean</option>
+  <option value="lagoon">🩵 Tropical Lagoon</option>
+  <option value="coral">🪸 Coral Reef</option>
+  <option value="arctic">🧊 Arctic Blue</option>
+  <option value="sunset">🌅 Ocean Sunset</option>
+  <option value="midnight">🌙 Midnight Sea</option>
+  <option value="seafoam">🍃 Seafoam Coast</option>
+</select>
 <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
 <button class="game-toggle" onclick="showGame()">⛴️</button>
 <button class="export-toggle" onclick="showExport()">📤</button>
@@ -1377,6 +1453,30 @@ function showNotification(message) {
   setTimeout(() => {
     notification.classList.remove('show');
   }, 3000);
+}
+
+const OCEAN_THEMES = ['deep','lagoon','coral','arctic','sunset','midnight','seafoam'];
+
+function dailyOceanTheme() {
+  // A stable theme for each local calendar day; it changes automatically each new day.
+  const dayNumber = Math.floor(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime() / 86400000);
+  return OCEAN_THEMES[((dayNumber % OCEAN_THEMES.length) + OCEAN_THEMES.length) % OCEAN_THEMES.length];
+}
+
+function setOceanTheme(theme, saveChoice = true) {
+  const chosen = theme === 'auto' ? dailyOceanTheme() : (OCEAN_THEMES.includes(theme) ? theme : dailyOceanTheme());
+  document.body.dataset.oceanTheme = chosen;
+  const selector = document.getElementById('oceanThemeSelect');
+  if (selector) selector.value = theme === 'auto' ? 'auto' : chosen;
+  if (saveChoice) {
+    if (theme === 'auto') localStorage.removeItem('oceanThemeChoice');
+    else localStorage.setItem('oceanThemeChoice', chosen);
+  }
+}
+
+function initializeOceanTheme() {
+  const savedChoice = localStorage.getItem('oceanThemeChoice');
+  setOceanTheme(savedChoice && OCEAN_THEMES.includes(savedChoice) ? savedChoice : 'auto', false);
 }
 
 function toggleTheme() {
@@ -1842,6 +1942,7 @@ window.onload = function() {
     checkLogin();
     createParticles();
     detectSystemTheme();
+    initializeOceanTheme();
     
     const today = new Date();
     const formattedDate = today.toISOString().substring(0, 10);
