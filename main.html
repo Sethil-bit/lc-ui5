@@ -1041,71 +1041,213 @@ select {
   transform: translateX(0);
 }
 
-/* Daily Ocean Themes + Manual Theme Selector */
-body[data-ocean-theme="deep"] {
-  --primary:#42c9ff; --secondary:#00e5c7; --accent:#8aa8ff;
-  --border:rgba(66,201,255,.34); --input-bg:rgba(10,45,73,.72);
-  --card:rgba(8,31,55,.82); --glow:0 0 20px rgba(66,201,255,.45);
-  --bg:linear-gradient(135deg,#031321 0%,#073451 52%,#061b35 100%);
-}
-body[data-ocean-theme="lagoon"] {
-  --primary:#43e6d0; --secondary:#38bdf8; --accent:#a7f3d0;
-  --border:rgba(67,230,208,.34); --input-bg:rgba(5,61,70,.72);
-  --card:rgba(5,42,52,.84); --glow:0 0 20px rgba(67,230,208,.42);
-  --bg:linear-gradient(135deg,#032a35 0%,#07545a 52%,#073344 100%);
-}
-body[data-ocean-theme="coral"] {
-  --primary:#ff8b75; --secondary:#43d9e8; --accent:#ffc2a6;
-  --border:rgba(255,139,117,.34); --input-bg:rgba(64,36,48,.74);
-  --card:rgba(43,28,43,.85); --glow:0 0 20px rgba(255,139,117,.4);
-  --bg:linear-gradient(135deg,#24152a 0%,#653746 52%,#12394b 100%);
-}
-body[data-ocean-theme="arctic"] {
-  --primary:#a8e7ff; --secondary:#7dd3fc; --accent:#c4b5fd;
-  --border:rgba(168,231,255,.38); --input-bg:rgba(30,61,91,.7);
-  --card:rgba(22,46,73,.84); --glow:0 0 20px rgba(168,231,255,.45);
-  --bg:linear-gradient(135deg,#10283f 0%,#285b7c 52%,#182e52 100%);
-}
-body[data-ocean-theme="sunset"] {
-  --primary:#ffb86b; --secondary:#ff7e9d; --accent:#ffd6a5;
-  --border:rgba(255,184,107,.35); --input-bg:rgba(69,43,61,.72);
-  --card:rgba(43,29,51,.85); --glow:0 0 20px rgba(255,184,107,.42);
-  --bg:linear-gradient(135deg,#261b39 0%,#75465a 52%,#173d57 100%);
-}
-body[data-ocean-theme="midnight"] {
-  --primary:#9b9dff; --secondary:#5eead4; --accent:#c084fc;
-  --border:rgba(155,157,255,.35); --input-bg:rgba(27,25,68,.75);
-  --card:rgba(20,19,53,.86); --glow:0 0 20px rgba(155,157,255,.45);
-  --bg:linear-gradient(135deg,#090b2b 0%,#191b55 52%,#071d38 100%);
-}
-body[data-ocean-theme="seafoam"] {
-  --primary:#70e1c1; --secondary:#67c9ff; --accent:#b8f2e6;
-  --border:rgba(112,225,193,.35); --input-bg:rgba(20,66,68,.72);
-  --card:rgba(18,48,53,.84); --glow:0 0 20px rgba(112,225,193,.42);
-  --bg:linear-gradient(135deg,#123b3c 0%,#286c70 52%,#163e59 100%);
-}
-body[data-ocean-theme] { background:var(--bg); }
-body[data-ocean-theme]::before {
-  background:
-    radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--secondary) 27%, transparent) 0%, transparent 30%),
-    radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--primary) 26%, transparent) 0%, transparent 32%),
-    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent) 15%, transparent) 0%, transparent 42%),
-    radial-gradient(circle at 30% 80%, color-mix(in srgb, var(--secondary) 14%, transparent) 0%, transparent 35%);
-}
-.ocean-theme-selector {
-  position:fixed; top:27px; right:88px; z-index:101;
-  width:174px; padding:10px 34px 10px 13px;
-  border:1px solid rgba(255,255,255,.25); border-radius:18px;
-  color:#fff; background:rgba(255,255,255,.11);
-  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
-  box-shadow:0 8px 25px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.15);
-  font:600 13px 'Segoe UI',system-ui,sans-serif; cursor:pointer;
-}
-.ocean-theme-selector option { color:#102033; background:#f4fbff; }
-@media (max-width:600px) {
-  .ocean-theme-selector { top:20px; right:68px; width:145px; padding:9px 27px 9px 10px; font-size:12px; }
+/* ===== OCEAN THEMES (added) — only active when a theme-ocean-* class is on <body> ===== */
+body.theme-ocean-deep {
+  --bg:
+    radial-gradient(circle at top left, rgba(0, 180, 255, 0.22) 0%, transparent 32%),
+    radial-gradient(circle at bottom right, rgba(0, 119, 182, 0.30) 0%, transparent 34%),
+    linear-gradient(135deg, #020b1a 0%, #04213f 50%, #062f57 100%);
+  --text: #e6f4ff;
+  --card: rgba(6, 32, 58, 0.86);
+  --primary: #1e90ff;
+  --secondary: #00e5ff;
+  --accent: #48cae4;
+  --border: rgba(30, 144, 255, 0.35);
+  --input-bg: rgba(8, 44, 78, 0.7);
+  --shadow: 0 10px 30px rgba(0, 10, 30, 0.45);
+  --glow: 0 0 20px rgba(30, 144, 255, 0.55);
+  --aurora-a: rgba(0, 200, 255, 0.24);
+  --aurora-b: rgba(30, 144, 255, 0.24);
+  --aurora-c: rgba(72, 202, 228, 0.14);
 }
 
+body.theme-ocean-lagoon {
+  --bg:
+    radial-gradient(circle at top left, rgba(148, 210, 189, 0.22) 0%, transparent 32%),
+    radial-gradient(circle at bottom right, rgba(10, 147, 150, 0.30) 0%, transparent 34%),
+    linear-gradient(135deg, #021a1a 0%, #04403f 50%, #065f5b 100%);
+  --text: #e8fbf7;
+  --card: rgba(4, 48, 47, 0.86);
+  --primary: #0a9396;
+  --secondary: #94d2bd;
+  --accent: #f4a261;
+  --border: rgba(148, 210, 189, 0.35);
+  --input-bg: rgba(6, 70, 68, 0.7);
+  --shadow: 0 10px 30px rgba(0, 25, 25, 0.45);
+  --glow: 0 0 20px rgba(10, 147, 150, 0.55);
+  --aurora-a: rgba(148, 210, 189, 0.24);
+  --aurora-b: rgba(10, 147, 150, 0.26);
+  --aurora-c: rgba(244, 162, 97, 0.12);
+}
+
+body.theme-ocean-coral {
+  --bg:
+    radial-gradient(circle at top left, rgba(95, 211, 196, 0.20) 0%, transparent 32%),
+    radial-gradient(circle at bottom right, rgba(229, 84, 107, 0.22) 0%, transparent 34%),
+    linear-gradient(135deg, #0a1a2f 0%, #12304f 50%, #1b4965 100%);
+  --text: #f1f7fb;
+  --card: rgba(16, 42, 66, 0.86);
+  --primary: #e5546b;
+  --secondary: #5fd3c4;
+  --accent: #ffb703;
+  --border: rgba(229, 84, 107, 0.35);
+  --input-bg: rgba(24, 58, 88, 0.7);
+  --shadow: 0 10px 30px rgba(5, 15, 30, 0.45);
+  --glow: 0 0 20px rgba(229, 84, 107, 0.5);
+  --aurora-a: rgba(95, 211, 196, 0.22);
+  --aurora-b: rgba(229, 84, 107, 0.22);
+  --aurora-c: rgba(255, 183, 3, 0.12);
+}
+
+body.theme-ocean-shore {
+  --bg:
+    radial-gradient(circle at top left, rgba(0, 180, 216, 0.18) 0%, transparent 32%),
+    radial-gradient(circle at bottom right, rgba(244, 162, 97, 0.20) 0%, transparent 34%),
+    linear-gradient(135deg, #fbf6e6 0%, #dff3f5 50%, #bfe6ef 100%);
+  --text: #0b3a4a;
+  --card: rgba(255, 255, 255, 0.88);
+  --primary: #0077b6;
+  --secondary: #00b4d8;
+  --accent: #e07a3f;
+  --border: rgba(0, 119, 182, 0.25);
+  --input-bg: rgba(240, 250, 252, 0.8);
+  --shadow: 0 10px 30px rgba(0, 80, 110, 0.15);
+  --glow: 0 0 20px rgba(0, 119, 182, 0.3);
+  --aurora-a: rgba(0, 180, 216, 0.20);
+  --aurora-b: rgba(244, 162, 97, 0.18);
+  --aurora-c: rgba(255, 255, 255, 0.35);
+}
+
+body.theme-ocean-arctic {
+  --bg:
+    radial-gradient(circle at top left, rgba(72, 202, 228, 0.20) 0%, transparent 32%),
+    radial-gradient(circle at bottom right, rgba(10, 111, 168, 0.18) 0%, transparent 34%),
+    linear-gradient(135deg, #eef8ff 0%, #d6ecfa 50%, #b8dcf2 100%);
+  --text: #08324f;
+  --card: rgba(255, 255, 255, 0.9);
+  --primary: #0a6fa8;
+  --secondary: #48cae4;
+  --accent: #5a8fd6;
+  --border: rgba(10, 111, 168, 0.25);
+  --input-bg: rgba(240, 248, 255, 0.8);
+  --shadow: 0 10px 30px rgba(8, 50, 79, 0.14);
+  --glow: 0 0 20px rgba(10, 111, 168, 0.3);
+  --aurora-a: rgba(72, 202, 228, 0.22);
+  --aurora-b: rgba(10, 111, 168, 0.16);
+  --aurora-c: rgba(255, 255, 255, 0.40);
+}
+
+/* Aurora layer follows the ocean palette */
+body[class*="theme-ocean-"]::before {
+  background:
+    radial-gradient(circle at 20% 30%, var(--aurora-a) 0%, transparent 28%),
+    radial-gradient(circle at 80% 70%, var(--aurora-b) 0%, transparent 30%),
+    radial-gradient(circle at 50% 50%, var(--aurora-c) 0%, transparent 40%);
+}
+
+/* Manual theme selector */
+.theme-picker-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 100;
+}
+
+.theme-picker-btn:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow), var(--glow);
+}
+
+.theme-picker-panel {
+  position: fixed;
+  bottom: 80px;
+  left: 20px;
+  width: 230px;
+  max-width: calc(100vw - 40px);
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+  z-index: 101;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+
+.theme-picker-panel.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.theme-picker-title {
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin: 2px 6px 8px;
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  margin: 0 0 4px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-option:hover {
+  background: var(--input-bg);
+}
+
+.theme-option.active {
+  border-color: var(--primary);
+  background: var(--input-bg);
+  font-weight: 600;
+}
+
+.theme-swatch {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+}
+
+@media (max-width: 600px) {
+  .theme-picker-btn { width: 45px; height: 45px; bottom: 15px; left: 15px; }
+  .theme-picker-panel { bottom: 70px; left: 15px; }
+}
 </style>
 </head>
 <body>
@@ -1117,16 +1259,6 @@ body[data-ocean-theme]::before {
 
 <div class="particles" id="particles"></div>
 
-<select class="ocean-theme-selector" id="oceanThemeSelect" aria-label="Ocean color theme" onchange="setOceanTheme(this.value)">
-  <option value="auto">🌊 Daily Ocean Theme</option>
-  <option value="deep">🌌 Deep Ocean</option>
-  <option value="lagoon">🩵 Tropical Lagoon</option>
-  <option value="coral">🪸 Coral Reef</option>
-  <option value="arctic">🧊 Arctic Blue</option>
-  <option value="sunset">🌅 Ocean Sunset</option>
-  <option value="midnight">🌙 Midnight Sea</option>
-  <option value="seafoam">🍃 Seafoam Coast</option>
-</select>
 <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
 <button class="game-toggle" onclick="showGame()">⛴️</button>
 <button class="export-toggle" onclick="showExport()">📤</button>
@@ -1271,6 +1403,12 @@ body[data-ocean-theme]::before {
 <!-- Notification -->
 <div class="notification" id="notification">
   <div id="notificationText">Operation completed successfully!</div>
+</div>
+
+<!-- Manual theme selector (ocean themes) -->
+<button class="theme-picker-btn" id="themePickerBtn" type="button" aria-label="Choose theme" aria-haspopup="true" aria-expanded="false" title="Themes">🌊</button>
+<div class="theme-picker-panel" id="themePickerPanel" role="menu" aria-label="Theme selector">
+  <div class="theme-picker-title">Themes</div>
 </div>
 
 <script>
@@ -1453,30 +1591,6 @@ function showNotification(message) {
   setTimeout(() => {
     notification.classList.remove('show');
   }, 3000);
-}
-
-const OCEAN_THEMES = ['deep','lagoon','coral','arctic','sunset','midnight','seafoam'];
-
-function dailyOceanTheme() {
-  // A stable theme for each local calendar day; it changes automatically each new day.
-  const dayNumber = Math.floor(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime() / 86400000);
-  return OCEAN_THEMES[((dayNumber % OCEAN_THEMES.length) + OCEAN_THEMES.length) % OCEAN_THEMES.length];
-}
-
-function setOceanTheme(theme, saveChoice = true) {
-  const chosen = theme === 'auto' ? dailyOceanTheme() : (OCEAN_THEMES.includes(theme) ? theme : dailyOceanTheme());
-  document.body.dataset.oceanTheme = chosen;
-  const selector = document.getElementById('oceanThemeSelect');
-  if (selector) selector.value = theme === 'auto' ? 'auto' : chosen;
-  if (saveChoice) {
-    if (theme === 'auto') localStorage.removeItem('oceanThemeChoice');
-    else localStorage.setItem('oceanThemeChoice', chosen);
-  }
-}
-
-function initializeOceanTheme() {
-  const savedChoice = localStorage.getItem('oceanThemeChoice');
-  setOceanTheme(savedChoice && OCEAN_THEMES.includes(savedChoice) ? savedChoice : 'auto', false);
 }
 
 function toggleTheme() {
@@ -1942,7 +2056,6 @@ window.onload = function() {
     checkLogin();
     createParticles();
     detectSystemTheme();
-    initializeOceanTheme();
     
     const today = new Date();
     const formattedDate = today.toISOString().substring(0, 10);
@@ -1955,6 +2068,81 @@ window.onload = function() {
     showWelcomeMessage();
     calculateAll();
 };
+</script>
+<script>
+/* ===== Ocean themes + manual selector (added; self-contained) ===== */
+(function () {
+  var THEMES = [
+    { id: 'default',       name: 'Default (Dark / Light)', sw: 'linear-gradient(135deg,#121212,#6c5ce7 60%,#f8f9fa)' },
+    { id: 'ocean-deep',    name: 'Deep Ocean',      sw: 'linear-gradient(135deg,#020b1a,#1e90ff 65%,#00e5ff)' },
+    { id: 'ocean-lagoon',  name: 'Tropical Lagoon', sw: 'linear-gradient(135deg,#021a1a,#0a9396 65%,#94d2bd)' },
+    { id: 'ocean-coral',   name: 'Coral Reef',      sw: 'linear-gradient(135deg,#0a1a2f,#e5546b 65%,#5fd3c4)' },
+    { id: 'ocean-shore',   name: 'Sunny Shore',     sw: 'linear-gradient(135deg,#fbf6e6,#00b4d8 65%,#e07a3f)' },
+    { id: 'ocean-arctic',  name: 'Arctic Sea',      sw: 'linear-gradient(135deg,#eef8ff,#48cae4 65%,#0a6fa8)' }
+  ];
+  var KEY = 'oceanTheme';
+  var btn = document.getElementById('themePickerBtn');
+  var panel = document.getElementById('themePickerPanel');
+  var current = 'default';
+
+  function safeGet() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function safeSet(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+
+  THEMES.forEach(function (t) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'theme-option';
+    b.setAttribute('role', 'menuitemradio');
+    b.dataset.theme = t.id;
+    b.innerHTML = '<span class="theme-swatch" style="background:' + t.sw + '"></span><span>' + t.name + '</span>';
+    b.addEventListener('click', function () {
+      applyTheme(t.id, true);
+      closePanel();
+    });
+    panel.appendChild(b);
+  });
+
+  function applyTheme(id, fromUser) {
+    if (!THEMES.some(function (t) { return t.id === id; })) id = 'default';
+    THEMES.forEach(function (t) { document.body.classList.remove('theme-' + t.id); });
+    if (id !== 'default') document.body.classList.add('theme-' + id);
+    current = id;
+    safeSet(id);
+    panel.querySelectorAll('.theme-option').forEach(function (o) {
+      var on = o.dataset.theme === id;
+      o.classList.toggle('active', on);
+      o.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+    if (fromUser) {
+      try { if (typeof trackUserAction === 'function') trackUserAction('theme_selected', { theme: id }); } catch (e) {}
+      try { if (typeof playSound === 'function') playSound('click'); } catch (e) {}
+    }
+  }
+
+  function openPanel() { panel.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+  function closePanel() { panel.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    panel.classList.contains('open') ? closePanel() : openPanel();
+  });
+  document.addEventListener('click', function (e) {
+    if (!panel.contains(e.target) && e.target !== btn) closePanel();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePanel(); });
+
+  /* The existing moon/sun button keeps its original behaviour.
+     If an ocean theme is active, its first click returns to the classic look. */
+  if (typeof window.toggleTheme === 'function') {
+    var originalToggle = window.toggleTheme;
+    window.toggleTheme = function () {
+      if (current !== 'default') { applyTheme('default', true); return; }
+      return originalToggle.apply(this, arguments);
+    };
+  }
+
+  applyTheme(safeGet() || 'default', false);
+})();
 </script>
 </body>
 </html>
