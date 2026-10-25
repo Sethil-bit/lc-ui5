@@ -869,6 +869,18 @@ body[class*="theme-"]::before {
   .toolbar .theme-picker-btn{width:40px;height:40px;font-size:16px}
   .theme-picker-panel,.calendar-panel{top:132px;right:12px;left:12px;width:auto;max-width:none}
 }
+
+
+/* ===== FIX: readable colors for ALL native dropdown lists only ===== */
+select option,
+select optgroup {
+  background-color: #202438 !important;
+  color: #eef3ff !important;
+}
+select option:checked {
+  background-color: #164e63 !important;
+  color: #ffffff !important;
+}
 </style>
 </head>
 <body>
@@ -907,6 +919,7 @@ body[class*="theme-"]::before {
   <div class="page-head">
     <div>
       <div class="eyebrow">LC toolkit</div>
+      <h1>Every LC date, <span>every amount,</span> worked out fast.</h1>
     </div>
     <div class="today-chip"><i></i><span id="todayChip">Today</span></div>
   </div>
