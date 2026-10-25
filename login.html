@@ -1,952 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Favicon: Blue "LC" in a box -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='8' y='8' width='84' height='84' rx='16' fill='%231a6bff'/%3E%3Ctext x='50' y='68' font-family='Arial, sans-serif' font-size='56' font-weight='bold' text-anchor='middle' fill='%23ffffff'%3ELC%3C/text%3E%3C/svg%3E">
-    <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='8' y='8' width='84' height='84' rx='16' fill='%231a6bff'/%3E%3Ctext x='50' y='68' font-family='Arial, sans-serif' font-size='56' font-weight='bold' text-anchor='middle' fill='%23ffffff'%3ELC%3C/text%3E%3C/svg%3E">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeFlow LC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TradeFlow LC</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='8' y='8' width='84' height='84' rx='20' fill='%2300c2ff'/%3E%3Ctext x='50' y='67' font-family='Arial' font-size='50' font-weight='bold' text-anchor='middle' fill='%23061022'%3ELC%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060914; --ink:#eef3ff; --muted:rgba(238,243,255,.58); --faint:rgba(238,243,255,.35);
+  --glass:rgba(16,22,44,.55); --line:rgba(255,255,255,.09);
+  --cyan:#22d3ee; --blue:#4f8cff; --violet:#9b6bff; --pink:#ff5fd2;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:'DM Sans',system-ui,sans-serif; color:var(--ink); background:var(--bg);
+  min-height:100vh; display:grid; grid-template-columns:1.15fr 1fr; overflow:hidden; position:relative;
+}
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            background:
-                radial-gradient(circle at 20% 20%, rgba(255, 0, 128, .12), transparent 25%),
-                radial-gradient(circle at 80% 30%, rgba(0, 255, 255, .10), transparent 25%),
-                radial-gradient(circle at 50% 80%, rgba(128, 0, 255, .12), transparent 30%),
-                linear-gradient(135deg, #050510, #09091a, #0d1020);
-        }
+/* ---------- background ---------- */
+.bg{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+.blob{position:absolute; border-radius:50%; filter:blur(90px); opacity:.55; will-change:transform}
+.b1{width:48vw;height:48vw;left:-12vw;top:-14vw;background:radial-gradient(circle,#2b5bff,transparent 65%);animation:drift1 22s ease-in-out infinite alternate}
+.b2{width:42vw;height:42vw;right:-10vw;bottom:-14vw;background:radial-gradient(circle,#9b3bff,transparent 65%);animation:drift2 26s ease-in-out infinite alternate}
+.b3{width:30vw;height:30vw;left:38vw;top:30vh;background:radial-gradient(circle,#00d4ff55,transparent 65%);animation:drift1 30s ease-in-out infinite alternate-reverse}
+@keyframes drift1{to{transform:translate(8vw,6vh) scale(1.15)}}
+@keyframes drift2{to{transform:translate(-8vw,-6vh) scale(1.1)}}
+.grid{
+  position:absolute; inset:0;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:56px 56px; opacity:.35;
+  mask-image:radial-gradient(ellipse at 40% 45%,#000 20%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse at 40% 45%,#000 20%,transparent 75%);
+}
 
-        body::before {
-            content: "";
-            position: fixed;
-            inset: -50%;
-            background: conic-gradient(from 0deg, transparent, rgba(255, 0, 200, .15), transparent, rgba(0, 255, 255, .15), transparent);
-            animation: spin 40s linear infinite;
-            pointer-events: none;
-        }
+/* ---------- left: brand ---------- */
+.brand{position:relative; z-index:1; padding:56px 64px; display:flex; flex-direction:column; justify-content:space-between; min-height:100vh}
+.logo{display:flex; align-items:center; gap:14px}
+.logo-mark{
+  width:46px;height:46px;border-radius:14px; display:grid; place-items:center;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:18px; color:#061022;
+  background:linear-gradient(135deg,var(--cyan),var(--blue) 60%,var(--violet));
+  box-shadow:0 0 30px rgba(34,211,238,.35), inset 0 1px 0 rgba(255,255,255,.5);
+}
+.logo-text{font-family:'Syne',sans-serif; font-weight:700; font-size:20px; letter-spacing:.2px}
+.hero h2{
+  font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(32px,3.6vw,52px); line-height:1.05; letter-spacing:-.5px; margin-bottom:18px;
+}
+.hero h2 span{background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted); font-size:16px; line-height:1.6; max-width:440px}
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+.route{margin-top:34px; max-width:520px}
+.route svg{width:100%; height:auto; overflow:visible}
+.route .track{fill:none; stroke:rgba(255,255,255,.14); stroke-width:2; stroke-dasharray:3 7; stroke-linecap:round}
+.route .done{fill:none; stroke:url(#routeGrad); stroke-width:3; stroke-linecap:round; stroke-dasharray:420; stroke-dashoffset:420; animation:draw 7s ease-in-out infinite}
+@keyframes draw{0%{stroke-dashoffset:420}70%,100%{stroke-dashoffset:0}}
+.node-ring{fill:none; stroke:var(--cyan); stroke-width:1.5; opacity:.6; transform-box:fill-box; transform-origin:center; animation:ping 2.8s ease-out infinite}
+@keyframes ping{from{transform:scale(.6);opacity:.8}to{transform:scale(2.4);opacity:0}}
+.route text{font-size:11px; fill:var(--muted); font-family:'DM Sans',sans-serif; letter-spacing:.4px}
 
-        /* ----- OCEAN WAVES (matching the cargo ship) ----- */
-        .ocean-waves {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 45vh;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
+.chips{display:flex; gap:10px; flex-wrap:wrap}
+.chip{
+  padding:9px 16px; border-radius:40px; font-size:12.5px; color:var(--muted);
+  background:rgba(255,255,255,.04); border:1px solid var(--line); backdrop-filter:blur(10px);
+  display:inline-flex; align-items:center; gap:8px;
+}
+.chip i{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
 
-        .wave-layer {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            pointer-events: none;
-            overflow: visible;
-        }
+/* ---------- right: login ---------- */
+.side{position:relative; z-index:1; display:grid; place-items:center; padding:32px}
+.card{
+  width:100%; max-width:410px; padding:44px 38px 38px; border-radius:30px;
+  background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.02)) , var(--glass);
+  border:1px solid rgba(255,255,255,.11); backdrop-filter:blur(28px); -webkit-backdrop-filter:blur(28px);
+  box-shadow:0 30px 90px rgba(0,0,0,.6), 0 0 80px rgba(79,140,255,.10), inset 0 1px 0 rgba(255,255,255,.12);
+  position:relative; animation:rise .9s cubic-bezier(.2,.9,.25,1) both;
+}
+.card::before{
+  content:""; position:absolute; inset:-1px; border-radius:inherit; padding:1px; pointer-events:none;
+  background:conic-gradient(from var(--a,0deg),transparent 0 70%,rgba(34,211,238,.7),rgba(155,107,255,.7),transparent);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;
+  animation:orbit 7s linear infinite;
+}
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes orbit{to{--a:360deg}}
+@keyframes rise{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
 
-        .wave-move {
-            position: absolute;
-            left: -10%;
-            width: 120%;
-            height: 100%;
-        }
+.card .eyebrow{font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:600; margin-bottom:10px}
+.card h1{font-family:'Syne',sans-serif; font-weight:700; font-size:28px; margin-bottom:6px}
+.card .sub{color:var(--muted); font-size:14px; margin-bottom:30px}
 
-        .wave-move svg {
-            display: block;
-            width: 100%;
-            height: 100%;
-            overflow: visible;
-        }
+.field{position:relative; margin-bottom:18px}
+.field svg{position:absolute; left:16px; top:50%; transform:translateY(-50%); width:18px; height:18px; stroke:var(--faint); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:stroke .3s}
+.field input{
+  width:100%; height:58px; padding:20px 16px 6px 46px; border-radius:16px; border:1px solid var(--line);
+  background:rgba(255,255,255,.04); color:#fff; font:500 15px 'DM Sans',sans-serif; outline:none;
+  transition:border-color .3s, background .3s, box-shadow .3s;
+}
+.field label{
+  position:absolute; left:46px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--faint);
+  pointer-events:none; transition:all .2s ease; transform-origin:left;
+}
+.field input:focus,.field input:not(:placeholder-shown){}
+.field input:focus + label,.field input:not(:placeholder-shown) + label{top:15px; font-size:11px; letter-spacing:.5px; color:var(--cyan)}
+.field input:focus{border-color:rgba(34,211,238,.55); background:rgba(255,255,255,.07); box-shadow:0 0 0 4px rgba(34,211,238,.10)}
+.field:focus-within svg{stroke:var(--cyan)}
 
-        .wave-deep {
-            bottom: -3%;
-            height: 68%;
-            z-index: 1;
-            opacity: .78;
-        }
-        .wave-deep .wave-move {
-            animation: realisticWave 24s ease-in-out infinite alternate;
-        }
-        .wave-deep svg path {
-            fill: url(#deepGradient);
-            filter: drop-shadow(0 -6px 12px rgba(0, 90, 255, .12));
-        }
+.error{
+  display:none; margin:-4px 0 16px; padding:10px 14px; border-radius:12px; font-size:13px; font-weight:500;
+  color:#ff9bb3; background:rgba(255,80,120,.10); border:1px solid rgba(255,80,120,.25); border-left:3px solid #ff6b8a;
+}
+.error.show{display:block; animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
 
-        .wave-mid {
-            bottom: -5%;
-            height: 60%;
-            z-index: 2;
-            opacity: .82;
-        }
-        .wave-mid .wave-move {
-            animation: realisticWave 18s ease-in-out infinite alternate-reverse;
-        }
-        .wave-mid svg path {
-            fill: url(#midGradient);
-            filter: drop-shadow(0 -5px 11px rgba(0, 220, 255, .14));
-        }
+.btn{
+  width:100%; height:56px; border:none; border-radius:16px; cursor:pointer; position:relative; overflow:hidden;
+  font:700 14px 'DM Sans',sans-serif; letter-spacing:1.2px; text-transform:uppercase; color:#04101f;
+  background:linear-gradient(110deg,var(--cyan),var(--blue) 50%,var(--violet) 100%); background-size:200% 100%;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  box-shadow:0 10px 30px rgba(79,140,255,.35); transition:transform .25s cubic-bezier(.34,1.4,.64,1), box-shadow .3s, background-position .6s;
+}
+.btn::after{content:""; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent); transform:skewX(-20deg); transition:left .7s}
+.btn:hover{transform:translateY(-2px); background-position:100% 0; box-shadow:0 16px 40px rgba(79,140,255,.5)}
+.btn:hover::after{left:130%}
+.btn:active{transform:scale(.97)}
+.btn:disabled{cursor:progress; filter:saturate(.7); transform:none}
+.btn .arrow{transition:transform .3s}
+.btn:hover .arrow{transform:translateX(4px)}
+.btn:focus-visible{outline:2px solid rgba(255,255,255,.5); outline-offset:3px}
 
-        .wave-surface {
-            bottom: -8%;
-            height: 52%;
-            z-index: 3;
-        }
-        .wave-surface .wave-move {
-            animation: realisticWave 13s ease-in-out infinite alternate;
-        }
-        .wave-surface svg path {
-            fill: url(#surfaceGradient);
-            filter: drop-shadow(0 -4px 9px rgba(0, 255, 230, .16));
-        }
+.loader{margin-top:22px; display:none}
+.loader-track{height:4px; border-radius:30px; background:rgba(255,255,255,.08); overflow:hidden}
+.loader-fill{height:100%; width:0; border-radius:30px; background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink)); transition:width .15s}
+.loader-percent{text-align:center; margin-top:8px; font-size:12px; color:var(--muted); letter-spacing:.5px}
 
-        .wave-sparkle {
-            bottom: -12%;
-            height: 44%;
-            z-index: 4;
-            opacity: .72;
-        }
-        .wave-sparkle .wave-move {
-            animation: realisticWave 9s ease-in-out infinite alternate-reverse;
-        }
-        .wave-sparkle svg path {
-            fill: url(#sparkleGradient);
-            filter: drop-shadow(0 0 6px rgba(255,255,255,.14));
-        }
+.foot{margin-top:26px; text-align:center; font-size:12px; color:var(--faint)}
 
-        @keyframes realisticWave {
-            0%   { transform: translate3d(-2%, 4px, 0) scaleY(.98); }
-            50%  { transform: translate3d(1%, -5px, 0) scaleY(1.02); }
-            100% { transform: translate3d(3%, 3px, 0) scaleY(.99); }
-        }
+/* ---------- PDF Tools: icon only ---------- */
+.pdf-dock{position:fixed; top:20px; right:20px; z-index:30}
+.pdf-icon-btn{
+  width:46px; height:46px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
+  background:var(--glass); border:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.75);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  transition:transform .3s cubic-bezier(.34,1.5,.64,1), color .3s, border-color .3s, box-shadow .3s;
+}
+.pdf-icon-btn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pdf-icon-btn:hover,.pdf-icon-btn[aria-expanded="true"]{color:#fff; border-color:rgba(34,211,238,.5); box-shadow:0 0 26px rgba(34,211,238,.25); transform:translateY(-2px)}
+.pdf-icon-btn:focus-visible{outline:2px solid rgba(255,255,255,.5); outline-offset:3px}
+.pdf-pop{
+  position:absolute; top:56px; right:0; white-space:nowrap; padding:8px; border-radius:16px;
+  background:rgba(14,19,40,.8); border:1px solid rgba(255,255,255,.10); backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
+  box-shadow:0 20px 50px rgba(0,0,0,.55);
+  opacity:0; visibility:hidden; pointer-events:none; transform:translateY(-8px) scale(.96); transform-origin:top right;
+  transition:opacity .3s, transform .3s cubic-bezier(.34,1.3,.64,1), visibility .3s;
+}
+.pdf-pop.open{opacity:1; visibility:visible; pointer-events:auto; transform:none}
+.pdf-pop a{
+  display:flex; align-items:center; gap:10px; padding:11px 16px; border-radius:11px; color:rgba(255,255,255,.85);
+  text-decoration:none; font-size:13.5px; font-weight:500; transition:background .25s, color .25s;
+}
+.pdf-pop a:hover{background:rgba(255,255,255,.08); color:#fff}
+.pdf-pop a span{transition:transform .3s}
+.pdf-pop a:hover span{transform:translateX(4px)}
 
-        /* ----- MOVING CARGO SHIP (2cm wide, at the very bottom, clickable) ----- */
-        .ship-layer {
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .ship-travel {
-            position: absolute;
-            bottom: 0;
-            left: -4%;
-            width: 2cm;
-            animation: shipTravel 80s linear infinite;
-            will-change: left;
-        }
-
-        .cargo-ship {
-            width: 100%;
-            opacity: 0.9;
-            filter: drop-shadow(0 0 10px rgba(0, 220, 255, 0.45));
-            animation: shipBob 7s ease-in-out infinite alternate;
-            transform-origin: center bottom;
-            will-change: transform;
-
-            /* NEW: make the ship clickable */
-            pointer-events: auto;
-            cursor: pointer;
-            transition: filter 0.3s ease;
-        }
-
-        /* NEW: brighter glow on hover so users know it's interactive */
-        .cargo-ship:hover {
-            filter: drop-shadow(0 0 16px rgba(0, 220, 255, 0.85));
-        }
-
-        /* NEW: pink + cyan glow while the ship is in fast mode */
-        .cargo-ship.fast {
-            filter: drop-shadow(0 0 12px rgba(255, 0, 200, 0.85))
-                    drop-shadow(0 0 20px rgba(0, 220, 255, 0.65));
-        }
-
-        .cargo-ship svg {
-            display: block;
-            width: 100%;
-            height: auto;
-            overflow: visible;
-            /* Flip ship so the bow faces right — travels forward */
-            transform: scaleX(-1);
-        }
-
-        @keyframes shipTravel {
-            0%   { left: -4%; }
-            100% { left: 125%; }
-        }
-
-        @keyframes shipBob {
-            0%   { transform: translateY(0) rotate(-0.7deg); }
-            50%  { transform: translateY(-10px) rotate(0.5deg); }
-            100% { transform: translateY(3px) rotate(-0.4deg); }
-        }
-
-        /* Pause background animations when tab is hidden (performance) */
-        body.page-hidden .ship-travel,
-        body.page-hidden .cargo-ship,
-        body.page-hidden .wave-move {
-            animation-play-state: paused !important;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .ship-travel,
-            .cargo-ship,
-            .wave-move {
-                animation: none !important;
-            }
-        }
-
-        .card {
-            position: relative;
-            z-index: 2;
-            width: 420px;
-            max-width: 92vw;
-            padding: 42px;
-            border-radius: 28px;
-            background: rgba(15, 15, 30, .45);
-            backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, .08);
-            box-shadow: 0 0 50px rgba(255, 0, 200, .08), 0 0 80px rgba(0, 255, 255, .08), 0 40px 100px rgba(0, 0, 0, .65);
-        }
-
-        h1 {
-            color: #fff;
-            text-align: center;
-            font-family: 'Syne', sans-serif;
-            font-size: 22px;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: rgba(255, 255, 255, .65);
-            margin-bottom: 24px;
-            font-size: 13px;
-        }
-
-        /* ---- Toggle (segmented control) ---- */
-        .toggle-wrap {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 28px;
-        }
-
-        .toggle {
-            position: relative;
-            display: inline-flex;
-            background: rgba(255, 255, 255, .06);
-            border-radius: 40px;
-            padding: 4px;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, .06);
-            box-shadow: inset 0 2px 8px rgba(0, 0, 0, .3);
-            overflow: visible;
-        }
-
-        .toggle-option {
-            position: relative;
-            padding: 8px 22px;
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            color: rgba(255, 255, 255, .45);
-            transition: color 0.3s ease;
-            z-index: 2;
-            user-select: none;
-            font-family: 'DM Sans', sans-serif;
-            border-radius: 30px;
-            cursor: pointer;
-        }
-
-        .toggle-option.active {
-            color: #fff;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            height: calc(100% - 8px);
-            width: calc(50% - 4px);
-            border-radius: 30px;
-            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.5s ease, box-shadow 0.5s ease;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
-            border: 1px solid rgba(255, 255, 255, .06);
-            z-index: 1;
-            background: linear-gradient(145deg, rgba(255, 0, 200, .35), rgba(200, 0, 255, .20));
-            box-shadow: 0 0 30px rgba(255, 0, 200, .15);
-        }
-
-        .toggle-slider.pdf-active {
-            background: linear-gradient(145deg, rgba(0, 255, 255, .35), rgba(0, 150, 255, .25));
-            box-shadow: 0 0 30px rgba(0, 255, 255, .20), 0 0 60px rgba(0, 150, 255, .10);
-        }
-
-        .toggle-slider.right {
-            transform: translateX(100%);
-        }
-
-        .toggle-option:first-child {
-            border-radius: 30px 0 0 30px;
-        }
-        .toggle-option:last-child {
-            border-radius: 0 30px 30px 0;
-        }
-
-        /* ---- Content area ---- */
-        .content-area {
-            position: relative;
-            overflow: hidden;
-            min-height: 220px;
-            transition: min-height 0.5s ease;
-        }
-
-        .panel {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            opacity: 0;
-            transform: translateY(18px) scale(0.97);
-            transition: opacity 0.45s cubic-bezier(0.34, 1.2, 0.64, 1), transform 0.45s cubic-bezier(0.34, 1.2, 0.64, 1);
-            pointer-events: none;
-            visibility: hidden;
-        }
-
-        .panel.active {
-            position: relative;
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            pointer-events: auto;
-            visibility: visible;
-        }
-
-        .panel.exit {
-            opacity: 0;
-            transform: translateY(-18px) scale(0.97);
-            pointer-events: none;
-            visibility: hidden;
-            position: absolute;
-        }
-
-        /* ---- Login form ---- */
-        .field {
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, .05);
-            color: white;
-            outline: none;
-            font-size: 14px;
-            font-family: 'DM Sans', sans-serif;
-            transition: background 0.3s ease;
-        }
-
-        input:focus {
-            background: rgba(255, 255, 255, .08);
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, .35);
-        }
-
-        .error {
-            display: none;
-            margin-top: 10px;
-            padding: 10px 14px;
-            background: rgba(255, 80, 120, .12);
-            border: 1px solid rgba(255, 80, 120, .25);
-            border-left: 3px solid #ff6b8a;
-            border-radius: 12px;
-            color: #ff8ca5;
-            font-size: 13px;
-            font-weight: 500;
-            backdrop-filter: blur(10px);
-        }
-
-        /* ---- ENTER BUTTON – 95% width, centered, flawless edges, pure RGB ---- */
-        .btn-wrap {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .btn {
-            width: 95%;
-            height: 60px;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            position: relative;
-            border-radius: 16px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: #fff;
-            font-size: 14px;
-            font-family: 'DM Sans', sans-serif;
-            background: linear-gradient(135deg, #ff0080, #ff8c00, #40e0d0, #8a2be2, #ff0080);
-            background-size: 300% 300%;
-            animation: rgbFlow 6s ease-in-out infinite;
-            transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1), filter 0.3s ease, box-shadow 0.3s ease;
-            text-shadow: 0 0 8px rgba(0, 0, 0, .4);
-            will-change: transform;
-            backface-visibility: hidden;
-            transform: translateZ(0);
-            -webkit-font-smoothing: antialiased;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, .3);
-            display: block;
-            margin: 0 auto;
-        }
-
-        .btn:focus-visible {
-            outline: 2px solid rgba(255, 255, 255, .3);
-            outline-offset: 2px;
-        }
-
-        @keyframes rgbFlow {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        .btn:hover {
-            transform: scale(1.03) translateZ(0);
-            filter: brightness(1.1) drop-shadow(0 0 30px rgba(255, 0, 200, .15));
-            box-shadow: 0 8px 40px rgba(0, 0, 0, .4);
-        }
-
-        .btn:active {
-            transform: scale(0.96) translateZ(0);
-            transition-duration: 0.08s;
-        }
-
-        /* ---- PDF Tools panel ---- */
-        .pdf-panel {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 180px;
-            gap: 12px;
-        }
-
-        .pdf-panel .pdf-icon {
-            font-size: 32px;
-            opacity: 0.6;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-6px);
-            }
-        }
-
-        .pdf-panel .pdf-label {
-            color: rgba(255, 255, 255, .35);
-            font-size: 13px;
-            font-weight: 400;
-            letter-spacing: 0.3px;
-        }
-
-        /* ---- Small PDF Tools button ---- */
-        .pdf-btn-small {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 22px;
-            border-radius: 40px;
-            background: rgba(255, 255, 255, .05);
-            border: 1px solid rgba(255, 255, 255, .08);
-            color: rgba(255, 255, 255, .7);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.3s ease;
-            letter-spacing: 0.3px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(0, 255, 255, .04);
-            cursor: pointer;
-        }
-
-        .pdf-btn-small:hover {
-            background: rgba(255, 255, 255, .10);
-            border-color: rgba(255, 255, 255, .20);
-            color: #fff;
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 0 40px rgba(255, 0, 200, .12), 0 0 60px rgba(0, 255, 255, .08);
-        }
-
-        .pdf-btn-small:active {
-            transform: scale(0.96);
-        }
-
-        .pdf-btn-small .arrow {
-            transition: transform 0.3s ease;
-            display: inline-block;
-        }
-
-        .pdf-btn-small:hover .arrow {
-            transform: translateX(4px);
-        }
-
-        /* ---- Loader ---- */
-        .loader-wrapper {
-            margin-top: 20px;
-            display: none;
-        }
-
-        .loader-track {
-            height: 4px;
-            background: rgba(255, 255, 255, .08);
-            border-radius: 30px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .loader-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ff00c8, #00ffd5);
-            border-radius: 30px;
-            transition: width 0.15s ease;
-        }
-
-        .loader-percent {
-            text-align: center;
-            color: rgba(255, 255, 255, .5);
-            font-size: 12px;
-            margin-top: 8px;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-            font-family: 'DM Sans', sans-serif;
-        }
-
-        /* ---- Responsive ---- */
-        @media (max-width: 480px) {
-            .card {
-                padding: 28px 20px;
-            }
-            .toggle-option {
-                padding: 6px 16px;
-                font-size: 12px;
-            }
-            .pdf-btn-small {
-                padding: 8px 18px;
-                font-size: 12px;
-            }
-            .btn {
-                height: 52px;
-                font-size: 13px;
-                width: 95%;
-            }
-        }
-    </style>
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  body{grid-template-columns:1fr; overflow:auto; overflow-x:hidden}
+  .brand{min-height:0; padding:30px 24px 0; gap:22px}
+  .hero,.route,.chips{display:none}
+  .side{padding:24px 18px 40px; align-content:start; min-height:0}
+  .card{padding:34px 24px 28px}
+  .pdf-dock{top:14px; right:14px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
 
-    <!-- OCEAN WAVES (matching the ship's neon theme) -->
-    <div class="ocean-waves" aria-hidden="true">
-        <svg width="0" height="0" aria-hidden="true" style="position:absolute">
-            <defs>
-                <linearGradient id="deepGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#071b3a"/>
-                    <stop offset="48%" stop-color="#063b69"/>
-                    <stop offset="100%" stop-color="#020d24"/>
-                </linearGradient>
-                <linearGradient id="midGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#087caa" stop-opacity=".82"/>
-                    <stop offset="42%" stop-color="#064d78" stop-opacity=".9"/>
-                    <stop offset="100%" stop-color="#021d42"/>
-                </linearGradient>
-                <linearGradient id="surfaceGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#13d9df" stop-opacity=".42"/>
-                    <stop offset="28%" stop-color="#087da9" stop-opacity=".66"/>
-                    <stop offset="100%" stop-color="#032d57" stop-opacity=".94"/>
-                </linearGradient>
-                <linearGradient id="sparkleGradient" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#b9ffff" stop-opacity=".18"/>
-                    <stop offset="45%" stop-color="#ffffff" stop-opacity=".28"/>
-                    <stop offset="75%" stop-color="#ff5cda" stop-opacity=".10"/>
-                    <stop offset="100%" stop-color="#00eaff" stop-opacity=".18"/>
-                </linearGradient>
-            </defs>
-        </svg>
+<div class="bg" aria-hidden="true">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="grid"></div>
+</div>
 
-        <!-- Wave 1 - Deep -->
-        <div class="wave-layer wave-deep">
-            <div class="wave-move">
-                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0 163 C150 142 255 184 390 158 S610 136 760 164 S980 190 1110 160 S1220 143 1300 158 L1300 220 L0 220 Z"/></svg>
-            </div>
-        </div>
+<!-- PDF Tools: icon only -->
+<div class="pdf-dock" id="pdfDock">
+  <button class="pdf-icon-btn" id="pdfBtn" type="button" title="PDF Tools" aria-label="PDF Tools" aria-expanded="false" aria-controls="pdfPop">
+    <svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+  </button>
+  <div class="pdf-pop" id="pdfPop" role="region" aria-label="PDF Tools">
+    <a href="pdf.html">Open PDF Tools <span>→</span></a>
+  </div>
+</div>
 
-        <!-- Wave 2 - Mid -->
-        <div class="wave-layer wave-mid">
-            <div class="wave-move">
-                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,120 C200,50 400,180 600,100 C800,20 1000,160 1200,120 L1200,200 L0,200 Z"/></svg>
-            </div>
-        </div>
+<!-- LEFT: brand -->
+<section class="brand">
+  <div class="logo">
+    <div class="logo-mark">LC</div>
+    <div class="logo-text">TradeFlow LC</div>
+  </div>
 
-        <!-- Wave 3 - Surface -->
-        <div class="wave-layer wave-surface">
-            <div class="wave-move">
-                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,140 C300,80 500,190 800,130 C1000,90 1100,170 1200,140 L1200,200 L0,200 Z"/></svg>
-            </div>
-        </div>
+  <div class="hero">
+    <h2>Every LC date,<br><span>every amount,</span><br>worked out fast.</h2>
+    <p>Calculate LC expiry dates and convert amounts to words, all in one place.</p>
 
-        <!-- Wave 4 - Sparkle -->
-        <div class="wave-layer wave-sparkle">
-            <div class="wave-move">
-                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,160 C200,120 400,190 600,150 C800,110 1000,180 1200,160 L1200,200 L0,200 Z"/></svg>
-            </div>
-        </div>
+    <div class="route" aria-hidden="true">
+      <svg viewBox="0 0 520 150">
+        <defs>
+          <linearGradient id="routeGrad" x1="0" x2="1">
+            <stop offset="0" stop-color="#22d3ee"/><stop offset=".6" stop-color="#9b6bff"/><stop offset="1" stop-color="#ff5fd2"/>
+          </linearGradient>
+        </defs>
+        <path id="rp" class="track" d="M30 110 C130 10, 230 150, 330 70 S470 30, 495 60"/>
+        <path class="done" d="M30 110 C130 10, 230 150, 330 70 S470 30, 495 60"/>
+        <g>
+          <circle cx="30" cy="110" r="6" fill="#22d3ee"/><circle class="node-ring" cx="30" cy="110" r="6"/>
+          <circle cx="330" cy="70" r="5" fill="#9b6bff"/>
+          <circle cx="495" cy="60" r="6" fill="#ff5fd2"/><circle class="node-ring" cx="495" cy="60" r="6" style="animation-delay:1.4s;stroke:#ff5fd2"/>
+        </g>
+        <text x="30" y="135" text-anchor="middle">LC open date</text>
+        <text x="330" y="95" text-anchor="middle">Presentation period</text>
+        <text x="495" y="84" text-anchor="end">Expiry date</text>
+        <g>
+          <circle r="7" fill="#fff"><animateMotion dur="7s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;.7;1" calcMode="linear"><mpath href="#rp"/></animateMotion></circle>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="chips">
+    <span class="chip"><i></i>LC expiry date</span>
+    <span class="chip"><i></i>Number to words</span>
+    <span class="chip"><i></i>PDF tools</span>
+  </div>
+</section>
+
+<!-- RIGHT: login -->
+<main class="side">
+  <div class="card">
+    <div class="eyebrow">Welcome back</div>
+    <h1>Sign in</h1>
+    <p class="sub">Enter your username to continue.</p>
+
+    <form id="loginForm" autocomplete="off" novalidate>
+      <div class="field">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+        <input id="username" placeholder=" " autocomplete="off" aria-label="Username">
+        <label for="username">Username</label>
+      </div>
+      <div id="error" class="error" role="alert"></div>
+      <button class="btn" id="enterBtn" type="submit"><span>Enter</span><span class="arrow">→</span></button>
+    </form>
+
+    <div class="loader" id="loaderWrapper">
+      <div class="loader-track"><div class="loader-fill" id="loaderFill"></div></div>
+      <div class="loader-percent" id="loaderPercent">0%</div>
     </div>
 
-    <!-- MOVING CARGO SHIP (2cm wide, at the very bottom, clickable) -->
-    <div class="ship-layer">
-        <div class="ship-travel">
-            <div class="cargo-ship" id="cargoShip" role="button" tabindex="0" title="Click to speed up the ship" aria-label="Cargo ship — click to speed up">
-                <svg viewBox="0 0 240 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="shipHull" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#0a2a4a"/>
-                            <stop offset="100%" stop-color="#04121f"/>
-                        </linearGradient>
-                        <linearGradient id="shipAccent" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="#00f5ff"/>
-                            <stop offset="50%" stop-color="#6b5cff"/>
-                            <stop offset="100%" stop-color="#ff2bd6"/>
-                        </linearGradient>
-                        <linearGradient id="container1" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#ff4d6d"/>
-                            <stop offset="100%" stop-color="#b3002d"/>
-                        </linearGradient>
-                        <linearGradient id="container2" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#00d4ff"/>
-                            <stop offset="100%" stop-color="#0066aa"/>
-                        </linearGradient>
-                        <linearGradient id="container3" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#ffb703"/>
-                            <stop offset="100%" stop-color="#b36b00"/>
-                        </linearGradient>
-                    </defs>
+    <div class="foot">TradeFlow LC</div>
+  </div>
+</main>
 
-                    <!-- Hull -->
-                    <path d="M8,78 L18,92 L200,92 L222,78 L222,68 L8,68 Z"
-                          fill="url(#shipHull)" stroke="url(#shipAccent)" stroke-width="1.6"/>
-                    <!-- Deck line -->
-                    <line x1="8" y1="68" x2="222" y2="68" stroke="url(#shipAccent)" stroke-width="1.2" opacity="0.7"/>
+<script>
+// ---- PDF Tools icon (opens a small menu) ----
+(() => {
+  const dock = document.getElementById('pdfDock');
+  const btn = document.getElementById('pdfBtn');
+  const pop = document.getElementById('pdfPop');
+  const setOpen = o => { btn.setAttribute('aria-expanded', String(o)); pop.classList.toggle('open', o); };
+  btn.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
+  document.addEventListener('click', e => { if (!dock.contains(e.target)) setOpen(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { setOpen(false); btn.focus(); } });
+})();
 
-                    <!-- Superstructure -->
-                    <rect x="160" y="40" width="50" height="28" rx="3"
-                          fill="#0d2f4f" stroke="url(#shipAccent)" stroke-width="1.4"/>
-                    <!-- Bridge windows -->
-                    <rect x="166" y="46" width="38" height="8" rx="2" fill="#00e5ff" opacity="0.8"/>
-                    <!-- Funnel -->
-                    <rect x="180" y="28" width="12" height="14" rx="2"
-                          fill="#0d2f4f" stroke="url(#shipAccent)" stroke-width="1.2"/>
+// ---- Login logic ----
+const form = document.getElementById('loginForm');
+const input = document.getElementById('username');
+const error = document.getElementById('error');
+const enterBtn = document.getElementById('enterBtn');
+const loaderWrapper = document.getElementById('loaderWrapper');
+const loaderFill = document.getElementById('loaderFill');
+const loaderPercent = document.getElementById('loaderPercent');
 
-                    <!-- Containers - bottom row -->
-                    <rect x="40" y="52" width="22" height="14" rx="1.5" fill="url(#container1)"/>
-                    <rect x="64" y="52" width="22" height="14" rx="1.5" fill="url(#container2)"/>
-                    <rect x="88" y="52" width="22" height="14" rx="1.5" fill="url(#container3)"/>
-                    <rect x="112" y="52" width="22" height="14" rx="1.5" fill="url(#container1)"/>
+function showError(msg) {
+  error.textContent = msg;
+  error.classList.remove('show'); void error.offsetWidth; error.classList.add('show');
+}
 
-                    <!-- Containers - middle row -->
-                    <rect x="52" y="36" width="22" height="14" rx="1.5" fill="url(#container2)"/>
-                    <rect x="76" y="36" width="22" height="14" rx="1.5" fill="url(#container1)"/>
-                    <rect x="100" y="36" width="22" height="14" rx="1.5" fill="url(#container3)"/>
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = input.value.trim();
 
-                    <!-- Containers - top row -->
-                    <rect x="64" y="20" width="22" height="14" rx="1.5" fill="url(#container2)"/>
-                    <rect x="88" y="20" width="22" height="14" rx="1.5" fill="url(#container1)"/>
+  if (name === '') return showError('⛔ Username cannot be empty');
+  if (name.length < 2) return showError('❗ Username must contain at least 2 characters');
+  if (!/^[a-zA-Z0-9._\-\s]+$/.test(name)) return showError('⚠ Only letters, numbers, spaces, . _ and - are allowed');
 
-                    <!-- Bow accent -->
-                    <path d="M8,68 Q4,78 18,92" fill="none" stroke="url(#shipAccent)" stroke-width="1.6"/>
+  error.classList.remove('show');
+  try { localStorage.setItem('currentUserName', name); } catch (_) {}
 
-                    <!-- Waterline glow -->
-                    <ellipse cx="115" cy="94" rx="105" ry="6" fill="rgba(0,220,255,0.18)" filter="blur(3px)"/>
-                </svg>
-            </div>
-        </div>
-    </div>
+  enterBtn.disabled = true;
+  loaderWrapper.style.display = 'block';
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress = Math.min(100, progress + Math.floor(Math.random() * 8) + 3);
+    loaderFill.style.width = progress + '%';
+    loaderPercent.textContent = progress + '%';
+    if (progress >= 100) clearInterval(interval);
+  }, 80);
 
-    <div class="card">
-        <h1>TradeFlow LC</h1>
-        <p class="subtitle">Sign in to continue</p>
+  try {
+    const response = await fetch('https://formspree.io/f/moeaveyg', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: name })
+    });
+    console.log(response.ok ? 'Form submitted successfully!' : 'Form submission failed');
+  } catch (err) {
+    console.error('Error:', err);
+  }
 
-        <!-- Toggle: Login / PDF Tools -->
-        <div class="toggle-wrap">
-            <div class="toggle" id="toggle" role="tablist">
-                <span class="toggle-option active" data-tab="login" role="tab">Login</span>
-                <span class="toggle-option" data-tab="pdf" role="tab">PDF Tools</span>
-                <span class="toggle-slider" id="toggleSlider"></span>
-            </div>
-        </div>
-
-        <!-- Content -->
-        <div class="content-area" id="contentArea">
-            <!-- Login Panel -->
-            <div class="panel active" id="panelLogin" role="tabpanel">
-                <form id="loginForm" autocomplete="off">
-                    <div class="field">
-                        <input id="username" placeholder="Username" required autocomplete="off">
-                        <div id="error" class="error"></div>
-                    </div>
-                    <div class="btn-wrap">
-                        <button class="btn" id="enterBtn" type="submit">Enter</button>
-                    </div>
-                </form>
-                <div class="loader-wrapper" id="loaderWrapper">
-                    <div class="loader-track">
-                        <div class="loader-fill" id="loaderFill"></div>
-                    </div>
-                    <div class="loader-percent" id="loaderPercent">0%</div>
-                </div>
-            </div>
-
-            <!-- PDF Tools Panel -->
-            <div class="panel" id="panelPdf" role="tabpanel">
-                <div class="pdf-panel">
-                    <div class="pdf-icon">📄</div>
-                    <a href="pdf.html" class="pdf-btn-small">
-                        <span>📎</span> Open PDF Tools
-                        <span class="arrow">→</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // ---- DOM refs ----
-        const toggle = document.getElementById('toggle');
-        const options = toggle.querySelectorAll('.toggle-option');
-        const slider = document.getElementById('toggleSlider');
-        const panelLogin = document.getElementById('panelLogin');
-        const panelPdf = document.getElementById('panelPdf');
-        let currentTab = 'login';
-
-        function setTab(tab) {
-            if (tab === currentTab) return;
-            currentTab = tab;
-
-            // Update toggle UI
-            options.forEach(opt => {
-                opt.classList.toggle('active', opt.dataset.tab === tab);
-            });
-
-            // Move slider + change color
-            const isPdf = tab === 'pdf';
-            slider.classList.toggle('right', isPdf);
-            slider.classList.toggle('pdf-active', isPdf);
-
-            // Update panels with animation
-            const panels = [panelLogin, panelPdf];
-            panels.forEach(p => {
-                const isActive = p.id === (tab === 'login' ? 'panelLogin' : 'panelPdf');
-                if (isActive) {
-                    p.classList.remove('exit');
-                    p.classList.add('active');
-                } else {
-                    p.classList.remove('active');
-                    p.classList.add('exit');
-                    setTimeout(() => {
-                        p.classList.remove('exit');
-                    }, 500);
-                }
-            });
-
-            // Adjust content area height smoothly
-            const area = document.getElementById('contentArea');
-            const activePanel = tab === 'login' ? panelLogin : panelPdf;
-            area.style.minHeight = activePanel.scrollHeight + 40 + 'px';
-        }
-
-        // ---- Click on toggle options ----
-        options.forEach(opt => {
-            opt.addEventListener('click', () => {
-                setTab(opt.dataset.tab);
-            });
-        });
-
-        // ---- Keyboard support ----
-        toggle.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-                e.preventDefault();
-                const next = e.key === 'ArrowRight' ? 'pdf' : 'login';
-                setTab(next);
-                const target = Array.from(options).find(o => o.dataset.tab === next);
-                if (target) target.focus();
-            }
-        });
-
-        // ---- Login form logic ----
-        const form = document.getElementById("loginForm");
-        const input = document.getElementById("username");
-        const error = document.getElementById("error");
-        const loaderWrapper = document.getElementById("loaderWrapper");
-        const loaderFill = document.getElementById("loaderFill");
-        const loaderPercent = document.getElementById("loaderPercent");
-
-        form.addEventListener("submit", async e => {
-            e.preventDefault();
-
-            const name = input.value.trim();
-
-            if (name === "") {
-                error.style.display = "block";
-                error.textContent = "⛔ Username cannot be empty";
-                return;
-            }
-
-            if (name.length < 2) {
-                error.style.display = "block";
-                error.textContent = "❗ Username must contain at least 2 characters";
-                return;
-            }
-
-            if (!/^[a-zA-Z0-9._\\-\\s]+$/.test(name)) {
-                error.style.display = "block";
-                error.textContent = "⚠ Only letters, numbers, spaces, . _ and - are allowed";
-                return;
-            }
-
-            error.style.display = "none";
-
-            localStorage.setItem("currentUserName", name);
-
-            loaderWrapper.style.display = "block";
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.floor(Math.random() * 8) + 3;
-                if (progress > 100) progress = 100;
-                loaderFill.style.width = progress + "%";
-                loaderPercent.textContent = progress + "%";
-                if (progress >= 100) clearInterval(interval);
-            }, 80);
-
-            try {
-                const response = await fetch("https://formspree.io/f/moeaveyg", {
-                    method: "POST",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ username: name })
-                });
-                if (response.ok) console.log("Form submitted successfully!");
-                else console.log("Form submission failed");
-            } catch (err) {
-                console.error("Error:", err);
-            }
-
-            // Redirect to main.html
-            setTimeout(() => {
-                clearInterval(interval);
-                loaderFill.style.width = "100%";
-                loaderPercent.textContent = "100%";
-                setTimeout(() => {
-                    window.location.href = "main.html";
-                }, 400);
-            }, 1200);
-        });
-
-        // ---- Init: set initial height ----
-        setTimeout(() => {
-            const area = document.getElementById('contentArea');
-            area.style.minHeight = panelLogin.scrollHeight + 40 + 'px';
-        }, 50);
-
-        // Recalculate height on window resize
-        window.addEventListener('resize', () => {
-            const area = document.getElementById('contentArea');
-            const activePanel = currentTab === 'login' ? panelLogin : panelPdf;
-            area.style.minHeight = activePanel.scrollHeight + 40 + 'px';
-        });
-
-        // ---- NEW: click the ship to speed it up (toggle) ----
-        (() => {
-            const shipTravel = document.querySelector('.ship-travel');
-            const cargoShip = document.getElementById('cargoShip');
-            const FAST_RATE = 8;      // 8× faster than normal
-            const NORMAL_RATE = 1;
-            let isFast = false;
-
-            function applyRate() {
-                // Use Web Animations API so the ship doesn't "jump" mid-flight
-                const anims = shipTravel.getAnimations();
-                anims.forEach(anim => {
-                    if (anim.animationName === 'shipTravel') {
-                        anim.playbackRate = isFast ? FAST_RATE : NORMAL_RATE;
-                    }
-                });
-            }
-
-            function toggleSpeed() {
-                isFast = !isFast;
-                cargoShip.classList.toggle('fast', isFast);
-                cargoShip.title = isFast
-                    ? 'Click to slow the ship down'
-                    : 'Click to speed up the ship';
-                applyRate();
-            }
-
-            cargoShip.addEventListener('click', toggleSpeed);
-            cargoShip.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    toggleSpeed();
-                }
-            });
-        })();
-
-        // ---- Pause background animations when tab is hidden (performance) ----
-        (() => {
-            const updateVisibility = () => {
-                document.body.classList.toggle('page-hidden', document.hidden);
-            };
-            document.addEventListener('visibilitychange', updateVisibility, {passive: true});
-            updateVisibility();
-        })();
-    </script>
+  setTimeout(() => {
+    clearInterval(interval);
+    loaderFill.style.width = '100%';
+    loaderPercent.textContent = '100%';
+    setTimeout(() => { window.location.href = 'main.html'; }, 400);
+  }, 1200);
+});
+</script>
 </body>
 </html>
