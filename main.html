@@ -2,1044 +2,360 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>⚓ TradeFlow LC</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='8' y='8' width='84' height='84' rx='20' fill='%2300c2ff'/%3E%3Ctext x='50' y='67' font-family='Arial' font-size='50' font-weight='bold' text-anchor='middle' fill='%23061022'%3ELC%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Your existing CSS styles remain exactly the same */
-:root {
-  --bg: linear-gradient(135deg, #121212 0%, #1a1a2e 50%, #16213e 100%);
-  --text: #f8f9fa;
-  --card: rgba(30, 30, 46, 0.85);
-  --primary: #6c5ce7;
-  --secondary: #00cec9;
-  --accent: #fd79a8;
-  --border: rgba(109, 92, 231, 0.3);
-  --input-bg: rgba(42, 42, 62, 0.7);
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  --glow: 0 0 20px rgba(108, 92, 231, 0.5);
-}
-
-.light-mode {
-  --bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
-  --text: #212529;
-  --card: rgba(255, 255, 255, 0.9);
-  --primary: #6c5ce7;
-  --secondary: #00cec9;
-  --accent: #fd79a8;
-  --border: rgba(108, 92, 231, 0.2);
-  --input-bg: rgba(248, 249, 250, 0.7);
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  --glow: 0 0 20px rgba(108, 92, 231, 0.3);
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  --bg:
-    radial-gradient(circle at top left, rgba(0, 229, 255, 0.25) 0%, transparent 30%),
-    radial-gradient(circle at bottom right, rgba(108, 92, 231, 0.25) 0%, transparent 30%),
-    radial-gradient(circle at center, rgba(253, 121, 168, 0.10) 0%, transparent 40%),
-    linear-gradient(135deg, #050814 0%, #0b1022 45%, #070b17 100%);
-
-  background: var(--bg);
-  background-attachment: fixed;
-
-  color: var(--text);
-
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-
-  margin: 0;
-  padding: 20px;
-
-  min-height: 100vh;
-
-  transition:
-    background 0.8s ease,
-    color 0.5s ease;
-
-  overflow-x: hidden;
-  position: relative;
-  isolation: isolate;
-}
-
-/* LIQUID AURORA LAYER */
-body::before {
-  content: '';
-
-  position: fixed;
-  inset: -30%;
-
-  background:
-    radial-gradient(circle at 20% 30%,
-      rgba(0, 229, 255, 0.22) 0%,
-      transparent 28%),
-
-    radial-gradient(circle at 80% 70%,
-      rgba(108, 92, 231, 0.22) 0%,
-      transparent 30%),
-
-    radial-gradient(circle at 50% 50%,
-      rgba(253, 121, 168, 0.14) 0%,
-      transparent 40%),
-
-    radial-gradient(circle at 30% 80%,
-      rgba(0, 206, 201, 0.12) 0%,
-      transparent 35%),
-
-    radial-gradient(circle at 70% 20%,
-      rgba(255,255,255,0.05) 0%,
-      transparent 25%);
-
-  filter: blur(55px) saturate(160%);
-
-  animation: liquidAurora 14s ease-in-out infinite alternate;
-
-  z-index: -2;
-}
-
-/* GLASS + WATER RIPPLE TEXTURE */
-body::after {
-  content: '';
-
-  position: fixed;
-  inset: 0;
-
-  background:
-    linear-gradient(
-      rgba(255,255,255,0.02),
-      rgba(255,255,255,0.01)
-    ),
-
-    repeating-linear-gradient(
-      45deg,
-      rgba(255,255,255,0.02) 0px,
-      transparent 2px,
-      transparent 4px
-    );
-
-  mix-blend-mode: soft-light;
-  opacity: 0.6;
-
-  pointer-events: none;
-
-  z-index: -1;
-
-  animation: glassFlow 8s linear infinite;
-}
-
-/* LIQUID AURORA MOTION */
-@keyframes liquidAurora {
-  0% {
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-
-  25% {
-    transform: translate(20px, -25px) scale(1.08) rotate(1deg);
-  }
-
-  50% {
-    transform: translate(-25px, 20px) scale(1.12) rotate(-1deg);
-  }
-
-  75% {
-    transform: translate(25px, 10px) scale(1.05) rotate(2deg);
-  }
-
-  100% {
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-}
-
-/* subtle moving glass shimmer */
-@keyframes glassFlow {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(20px);
-  }
-}
-
-.container {
-  max-width: 500px;
-  margin: 0 auto;
-  background: var(--card);
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(10px);
-  transform: translateY(0);
-  opacity: 1;
-  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              opacity 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
-  overflow: hidden;
-}
-
-.container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
-  animation: shimmer 3s infinite linear;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.container.hidden {
-  transform: translateY(30px);
-  opacity: 0;
-}
-
-h1 {
-  text-align: center;
-  margin: 0 0 25px;
-  color: var(--primary);
-  animation: titleGlow 2s ease-in-out infinite alternate;
-  font-weight: 200;
-  font-size: 1.6rem;
-  position: relative;
-  padding-bottom: 15px;
-}
-
-h1::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 300px;
-  height: 0.1px;
-  background: linear-gradient(90deg, transparent, var(--primary), transparent);
-  border-radius: 3px;
-}
-
-@keyframes titleGlow {
-  from { text-shadow: 0 0 5px rgba(108, 92, 231, 0.5); }
-  to { text-shadow: 0 0 15px rgba(108, 92, 231, 0.8), 0 0 25px rgba(108, 92, 231, 0.4); }
-}
-
-.input-group {
-  margin-bottom: 25px;
-  animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  opacity: 0;
-  transform: translateY(30px);
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.input-group:nth-child(1) { animation-delay: 0.1s; }
-.input-group:nth-child(2) { animation-delay: 0.2s; }
-.input-group:nth-child(3) { animation-delay: 0.3s; }
-
-label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: 600;
-  color: var(--text);
-  transition: all 0.3s ease;
-  position: relative;
-  padding-left: 15px;
-}
-
-label::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6px;
-  height: 6px;
-  background: var(--primary);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.7); }
-  70% { box-shadow: 0 0 0 6px rgba(108, 92, 231, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
-}
-
-input, select {
-  width: 100%;
-  padding: 14px 16px;
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  background: var(--input-bg);
-  color: var(--text);
-  font-size: 16px;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-sizing: border-box;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.number-converter input[type="number"] {
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-input:focus, select:focus {
-  border-color: var(--primary);
-  outline: none;
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 0 10px var(--primary), 0 0 25px var(--primary);
-}
-
-.result-card {
-  background: var(--card);
-  padding: 20px;
-  margin: 20px 0;
-  border-radius: 15px;
-  border-left: 4px solid var(--primary);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  transform: scale(1);
-  opacity: 1;
-  animation: cardAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-.result-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: translateX(-100%);
-}
-
-.result-card:hover::before {
-  animation: shine 1.5s ease;
-}
-
-@keyframes shine {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-@keyframes cardAppear {
-  from { opacity: 0; transform: scale(0.9) translateY(20px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.result-card.secondary {
-  border-left-color: var(--secondary);
-}
-
-.result-card.accent {
-  border-left-color: var(--accent);
-}
-
-.result-card.hidden {
-  transform: scale(0.95);
-  opacity: 0;
-  height: 0;
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              height 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              padding 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              margin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.result-value {
-  font-size: 1.5em;
-  font-weight: 700;
-  margin-top: 8px;
-  transition: color 0.3s ease;
-  animation: textPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  color: var(--primary);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-@keyframes textPop {
-  from { opacity: 0; transform: translateY(10px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.words-result {
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.theme-toggle {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-
-  color: white;
-  font-size: 1.3rem;
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  transition: all 0.35s ease;
-  z-index: 100;
-
-  box-shadow:
-    0 8px 25px rgba(0, 0, 0, 0.3),
-    inset 0 0 10px rgba(255, 255, 255, 0.05);
-}
-
-.theme-toggle:hover {
-  transform: rotate(180deg) scale(1.1);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), var(--glow);
-}
-
-.game-toggle {
-  position: fixed;
-  top: 85px;
-  right: 20px;
-
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-
-  color: white;
-  font-size: 1.3rem;
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  transition: all 0.35s ease;
-  z-index: 100;
-
-  box-shadow:
-    0 8px 25px rgba(0, 0, 0, 0.3),
-    inset 0 0 10px rgba(255, 255, 255, 0.05);
-}
-
-.game-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 206, 201, 0.5);
-}
-
-.export-toggle {
-  position: fixed;
-  top: 150px;
-  right: 20px;
-
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-
-  color: white;
-  font-size: 1.3rem;
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  transition: all 0.35s ease;
-  z-index: 100;
-
-  box-shadow:
-    0 8px 25px rgba(0, 0, 0, 0.3),
-    inset 0 0 10px rgba(255, 255, 255, 0.05);
-}
-
-.export-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(253, 121, 168, 0.5);
-}
-
-.admin-toggle {
-  position: fixed;
-  top: 215px;
-  right: 20px;
-
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-
-  color: white;
-  font-size: 1.3rem;
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  transition: all 0.35s ease;
-  z-index: 100;
-
-  box-shadow:
-    0 8px 25px rgba(0, 0, 0, 0.3),
-    inset 0 0 10px rgba(255, 255, 255, 0.05);
-}
-
-.admin-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 107, 107, 0.5);
-}
-
-@keyframes rotateIn {
-  from { opacity: 0; transform: rotate(-90deg) scale(0.5); }
-  to { opacity: 1; transform: rotate(0) scale(1); }
-}
-
-.footer {
-  text-align: center;
-  margin-top: 40px;
-  font-size: 0.9em;
-  color: var(--text);
-  opacity: 0.8;
-  transition: all 0.3s ease;
-  position: relative;
-  animation: fadeIn 1s ease forwards;
-}
-
-.creator-badge {
-  display: inline-block;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: white;
-  padding: 12px 30px;
-  border-radius: 30px;
-  cursor: pointer;
-  transform: scale(1);
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  font-weight: 600;
-  letter-spacing: 1px;
-  position: relative;
-  overflow: hidden;
-  animation: bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  z-index: 1;
-}
-
-.creator-badge::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, var(--accent), var(--primary));
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  z-index: -1;
-}
-
-.creator-badge:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(253, 121, 168, 0.5);
-}
-
-.creator-badge:hover::before {
-  opacity: 1;
-}
-
-.creator-badge:active {
-  transform: translateY(1px) scale(0.98);
-}
-
-.creator-badge.hidden {
-  transform: scale(0);
-  opacity: 0;
-}
-
-@keyframes bounceIn {
-  0% { opacity: 0; transform: scale(0.3) rotate(-10deg); }
-  50% { opacity: 1; transform: scale(1.1) rotate(5deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0); }
-}
-
-.number-converter {
-  margin-top: 35px;
-  padding-top: 25px;
-  border-top: 1px solid var(--border);
-  animation: fadeIn 0.8s ease forwards;
-}
-
-.number-converter .result-card {
-  margin-top: 20px;
-}
-
-.currency-selector {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-  animation: fadeIn 0.6s ease forwards;
-}
-
-.currency-option {
-  flex: 1;
-}
-
-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 15px center;
-  background-size: 1em;
-  padding-right: 45px;
-}
-
-/* SHIP GAME Styles */
-.game-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.game-container.show {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.game-window {
-  background: var(--card);
-  padding: 25px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 450px;
-  max-height: 90vh;
-  overflow: auto;
-  position: relative;
-  border: 2px solid var(--primary);
-  box-shadow: 0 0 30px rgba(108, 92, 231, 0.7);
-  backdrop-filter: blur(10px);
-  animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes scaleIn {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-.close-game {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: none;
-  border: none;
-  color: var(--text);
-  font-size: 24px;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-}
-
-.close-game:hover {
-  background: rgba(108, 92, 231, 0.2);
-  transform: rotate(90deg);
-}
-
-.Ship-game {
-  text-align: center;
-}
-
-.Ship-game h2 {
-  color: var(--primary);
-  margin-bottom: 20px;
-  animation: titleGlow 2s infinite alternate;
-}
-
-.game-canvas-container {
-  position: relative;
-  margin: 0 auto;
-  width: 320px;
-  height: 320px;
-  background: var(--input-bg);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-#gameCanvas {
-  width: 100%;
-  height: 100%;
-}
-
-.game-stats {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-  padding: 15px;
-  background: var(--input-bg);
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-}
-
-.game-stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.game-stat-value {
-  font-weight: bold;
-  font-size: 1.5em;
-  color: var(--primary);
-}
-
-.game-stat-label {
-  font-size: 0.8em;
-  opacity: 0.8;
-}
-
-.game-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  z-index: 20;
-  display: none;
-  animation: fadeIn 0.5s ease;
-}
-
-.game-overlay h3 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
-  color: var(--primary);
-  text-shadow: 0 0 15px rgba(108, 92, 231, 0.9);
-  animation: pulse 2s infinite;
-}
-
-.restart-btn {
-  margin-top: 20px;
-  padding: 12px 30px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: white;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.restart-btn:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-.game-controls {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-.game-btn {
-  padding: 10px 25px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.game-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-/* Export Panel Styles */
-.export-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.export-container.show {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.export-window {
-  background: var(--card);
-  padding: 25px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow: auto;
-  position: relative;
-  border: 2px solid var(--accent);
-  box-shadow: 0 0 30px rgba(253, 121, 168, 0.7);
-  backdrop-filter: blur(10px);
-  animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.export-options {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin: 20px 0;
-}
-
-.export-option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 15px;
-  background: var(--input-bg);
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.export-option:hover {
-  background: rgba(108, 92, 231, 0.1);
-  transform: translateX(5px);
-}
-
-.export-option input {
-  width: auto;
-}
-
-.export-option label {
-  margin: 0;
-  padding: 0;
-  flex: 1;
-  cursor: pointer;
-}
-
-.export-option label::before {
-  display: none;
-}
-
-.export-btn {
-  padding: 12px 25px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: white;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  margin-top: 15px;
-}
-
-.export-btn:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-/* Sound Toggle */
-.sound-toggle {
-  position: fixed;
-  top: 280px;
-  right: 20px;
-  background: var(--secondary);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  z-index: 100;
-  animation: rotateIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.4s;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  font-size: 1.2rem;
-}
-
-.sound-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 206, 201, 0.5);
-}
-
-.sound-toggle.muted {
-  background: #666;
-}
-
-/* Floating particles animation */
-.particles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.particle {
-  position: absolute;
-  border-radius: 50%;
-  background: var(--primary);
-  opacity: 0.1;
-  animation: floatParticle 15s infinite linear;
-}
-
-@keyframes floatParticle {
-  0% {
-    transform: translateY(100vh) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.1;
-  }
-  90% {
-    opacity: 0.1;
-  }
-  100% {
-    transform: translateY(-100px) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  .container {
-    padding: 20px;
-    margin: 10px;
-  }
-  
-  h1 {
-    font-size: 1.8rem;
-  }
-  
-  .theme-toggle, .game-toggle, .export-toggle, .admin-toggle {
-    width: 45px;
-    height: 45px;
-    top: 15px;
-    right: 15px;
-  }
-  
-  .game-toggle {
-    top: 70px;
-  }
-  
-  .export-toggle {
-    top: 125px;
-  }
-  
-  .admin-toggle {
-    top: 180px;
-  }
-  
-  .sound-toggle {
-    top: 235px;
-  }
-  
-  .game-window, .export-window {
-    padding: 20px;
-  }
-  
-  .game-canvas-container {
-    width: 280px;
-    height: 280px;
-  }
-}
-
-/* Notification */
-.notification {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: var(--card);
-  color: var(--text);
-  padding: 15px 25px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  border-left: 4px solid var(--secondary);
-  transform: translateX(150%);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  z-index: 1000;
-  backdrop-filter: blur(10px);
-}
-
-.notification.show {
-  transform: translateX(0);
-}
+:root{
+  --bg:linear-gradient(135deg,#060914,#09091a,#0d1020);
+  --text:#eef3ff;
+  --card:rgba(16,22,44,.55);
+  --primary:#4f8cff;
+  --secondary:#22d3ee;
+  --accent:#ff5fd2;
+  --border:rgba(255,255,255,.10);
+  --input-bg:rgba(255,255,255,.05);
+  --shadow:0 24px 70px rgba(0,0,0,.45);
+  --glow:0 0 28px rgba(79,140,255,.40);
+}
+.light-mode{
+  --bg:linear-gradient(135deg,#f4f7ff,#e8eefc,#dde6f8);
+  --text:#0f172a;
+  --card:rgba(255,255,255,.72);
+  --primary:#3b6fe0;
+  --secondary:#0891b2;
+  --accent:#d6336c;
+  --border:rgba(15,23,42,.12);
+  --input-bg:rgba(255,255,255,.75);
+  --shadow:0 24px 60px rgba(30,50,100,.16);
+  --glow:0 0 24px rgba(59,111,224,.28);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  --muted:color-mix(in srgb,var(--text) 62%,transparent);
+  --faint:color-mix(in srgb,var(--text) 38%,transparent);
+  --line:color-mix(in srgb,var(--text) 10%,transparent);
+  --bg:linear-gradient(135deg,#060914,#09091a,#0d1020);
+  background:var(--bg);
+  background-attachment:fixed;
+  color:var(--text);
+  font-family:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  margin:0;
+  min-height:100vh;
+  overflow-x:hidden;
+  color-scheme:dark;
+  transition:background .8s ease,color .5s ease;
+}
+.light-mode:not([class*="theme-"]),
+body.theme-ocean-shore,body.theme-ocean-arctic,body.theme-sakura,
+body.theme-matcha,body.theme-lavender,body.theme-golden-desert{color-scheme:light}
+
+/* ---------- background ---------- */
+.bg{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform}
+.b1{width:48vw;height:48vw;left:-12vw;top:-14vw;background:radial-gradient(circle,color-mix(in srgb,var(--primary) 80%,transparent),transparent 65%);animation:drift1 22s ease-in-out infinite alternate}
+.b2{width:42vw;height:42vw;right:-10vw;bottom:-14vw;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 65%,transparent),transparent 65%);animation:drift2 26s ease-in-out infinite alternate}
+.b3{width:30vw;height:30vw;left:38vw;top:34vh;background:radial-gradient(circle,color-mix(in srgb,var(--secondary) 45%,transparent),transparent 65%);animation:drift1 30s ease-in-out infinite alternate-reverse}
+@keyframes drift1{to{transform:translate(8vw,6vh) scale(1.15)}}
+@keyframes drift2{to{transform:translate(-8vw,-6vh) scale(1.1)}}
+.grid-bg{
+  position:absolute;inset:0;opacity:.32;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse at 50% 30%,#000 15%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 15%,transparent 75%);
+}
+.particles{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.particle{position:absolute;border-radius:50%;background:var(--primary);opacity:.1;animation:floatParticle 15s infinite linear}
+@keyframes floatParticle{
+  0%{transform:translateY(100vh) rotate(0);opacity:0}
+  10%,90%{opacity:.12}
+  100%{transform:translateY(-100px) rotate(360deg);opacity:0}
+}
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:14px clamp(16px,4vw,48px);
+  background:color-mix(in srgb,var(--card) 55%,transparent);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{
+  width:42px;height:42px;border-radius:13px;display:grid;place-items:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#061022;
+  background:linear-gradient(135deg,var(--secondary),var(--primary) 65%,var(--accent));
+  box-shadow:0 0 26px color-mix(in srgb,var(--secondary) 40%,transparent),inset 0 1px 0 rgba(255,255,255,.5);
+}
+.logo-text{font-family:'Syne',sans-serif;font-weight:700;font-size:19px;letter-spacing:.2px}
+.top-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.user-chip{
+  display:flex;align-items:center;gap:10px;padding:5px 5px 5px 14px;border-radius:40px;font-size:13px;font-weight:500;
+  background:var(--card);border:1px solid var(--border);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.user-chip .avatar{opacity:.8}
+.logout{
+  padding:8px 15px;border:none;border-radius:30px;cursor:pointer;font:700 12px 'DM Sans',sans-serif;letter-spacing:.4px;color:#04101f;
+  background:linear-gradient(110deg,var(--secondary),var(--primary));transition:transform .25s,box-shadow .25s;
+}
+.logout:hover{transform:translateY(-1px);box-shadow:var(--glow)}
+.toolbar{display:flex;align-items:center;gap:8px}
+.ibtn{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:18px;line-height:1;cursor:pointer;
+  background:var(--card);border:1px solid var(--border);color:var(--text);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:transform .3s cubic-bezier(.34,1.5,.64,1),border-color .3s,box-shadow .3s;
+}
+.ibtn:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--secondary) 60%,transparent);box-shadow:var(--glow)}
+.ibtn:focus-visible,.logout:focus-visible,.adv-toggle:focus-visible,.btn-main:focus-visible,.game-btn:focus-visible,.restart-btn:focus-visible{outline:2px solid color-mix(in srgb,var(--secondary) 80%,#fff);outline-offset:3px}
+@keyframes rotateIn{from{transform:rotate(-180deg) scale(.5);opacity:0}to{transform:none;opacity:1}}
+
+/* ---------- page ---------- */
+.shell{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+.page-head{padding:34px 0 4px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--secondary);font-weight:600;margin-bottom:10px}
+.page-head h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(26px,3.4vw,42px);line-height:1.08;letter-spacing:-.4px;margin:0}
+.page-head h1 span{background:linear-gradient(90deg,var(--secondary),var(--primary),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.today-chip{padding:9px 16px;border-radius:40px;font-size:12.5px;color:var(--muted);background:var(--card);border:1px solid var(--border);backdrop-filter:blur(10px);display:inline-flex;align-items:center;gap:8px}
+.today-chip i{width:6px;height:6px;border-radius:50%;background:var(--secondary);box-shadow:0 0 10px var(--secondary)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;padding:26px 0 30px}
+
+/* ---------- cards ---------- */
+.card{
+  position:relative;padding:32px 30px 28px;border-radius:30px;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--text) 7%,transparent),color-mix(in srgb,var(--text) 1%,transparent)),var(--card);
+  border:1px solid var(--border);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);
+  box-shadow:var(--shadow),0 0 70px color-mix(in srgb,var(--primary) 10%,transparent),inset 0 1px 0 color-mix(in srgb,var(--text) 10%,transparent);
+  animation:rise .8s cubic-bezier(.2,.9,.25,1) both;
+}
+.card:nth-child(2){animation-delay:.12s}
+.card::before{
+  content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;
+  background:conic-gradient(from var(--a,0deg),transparent 0 72%,color-mix(in srgb,var(--secondary) 70%,transparent),color-mix(in srgb,var(--accent) 60%,transparent),transparent);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  animation:orbit 8s linear infinite;
+}
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes orbit{to{--a:360deg}}
+@keyframes rise{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+.card-head{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+.card-ico{
+  width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:21px;flex:0 0 auto;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 35%,transparent),color-mix(in srgb,var(--secondary) 25%,transparent));
+  border:1px solid var(--border);
+}
+.card-head h2{font-family:'Syne',sans-serif;font-weight:700;font-size:19px;margin:0 0 3px}
+.card-head p{margin:0;font-size:12.5px;color:var(--muted)}
+
+/* ---------- fields ---------- */
+.field{margin-bottom:20px;animation:slideUp .6s ease both}
+.card .field:nth-of-type(1){animation-delay:.12s}
+.card .field:nth-of-type(2){animation-delay:.2s}
+.card .field:nth-of-type(3){animation-delay:.28s}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.field>label{
+  display:flex;align-items:center;gap:8px;margin-bottom:9px;
+  font-size:12px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);
+}
+.field>label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--secondary);box-shadow:0 0 10px var(--secondary)}
+input[type=date],input[type=number],select{
+  width:100%;height:54px;padding:0 16px;border-radius:16px;border:1px solid var(--border);
+  background:var(--input-bg);color:var(--text);font:500 15px 'DM Sans',sans-serif;outline:none;
+  transition:border-color .3s,background .3s,box-shadow .3s;
+}
+input[type=date]{font-variant-numeric:tabular-nums}
+input:focus,select:focus{
+  border-color:color-mix(in srgb,var(--secondary) 60%,transparent);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--secondary) 14%,transparent);
+}
+input::placeholder{color:var(--faint)}
+select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:46px;
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a93b4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat:no-repeat;background-position:right 16px center;background-size:1.1em;
+}
+select:disabled,input:disabled{opacity:.45;cursor:not-allowed}
+.hint{font-size:12px;color:var(--faint);margin-top:8px;line-height:1.45}
+
+/* ---------- results ---------- */
+.result-card{
+  position:relative;margin-top:16px;padding:18px 20px;border-radius:18px;overflow:hidden;
+  border:1px solid var(--border);border-left:3px solid var(--secondary);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--secondary) 10%,transparent),transparent 70%),var(--input-bg);
+}
+.result-card.secondary{border-left-color:var(--primary);background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 12%,transparent),transparent 70%),var(--input-bg)}
+.result-card.accent{border-left-color:var(--accent);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 11%,transparent),transparent 70%),var(--input-bg)}
+.result-card.hidden{display:none}
+.result-card::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--text) 10%,transparent),transparent);transform:skewX(-20deg);transition:left .8s}
+.result-card:hover::after{left:130%}
+.result-label{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.result-value{
+  margin-top:6px;font-family:'Syne',sans-serif;font-weight:700;font-size:32px;letter-spacing:.5px;font-variant-numeric:tabular-nums;
+  background:linear-gradient(90deg,var(--secondary),var(--primary));-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.result-card.secondary .result-value{background-image:linear-gradient(90deg,var(--primary),var(--accent))}
+.words-result{font-family:'DM Sans',sans-serif;font-size:17px;font-weight:600;line-height:1.55;letter-spacing:.3px;background:none;color:var(--text);-webkit-text-fill-color:currentColor;word-break:break-word}
+@keyframes cardAppear{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes textPop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.pills:empty{display:none}
+.pill{padding:5px 11px;border-radius:40px;font-size:12px;font-weight:500;color:var(--muted);background:var(--input-bg);border:1px solid var(--border)}
+.pill.ok{color:#12a594;border-color:rgba(18,165,148,.4)}
+.pill.warn{color:#e8890c;border-color:rgba(232,137,12,.45)}
+.pill.bad{color:#e5484d;border-color:rgba(229,72,77,.45)}
+.result-note{display:none;margin-top:12px;padding:10px 12px;border-radius:12px;font-size:12.5px;line-height:1.5;color:var(--muted);background:color-mix(in srgb,var(--text) 5%,transparent);border:1px dashed var(--border)}
+.result-note.show{display:block}
+.result-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.copy-btn{
+  padding:6px 12px;border-radius:30px;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);
+  font:600 12px 'DM Sans',sans-serif;cursor:pointer;transition:all .25s;
+}
+.copy-btn:hover{color:var(--text);border-color:color-mix(in srgb,var(--secondary) 55%,transparent)}
+
+/* ---------- advanced options ---------- */
+.adv-toggle{
+  width:100%;display:flex;align-items:center;gap:10px;margin-top:24px;padding:13px 16px;border-radius:16px;
+  border:1px dashed color-mix(in srgb,var(--text) 22%,transparent);background:transparent;color:var(--muted);
+  font:600 13px 'DM Sans',sans-serif;letter-spacing:.3px;cursor:pointer;transition:color .25s,border-color .25s,background .25s;
+}
+.adv-toggle:hover,.adv-toggle[aria-expanded="true"]{color:var(--text);border-color:color-mix(in srgb,var(--secondary) 55%,transparent);background:color-mix(in srgb,var(--secondary) 6%,transparent)}
+.adv-toggle .chev{margin-left:auto;transition:transform .35s cubic-bezier(.34,1.4,.64,1)}
+.adv-toggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.adv-badge{min-width:20px;height:20px;padding:0 6px;border-radius:20px;display:grid;place-items:center;font-size:11px;font-weight:700;color:#04101f;background:var(--secondary)}
+.adv-badge[hidden]{display:none}
+.adv-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.3,.9,.3,1)}
+.adv-panel.open{grid-template-rows:1fr}
+.adv-inner{overflow:hidden;min-height:0;visibility:hidden;transition:visibility 0s .45s}
+.adv-panel.open .adv-inner{visibility:visible;transition-delay:0s}
+.adv-body{padding-top:18px}
+.adv-body .field{margin-bottom:16px;animation:none}
+.adv-body input[type=number],.adv-body select{height:48px;font-size:14px}
+.opt{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:10px;padding:12px 14px;border-radius:14px;cursor:pointer;
+  background:var(--input-bg);border:1px solid var(--border);transition:border-color .25s;
+}
+.opt:hover{border-color:color-mix(in srgb,var(--secondary) 45%,transparent)}
+.opt-text b{display:block;font-size:13.5px;font-weight:600}
+.opt-text small{display:block;margin-top:2px;font-size:12px;color:var(--faint);line-height:1.4}
+input.sw{
+  appearance:none;-webkit-appearance:none;flex:0 0 auto;position:relative;width:44px;height:26px;border-radius:26px;cursor:pointer;
+  background:color-mix(in srgb,var(--text) 16%,transparent);box-shadow:inset 0 1px 4px rgba(0,0,0,.3);transition:background .35s,box-shadow .35s;
+}
+input.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.4);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+input.sw:checked{background:linear-gradient(110deg,var(--secondary),var(--primary));box-shadow:0 0 14px color-mix(in srgb,var(--secondary) 35%,transparent)}
+input.sw:checked::after{transform:translateX(18px)}
+input.sw:focus-visible{outline:2px solid var(--secondary);outline-offset:3px}
+.adv-actions{display:flex;justify-content:flex-end;margin-top:6px}
+.link-btn{background:none;border:none;color:var(--secondary);font:600 12px 'DM Sans',sans-serif;cursor:pointer;padding:4px 2px}
+.link-btn:hover{text-decoration:underline}
+
+/* ---------- footer ---------- */
+.footer{text-align:center;padding:6px 0 48px}
+.creator-badge{
+  display:inline-block;padding:11px 26px;border-radius:30px;cursor:pointer;font-weight:600;font-size:13px;letter-spacing:1px;color:#04101f;
+  background:linear-gradient(110deg,var(--secondary),var(--primary) 55%,var(--accent));
+  box-shadow:0 10px 30px color-mix(in srgb,var(--primary) 30%,transparent);
+  transition:transform .4s cubic-bezier(.34,1.5,.64,1),box-shadow .3s;
+}
+.creator-badge:hover{transform:translateY(-3px) scale(1.04)}
+@keyframes bounceIn{0%{transform:scale(.3);opacity:0}50%{transform:scale(1.08)}70%{transform:scale(.94)}100%{transform:scale(1);opacity:1}}
+
+/* ---------- notification ---------- */
+.notification{
+  position:fixed;bottom:22px;right:22px;z-index:1200;padding:14px 22px;border-radius:14px;font-size:14px;max-width:calc(100vw - 44px);
+  background:var(--card);color:var(--text);border:1px solid var(--border);border-left:4px solid var(--secondary);
+  box-shadow:var(--shadow);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  transform:translateX(150%);transition:transform .45s cubic-bezier(.34,1.4,.64,1);
+}
+.notification.show{transform:none}
+
+/* ---------- modals (game + export) ---------- */
+.game-container,.export-container{
+  position:fixed;inset:0;z-index:1000;display:flex;justify-content:center;align-items:center;padding:16px;
+  background:rgba(3,6,18,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  opacity:0;pointer-events:none;visibility:hidden;transition:opacity .35s ease,visibility .35s;
+}
+.game-container.show,.export-container.show{opacity:1;pointer-events:all;visibility:visible}
+.game-window,.export-window{
+  position:relative;width:100%;max-height:96vh;overflow:auto;padding:26px 24px 22px;border-radius:28px;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--text) 7%,transparent),transparent),var(--card);
+  color:var(--text);border:1px solid var(--border);
+  box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 70px color-mix(in srgb,var(--secondary) 12%,transparent);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  animation:scaleIn .45s cubic-bezier(.34,1.4,.64,1);
+}
+.game-window{max-width:440px}
+.export-window{max-width:480px}
+@keyframes scaleIn{from{opacity:0;transform:scale(.92) translateY(16px)}to{opacity:1;transform:none}}
+.close-game{
+  position:absolute;top:14px;right:14px;z-index:5;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:20px;line-height:1;
+  display:grid;place-items:center;background:var(--input-bg);border:1px solid var(--border);color:var(--text);transition:transform .3s,border-color .3s;
+}
+.close-game:hover{transform:rotate(90deg);border-color:var(--accent)}
+.port-game h2,.export-window h2{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;margin:0 0 4px;padding-right:44px}
+.game-sub{margin:0 0 16px;font-size:13px;color:var(--muted)}
+.game-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.game-stat{padding:10px 8px;border-radius:14px;text-align:center;background:var(--input-bg);border:1px solid var(--border)}
+.game-stat-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;background:linear-gradient(90deg,var(--secondary),var(--primary));-webkit-background-clip:text;background-clip:text;color:transparent}
+.game-stat-label{margin-top:2px;font-size:10.5px;letter-spacing:1.2px;color:var(--muted);font-weight:600}
+.game-canvas-container{
+  position:relative;margin:0 auto;height:min(520px,calc(100dvh - 330px));min-height:260px;aspect-ratio:360/520;max-width:100%;
+  border-radius:20px;overflow:hidden;border:1px solid var(--border);box-shadow:0 12px 40px rgba(0,0,0,.45);touch-action:manipulation;
+}
+#gameCanvas{display:block;width:100%;height:100%;cursor:pointer}
+.game-overlay{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;
+  background:rgba(5,9,26,.66);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#eef3ff;
+}
+.game-overlay h3{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;margin:0;letter-spacing:.5px}
+.game-overlay p{margin:0;font-size:13.5px;color:rgba(238,243,255,.72);max-width:250px;line-height:1.5}
+.restart-btn{
+  margin-top:8px;padding:14px 30px;border:none;border-radius:16px;cursor:pointer;font:700 13px 'DM Sans',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:#04101f;
+  background:linear-gradient(110deg,#22d3ee,#4f8cff 55%,#9b6bff);box-shadow:0 10px 30px rgba(79,140,255,.4);transition:transform .25s cubic-bezier(.34,1.4,.64,1),box-shadow .3s;
+}
+.restart-btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 14px 38px rgba(79,140,255,.55)}
+.game-controls{display:flex;gap:10px;margin-top:14px}
+.game-btn{
+  flex:1;height:48px;border-radius:14px;cursor:pointer;font:700 13px 'DM Sans',sans-serif;letter-spacing:1px;
+  background:var(--input-bg);color:var(--text);border:1px solid var(--border);transition:transform .2s,border-color .25s;
+}
+.game-btn:hover{border-color:color-mix(in srgb,var(--secondary) 55%,transparent)}
+.game-btn:active{transform:scale(.96)}
+.game-btn.primary{flex:2;border:none;color:#04101f;background:linear-gradient(110deg,var(--secondary),var(--primary));box-shadow:0 8px 24px color-mix(in srgb,var(--primary) 35%,transparent)}
+.game-hint{margin-top:12px;text-align:center;font-size:12px;color:var(--faint)}
+
+.export-options{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.export-option{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;cursor:pointer;
+  background:var(--input-bg);border:1px solid var(--border);transition:border-color .25s;
+}
+.export-option:hover{border-color:color-mix(in srgb,var(--secondary) 50%,transparent)}
+.export-option input{width:18px;height:18px;accent-color:var(--secondary);cursor:pointer;margin:0}
+.export-option label{flex:1;cursor:pointer;font-size:14px;font-weight:500}
+.export-btn{
+  width:100%;height:54px;border:none;border-radius:16px;cursor:pointer;font:700 14px 'DM Sans',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:#04101f;
+  background:linear-gradient(110deg,var(--secondary),var(--primary) 55%,var(--accent));box-shadow:0 10px 30px color-mix(in srgb,var(--primary) 35%,transparent);transition:transform .25s,box-shadow .3s;
+}
+.export-btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px color-mix(in srgb,var(--primary) 50%,transparent)}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .topbar{flex-direction:column;align-items:stretch;gap:12px;padding:12px 16px}
+  .top-actions{justify-content:space-between}
+  .toolbar{flex:1;justify-content:flex-end}
+  .ibtn{width:40px;height:40px;font-size:16px}
+  .card{padding:26px 20px 22px;border-radius:26px}
+  .result-value{font-size:27px}
+  .page-head{padding-top:24px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ===== OCEAN THEMES (added) — only active when a theme-ocean-* class is on <body> ===== */
 body.theme-ocean-deep {
@@ -1538,171 +854,286 @@ body[class*="theme-"]::before {
   .calendar-toggle-btn { left: 70px; }
   .calendar-panel { bottom: 70px; left: 15px; max-width: calc(100vw - 30px); }
 }
+
+/* ===== Toolbar integration: theme + calendar buttons live in the top bar ===== */
+.toolbar .theme-picker-btn{position:static;width:44px;height:44px;font-size:18px;bottom:auto;left:auto}
+.toolbar .theme-picker-btn:hover{transform:translateY(-2px)}
+.theme-picker-panel,.calendar-panel{
+  position:fixed;top:84px;right:clamp(12px,3vw,40px);bottom:auto;left:auto;
+  transform:translateY(-10px) scale(.97);transform-origin:top right;
+}
+.theme-picker-panel.open,.calendar-panel.open{transform:none}
+.theme-picker-panel{width:250px;max-height:min(70vh,520px)}
+.calendar-panel{max-height:calc(100vh - 110px)}
+@media (max-width:640px){
+  .toolbar .theme-picker-btn{width:40px;height:40px;font-size:16px}
+  .theme-picker-panel,.calendar-panel{top:132px;right:12px;left:12px;width:auto;max-width:none}
+}
 </style>
 </head>
 <body>
-<!-- User Info Display -->
-<div id="userInfo" style="position: fixed; top: 15px; left: 15px; background: rgba(30, 30, 46, 0.9); color: white; padding: 10px 20px; border-radius: 25px; font-size: 14px; z-index: 1000; backdrop-filter: blur(10px); border: 1px solid var(--primary); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
-    👤 <span id="currentUser">Guest</span>
-    <button onclick="logout()" style="margin-left: 12px; padding: 5px 12px; background: var(--accent); border: none; border-radius: 12px; color: white; cursor: pointer; font-size: 12px; transition: all 0.3s ease;">Logout</button>
+
+<div class="bg" aria-hidden="true">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="grid-bg"></div>
 </div>
+<div class="particles" id="particles" aria-hidden="true"></div>
 
-<div class="particles" id="particles"></div>
-
-<button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-<button class="game-toggle" onclick="showGame()">⛴️</button>
-<button class="export-toggle" onclick="showExport()">📤</button>
-<button class="admin-toggle" onclick="showAdmin()">🔒</button>
-
-<div class="container" id="mainContainer">
-  <h1>⚓ TradeFlow LC</h1>
-  
-  <div class="input-group">
-    <label>LC OPEN DATE:</label>
-    <input type="date" id="inputDate" onchange="calculateAll()">
-  </div>
-  
-  <div class="input-group">
-    <label>PERIOD OF PRESENTATION:</label>
-    <input type="number" id="subDays" placeholder="e.g., 21" oninput="calculateAll()">
-  </div>
-  
-  <div class="input-group">
-    <label>TOTAL LC DURATION:</label>
-    <select id="expiryDays" onchange="calculateAll()">
-      <option value="30">30 Days</option>
-      <option value="60">60 Days</option>
-      <option value="90" selected>90 Days (Default)</option>
-    </select>
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-mark">LC</div>
+    <div class="logo-text">TradeFlow LC</div>
   </div>
 
-  <div class="result-card hidden" id="date90Card">
-    <div id="expiryLabel">[90-Day] EXPIRY DATE:</div>
-    <div class="result-value" id="date90">--/--/----</div>
+  <div class="top-actions">
+    <div class="user-chip" id="userInfo">
+      <span class="avatar">👤</span><span id="currentUser">Guest</span>
+      <button class="logout" type="button" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="toolbar">
+      <button class="ibtn calendar-toggle-btn theme-picker-btn" id="calendarToggleBtn" type="button" aria-label="Toggle holiday calendar" aria-expanded="false" title="Holiday calendar">🗓️</button>
+      <button class="ibtn theme-picker-btn" id="themePickerBtn" type="button" aria-label="Choose theme" aria-haspopup="true" aria-expanded="false" title="Themes">🌊</button>
+      <button class="ibtn theme-toggle" type="button" onclick="toggleTheme()" title="Light / dark" aria-label="Light or dark mode">🌙</button>
+      <button class="ibtn export-toggle" type="button" onclick="showExport()" title="Export results" aria-label="Export results">📤</button>
+      <button class="ibtn game-toggle" type="button" onclick="showGame()" title="Port Loader game" aria-label="Open Port Loader game">⛴️</button>
+      <button class="ibtn admin-toggle" type="button" onclick="showAdmin()" title="Admin" aria-label="Admin">🔒</button>
+    </div>
   </div>
-  
-  <div class="result-card secondary hidden" id="finalDateCard">
-    <div>LATEST DATE OF SHIPMENT:</div>
-    <div class="result-value" id="finalDate">--/--/----</div>
+</header>
+
+<main class="shell" id="mainContainer">
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">LC toolkit</div>
+      <h1>Every LC date, <span>every amount,</span> worked out fast.</h1>
+    </div>
+    <div class="today-chip"><i></i><span id="todayChip">Today</span></div>
   </div>
 
-  <div class="number-converter">
-    <div class="input-group">
-      <label>NUMBER TO WORDS CONVERTER:</label>
-      <input type="number" id="numberInput" placeholder="Enter a number (e.g., 6521.11)" step="0.01" oninput="convertNumberToWords()">
-      
-      <div class="currency-selector">
-        <div class="currency-option">
-          <select id="currencySelect" onchange="convertNumberToWords()">
-            <option value="USD">USD (Dollars/Cents) 💵</option>
-            <option value="GBP">GBP (Pounds/Pence) 💷</option>
-            <option value="JPY">JPY (Yen) 💴</option>
-            <option value="EUR">EUR (Euros/Cents) 💶</option>
-            <option value="CNY">CNY (Yuan/Fen) 🐉</option>
-            <option value="AUD">AUD (Dollars/Cents) 🦘</option>
-            <option value="CAD">CAD (Dollars/Cents) 🍁</option>
-            <option value="THB">THB (Baht/Satang) 🐘</option>
-            <option value="INR">INR (Rupees/Paise) 🕌</option>
-          </select>
-        </div>
+  <div class="grid">
+
+    <!-- ===== LC DATE CALCULATOR ===== -->
+    <article class="card" id="cardDates">
+      <div class="card-head">
+        <div class="card-ico">📅</div>
+        <div><h2>LC Date Calculator</h2><p>Expiry date and latest date of shipment</p></div>
       </div>
-    </div>
-    
-    <div class="result-card accent hidden" id="wordsOutputCard">
-      <div>In Words:</div>
-      <div class="result-value words-result" id="wordsOutput">--</div>
-    </div>
+
+      <div class="field">
+        <label for="inputDate">LC OPEN DATE:</label>
+        <input type="date" id="inputDate" onchange="calculateAll()">
+      </div>
+
+      <div class="field">
+        <label for="subDays">PERIOD OF PRESENTATION:</label>
+        <input type="number" id="subDays" placeholder="e.g., 21" min="0" oninput="calculateAll()">
+      </div>
+
+      <div class="field">
+        <label for="expiryDays">TOTAL LC DURATION:</label>
+        <select id="expiryDays" onchange="calculateAll()">
+          <option value="30">30 Days</option>
+          <option value="60">60 Days</option>
+          <option value="90" selected>90 Days (Default)</option>
+        </select>
+      </div>
+
+      <div class="result-card hidden" id="date90Card">
+        <div class="result-label" id="expiryLabel">[90-Day] EXPIRY DATE:</div>
+        <div class="result-value" id="date90">--/--/----</div>
+        <div class="pills" id="expiryChips"></div>
+        <div class="result-note" id="expiryNote"></div>
+      </div>
+
+      <div class="result-card secondary hidden" id="finalDateCard">
+        <div class="result-label">LATEST DATE OF SHIPMENT:</div>
+        <div class="result-value" id="finalDate">--/--/----</div>
+        <div class="pills" id="finalChips"></div>
+        <div class="result-note" id="finalNote"></div>
+      </div>
+
+      <!-- Advanced options: dates -->
+      <button class="adv-toggle" id="advToggleDates" type="button" aria-expanded="false" aria-controls="advPanelDates" onclick="toggleAdvanced('Dates')">
+        <span>⚙️</span><span>Advanced options</span><span class="adv-badge" id="advBadgeDates" hidden>0</span><span class="chev">⌄</span>
+      </button>
+      <div class="adv-panel" id="advPanelDates">
+        <div class="adv-inner"><div class="adv-body">
+
+          <div class="field">
+            <label for="customDays">CUSTOM DURATION (DAYS):</label>
+            <input type="number" id="customDays" placeholder="e.g., 120" min="1" oninput="calculateAll()">
+            <div class="hint">Overrides the 30 / 60 / 90 choice above. Leave empty to use the list.</div>
+          </div>
+
+          <label class="opt" for="inclusiveCount">
+            <span class="opt-text"><b>Count open date as day 1</b><small>Expiry = open date + duration − 1 day</small></span>
+            <input type="checkbox" class="sw" id="inclusiveCount" onchange="calculateAll()">
+          </label>
+
+          <div class="field">
+            <label for="adjustMode">IF EXPIRY IS A NON-BANKING DAY:</label>
+            <select id="adjustMode" onchange="calculateAll()">
+              <option value="none">Keep the calculated date</option>
+              <option value="next">Move to next banking day (UCP 600 Art. 29a)</option>
+              <option value="prev">Move to previous banking day</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="holidayRegion">BANKING DAYS EXCLUDE:</label>
+            <select id="holidayRegion" onchange="calculateAll()">
+              <option value="none">Weekends only</option>
+              <option value="jp">Weekends + Japan holidays 🎌</option>
+              <option value="cn">Weekends + China holidays 🏮</option>
+            </select>
+            <div class="hint">Uses the holiday calendar built into this page. Confirm the final date with your bank.</div>
+          </div>
+
+          <div class="adv-actions"><button class="link-btn" type="button" onclick="resetAdvancedDates()">Reset advanced options</button></div>
+        </div></div>
+      </div>
+    </article>
+
+    <!-- ===== NUMBER TO WORDS ===== -->
+    <article class="card" id="cardWords">
+      <div class="card-head">
+        <div class="card-ico">🔢</div>
+        <div><h2>Amount to Words</h2><p>Write any amount out in full</p></div>
+      </div>
+
+      <div class="field">
+        <label for="numberInput">NUMBER TO WORDS CONVERTER:</label>
+        <input type="number" id="numberInput" placeholder="Enter a number (e.g., 6521.11)" step="0.01" oninput="convertNumberToWords()">
+      </div>
+
+      <div class="field">
+        <label for="currencySelect">CURRENCY:</label>
+        <select id="currencySelect" onchange="convertNumberToWords()">
+          <option value="USD">USD (Dollars/Cents) 💵</option>
+          <option value="GBP">GBP (Pounds/Pence) 💷</option>
+          <option value="JPY">JPY (Yen) 💴</option>
+          <option value="EUR">EUR (Euros/Cents) 💶</option>
+          <option value="CNY">CNY (Yuan/Fen) 🐉</option>
+          <option value="AUD">AUD (Dollars/Cents) 🦘</option>
+          <option value="CAD">CAD (Dollars/Cents) 🍁</option>
+          <option value="THB">THB (Baht/Satang) 🐘</option>
+          <option value="INR">INR (Rupees/Paise) 🕌</option>
+        </select>
+      </div>
+
+      <div class="result-card accent hidden" id="wordsOutputCard">
+        <div class="result-head">
+          <div class="result-label">In Words:</div>
+          <button class="copy-btn" type="button" onclick="copyWords()">Copy</button>
+        </div>
+        <div class="result-value words-result" id="wordsOutput">--</div>
+        <div class="pills" id="numberChips"></div>
+      </div>
+
+      <!-- Advanced options: words -->
+      <button class="adv-toggle" id="advToggleWords" type="button" aria-expanded="false" aria-controls="advPanelWords" onclick="toggleAdvanced('Words')">
+        <span>⚙️</span><span>Advanced options</span><span class="adv-badge" id="advBadgeWords" hidden>0</span><span class="chev">⌄</span>
+      </button>
+      <div class="adv-panel" id="advPanelWords">
+        <div class="adv-inner"><div class="adv-body">
+
+          <div class="field">
+            <label for="wordsCase">LETTER CASE:</label>
+            <select id="wordsCase" onchange="convertNumberToWords()">
+              <option value="upper">UPPERCASE (default)</option>
+              <option value="title">Title Case</option>
+              <option value="lower">lowercase</option>
+            </select>
+          </div>
+
+          <label class="opt" for="wordsSay">
+            <span class="opt-text"><b>Start with “SAY”</b><small>Common on bank and LC documents</small></span>
+            <input type="checkbox" class="sw" id="wordsSay" onchange="convertNumberToWords()">
+          </label>
+
+          <label class="opt" for="wordsOnly">
+            <span class="opt-text"><b>End with “ONLY”</b><small>Closes the amount so nothing can be added</small></span>
+            <input type="checkbox" class="sw" id="wordsOnly" onchange="convertNumberToWords()">
+          </label>
+
+          <label class="opt" for="wordsFmt">
+            <span class="opt-text"><b>Show formatted figure</b><small>Currency code with thousands separators</small></span>
+            <input type="checkbox" class="sw" id="wordsFmt" checked onchange="convertNumberToWords()">
+          </label>
+
+          <div class="adv-actions"><button class="link-btn" type="button" onclick="resetAdvancedWords()">Reset advanced options</button></div>
+        </div></div>
+      </div>
+    </article>
   </div>
-</div>
 
-<div class="footer">
-  <div class="creator-badge" id="creatorBadge" onclick="animateCreatorBadge()">Developed by Sethil</div>
-</div>
+  <div class="footer">
+    <div class="creator-badge" id="creatorBadge" onclick="animateCreatorBadge()">Developed by Sethil</div>
+  </div>
+</main>
 
-<!-- SHIP GAME Container -->
-<div class="game-container" id="gameContainer">
+<!-- PORT LOADER GAME -->
+<div class="game-container" id="gameContainer" role="dialog" aria-modal="true" aria-label="Port Loader game">
   <div class="game-window">
-    <button class="close-game" onclick="hideGame()">×</button>
-    <div class="Ship-game">
-      <h2>SHIP GAME</h2>
+    <button class="close-game" type="button" onclick="hideGame()" aria-label="Close game">×</button>
+    <div class="port-game">
+      <h2>⚓ PORT LOADER</h2>
+      <p class="game-sub">Crane the containers onto the ship — keep them lined up.</p>
       <div class="game-stats">
-        <div class="game-stat">
-          <div class="game-stat-value" id="scoreValue">0</div>
-          <div class="game-stat-label">SCORE</div>
-        </div>
-        <div class="game-stat">
-          <div class="game-stat-value" id="highScoreValue">0</div>
-          <div class="game-stat-label">HIGH SCORE</div>
-        </div>
+        <div class="game-stat"><div class="game-stat-value" id="scoreValue">0</div><div class="game-stat-label">SCORE</div></div>
+        <div class="game-stat"><div class="game-stat-value" id="loadedValue">0</div><div class="game-stat-label">LOADED</div></div>
+        <div class="game-stat"><div class="game-stat-value" id="highScoreValue">0</div><div class="game-stat-label">BEST</div></div>
       </div>
       <div class="game-canvas-container">
-        <canvas id="gameCanvas" width="300" height="300"></canvas>
+        <canvas id="gameCanvas" width="360" height="520"></canvas>
         <div class="game-overlay" id="gameOverlay">
-          <h3 id="gameOverText">SHIP GAME</h3>
-          <p>Use arrow keys to play</p>
-          <button class="restart-btn" onclick="startGame()">START GAME</button>
+          <h3 id="gameOverText">PORT LOADER</h3>
+          <p id="gameOverMsg">Press SPACE or tap to drop each container onto the ship.</p>
+          <button class="restart-btn" id="startBtn" type="button" onclick="startGame()">Start loading</button>
         </div>
       </div>
       <div class="game-controls">
-        <button class="game-btn" onclick="pauseGame()">PAUSE</button>
+        <button class="game-btn" type="button" onclick="pauseGame()">PAUSE</button>
+        <button class="game-btn primary" type="button" onclick="dropContainer()">DROP ⬇</button>
       </div>
+      <div class="game-hint">Space / ↓ / tap to drop · Perfect stacks give bonus points</div>
     </div>
   </div>
 </div>
 
 <!-- Export Panel -->
-<div class="export-container" id="exportContainer">
+<div class="export-container" id="exportContainer" role="dialog" aria-modal="true" aria-label="Export results">
   <div class="export-window">
-    <button class="close-game" onclick="hideExport()">×</button>
+    <button class="close-game" type="button" onclick="hideExport()" aria-label="Close export">×</button>
     <h2>Export Calculation Results</h2>
     <div class="export-options">
-      <div class="export-option">
-        <input type="checkbox" id="exportDate90" checked>
-        <label for="exportDate90">EXPIRY DATE</label>
-      </div>
-      <div class="export-option">
-        <input type="checkbox" id="exportFinalDate" checked>
-        <label for="exportFinalDate">Latest Shipment Date</label>
-      </div>
-      <div class="export-option">
-        <input type="checkbox" id="exportNumberWords" checked>
-        <label for="exportNumberWords">Number to Words Conversion</label>
-      </div>
-      <div class="export-option">
-        <input type="checkbox" id="exportInputData" checked>
-        <label for="exportInputData">Input Data</label>
-      </div>
+      <div class="export-option"><input type="checkbox" id="exportDate90" checked><label for="exportDate90">EXPIRY DATE</label></div>
+      <div class="export-option"><input type="checkbox" id="exportFinalDate" checked><label for="exportFinalDate">Latest Shipment Date</label></div>
+      <div class="export-option"><input type="checkbox" id="exportNumberWords" checked><label for="exportNumberWords">Number to Words Conversion</label></div>
+      <div class="export-option"><input type="checkbox" id="exportInputData" checked><label for="exportInputData">Input Data</label></div>
     </div>
     <div class="export-options">
-      <div class="export-option">
-        <input type="radio" id="exportPDF" name="exportFormat" value="pdf" checked>
-      </div>
-      <div class="export-option">
-        <input type="radio" id="exportText" name="exportFormat" value="text">
-        <label for="exportText">Export as Text File 📄</label>
-      </div>
-      <div class="export-option">
-        <input type="radio" id="exportPrint" name="exportFormat" value="print">
-        <label for="exportPrint">Print 🖨️</label>
-      </div>
+      <div class="export-option"><input type="radio" id="exportPDF" name="exportFormat" value="pdf" checked><label for="exportPDF">Export as PDF 📑</label></div>
+      <div class="export-option"><input type="radio" id="exportText" name="exportFormat" value="text"><label for="exportText">Export as Text File 📄</label></div>
+      <div class="export-option"><input type="radio" id="exportPrint" name="exportFormat" value="print"><label for="exportPrint">Print 🖨️</label></div>
     </div>
-    <button class="export-btn" onclick="exportResults()">Export Now</button>
+    <button class="export-btn" type="button" onclick="exportResults()">Export Now</button>
   </div>
 </div>
 
 <!-- Notification -->
-<div class="notification" id="notification">
+<div class="notification" id="notification" role="status" aria-live="polite">
   <div id="notificationText">Operation completed successfully!</div>
 </div>
 
-<!-- Manual theme selector (ocean themes) -->
-<button class="theme-picker-btn" id="themePickerBtn" type="button" aria-label="Choose theme" aria-haspopup="true" aria-expanded="false" title="Themes">🌊</button>
+<!-- Theme selector panel (buttons live in the top bar) -->
 <div class="theme-picker-panel" id="themePickerPanel" role="menu" aria-label="Theme selector">
   <div class="theme-picker-title">Themes</div>
 </div>
 
-<!-- Holiday calendar toggle (Japan / China) -->
-<button class="theme-picker-btn calendar-toggle-btn" id="calendarToggleBtn" type="button" aria-label="Toggle holiday calendar" aria-expanded="false" title="Holiday calendar">🗓️</button>
+<!-- Holiday calendar panel -->
 <div class="calendar-panel" id="calendarPanel" role="dialog" aria-label="Holiday calendar">
   <div class="cal-tabs">
     <button type="button" class="cal-tab" data-region="jp">🎌 Japan</button>
@@ -1959,35 +1390,154 @@ function hideElement(element) {
   element.classList.add('hidden');
 }
 
-// Main calculation function: supports 30/60/90 days dynamically
+// ===== Date calculator (with advanced options) =====
+function getExpiryDays() {
+  const custom = parseInt(document.getElementById('customDays').value);
+  if (!isNaN(custom) && custom > 0) return custom;
+  return parseInt(document.getElementById('expiryDays').value) || 90;
+}
+
+function isNonBankingDay(dt, region) {
+  const info = (region && window.TFHolidayInfo) ? window.TFHolidayInfo(region, dt) : null;
+  if (info && info.type === 'makeup') return false;      // China make-up workday
+  if (info && info.type === 'holiday') return true;
+  const dow = dt.getDay();
+  return dow === 0 || dow === 6;
+}
+
+function adjustBankingDay(date, mode, region) {
+  const d = new Date(date);
+  if (mode === 'none') return { date: d, moved: 0 };
+  const step = mode === 'next' ? 1 : -1;
+  let moved = 0;
+  while (isNonBankingDay(d, region) && moved < 30) { d.setDate(d.getDate() + step); moved++; }
+  return { date: d, moved: moved };
+}
+
+function weekdayName(d) { return d.toLocaleDateString('en-GB', { weekday: 'long' }); }
+
+function dateChips(d) {
+  const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+  const dd = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diff = Math.round((dd - t0) / 86400000);
+  let txt, cls;
+  if (diff > 0) { txt = diff + ' day' + (diff === 1 ? '' : 's') + ' left'; cls = diff <= 14 ? 'warn' : 'ok'; }
+  else if (diff === 0) { txt = 'Today'; cls = 'warn'; }
+  else { txt = 'Passed ' + (-diff) + ' day' + (diff === -1 ? '' : 's') + ' ago'; cls = 'bad'; }
+  return '<span class="pill">' + weekdayName(d) + '</span><span class="pill ' + cls + '">' + txt + '</span>';
+}
+
+function setNote(id, text) {
+  const el = document.getElementById(id);
+  el.textContent = text || '';
+  el.classList.toggle('show', !!text);
+}
+
+function updateAdvBadges() {
+  const datesCount =
+    (parseInt(document.getElementById('customDays').value) > 0 ? 1 : 0) +
+    (document.getElementById('inclusiveCount').checked ? 1 : 0) +
+    (document.getElementById('adjustMode').value !== 'none' ? 1 : 0);
+  const wordsCount =
+    (document.getElementById('wordsCase').value !== 'upper' ? 1 : 0) +
+    (document.getElementById('wordsSay').checked ? 1 : 0) +
+    (document.getElementById('wordsOnly').checked ? 1 : 0);
+  [['Dates', datesCount], ['Words', wordsCount]].forEach(function (p) {
+    const b = document.getElementById('advBadge' + p[0]);
+    b.textContent = p[1];
+    b.hidden = p[1] === 0;
+  });
+}
+
+function toggleAdvanced(which) {
+  const btn = document.getElementById('advToggle' + which);
+  const panel = document.getElementById('advPanel' + which);
+  const open = !panel.classList.contains('open');
+  panel.classList.toggle('open', open);
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  trackUserAction('advanced_options_toggled', { panel: which, open: open });
+  playSound('click');
+}
+
+function resetAdvancedDates() {
+  document.getElementById('customDays').value = '';
+  document.getElementById('inclusiveCount').checked = false;
+  document.getElementById('adjustMode').value = 'none';
+  document.getElementById('holidayRegion').value = 'none';
+  trackUserAction('advanced_options_reset', { panel: 'Dates' });
+  calculateAll();
+}
+
+function resetAdvancedWords() {
+  document.getElementById('wordsCase').value = 'upper';
+  document.getElementById('wordsSay').checked = false;
+  document.getElementById('wordsOnly').checked = false;
+  document.getElementById('wordsFmt').checked = true;
+  trackUserAction('advanced_options_reset', { panel: 'Words' });
+  convertNumberToWords();
+}
+
+// Main calculation function
 function calculateAll() {
+  const mode = document.getElementById('adjustMode').value;
+  const region = document.getElementById('holidayRegion').value;
+  const inclusive = document.getElementById('inclusiveCount').checked;
+  document.getElementById('holidayRegion').disabled = (mode === 'none');
+
   trackUserAction('date_calculation', {
     inputDate: document.getElementById('inputDate').value,
     daysToSubtract: document.getElementById('subDays').value,
-    expiryPeriod: document.getElementById('expiryDays').value
+    expiryPeriod: getExpiryDays(),
+    customDuration: document.getElementById('customDays').value || null,
+    inclusiveCount: inclusive,
+    bankingAdjust: mode,
+    holidayRegion: region
   });
-  
+
   const inputDate = document.getElementById('inputDate').value;
   const daysToSubtract = parseInt(document.getElementById('subDays').value) || 0;
-  
   const date90Card = document.getElementById('date90Card');
   const finalDateCard = document.getElementById('finalDateCard');
-  
+
   if (inputDate) {
     const parts = inputDate.split('-');
-    const expiryDays = parseInt(document.getElementById('expiryDays').value) || 90;
+    const expiryDays = getExpiryDays();
 
-    const date90 = new Date(parts[0], parts[1]-1, parts[2]);
-    date90.setDate(date90.getDate() + expiryDays);
+    const rawExpiry = new Date(parts[0], parts[1] - 1, parts[2]);
+    rawExpiry.setDate(rawExpiry.getDate() + expiryDays - (inclusive ? 1 : 0));
 
-    document.getElementById('expiryLabel').textContent = `[${expiryDays}-Day] EXPIRY DATE:`;
-    document.getElementById('date90').textContent = formatDate(date90);
+    const activeRegion = region === 'none' ? null : region;
+    const adj = adjustBankingDay(rawExpiry, mode, activeRegion);
+    const expiry = adj.date;
+
+    document.getElementById('expiryLabel').textContent = '[' + expiryDays + '-Day] EXPIRY DATE:';
+    document.getElementById('date90').textContent = formatDate(expiry);
+    document.getElementById('expiryChips').innerHTML = dateChips(expiry);
+
+    let note = '';
+    if (mode !== 'none') {
+      const where = activeRegion ? ('weekends and ' + (region === 'jp' ? 'Japan' : 'China') + ' public holidays') : 'weekends';
+      if (adj.moved > 0) {
+        note = formatDate(rawExpiry) + ' (' + weekdayName(rawExpiry) + ') is a non-banking day (' + where + '). Expiry moves ' +
+          adj.moved + ' day' + (adj.moved === 1 ? '' : 's') + (mode === 'next' ? ' forward' : ' back') + ' to ' + weekdayName(expiry) + '.' +
+          (mode === 'next' ? ' Rule: UCP 600 Art. 29(a).' : '');
+      } else {
+        note = 'Checked against ' + where + ' — no adjustment needed.';
+      }
+      if (region === 'cn' && rawExpiry.getFullYear() !== 2026) {
+        note += ' China’s official holiday schedule is only built in for 2026.';
+      }
+    }
+    setNote('expiryNote', note);
     showElement(date90Card);
-    
+
     if (!isNaN(daysToSubtract) && daysToSubtract > 0) {
-      const finalDate = new Date(date90);
+      // Latest shipment date is counted back from the stated (unadjusted) expiry
+      const finalDate = new Date(rawExpiry);
       finalDate.setDate(finalDate.getDate() - daysToSubtract);
       document.getElementById('finalDate').textContent = formatDate(finalDate);
+      document.getElementById('finalChips').innerHTML = dateChips(finalDate);
+      setNote('finalNote', adj.moved > 0 ? 'Counted back from ' + formatDate(rawExpiry) + ' (expiry before the banking-day move), because an extended expiry does not extend the shipment date.' : '');
       showElement(finalDateCard);
     } else {
       hideElement(finalDateCard);
@@ -1996,40 +1546,79 @@ function calculateAll() {
     hideElement(date90Card);
     hideElement(finalDateCard);
   }
+  updateAdvBadges();
 }
 
 function formatDate(date) {
   const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth()+1).toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
 }
 
+// ===== Number to words (with advanced options) =====
+function formatWordsCase(str, mode) {
+  if (mode === 'lower') return str.toLowerCase();
+  if (mode === 'title') return str.toLowerCase().replace(/(^|[\s-])([a-z])/g, function (m, p, c) { return p + c.toUpperCase(); });
+  return str;
+}
+
 function convertNumberToWords() {
-  trackUserAction('number_conversion', {
-    number: document.getElementById('numberInput').value,
-    currency: document.getElementById('currencySelect').value
-  });
-  
   const numberStr = document.getElementById('numberInput').value;
   const currency = document.getElementById('currencySelect').value;
+  const caseMode = document.getElementById('wordsCase').value;
+  const say = document.getElementById('wordsSay').checked;
+  const only = document.getElementById('wordsOnly').checked;
+  const showFmt = document.getElementById('wordsFmt').checked;
+
+  trackUserAction('number_conversion', { number: numberStr, currency: currency, caseMode: caseMode, say: say, only: only });
+  updateAdvBadges();
+
   const wordsOutputCard = document.getElementById('wordsOutputCard');
-  
   if (!numberStr) {
     hideElement(wordsOutputCard);
     return;
   }
-  
-  const words = numberToWords(numberStr, currency);
-  document.getElementById('wordsOutput').textContent = words || 'ZERO';
-  
+
+  let words = numberToWords(numberStr, currency) || 'ZERO';
+  if (say) words = 'SAY ' + words;
+  if (only) words += ' ONLY';
+  words = formatWordsCase(words, caseMode);
+  document.getElementById('wordsOutput').textContent = words;
+
+  const chips = document.getElementById('numberChips');
+  const n = parseFloat(numberStr);
+  if (showFmt && !isNaN(n)) {
+    const digits = currency === 'JPY' ? 0 : 2;
+    chips.innerHTML = '<span class="pill">' + currency + ' ' +
+      n.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits }) + '</span>';
+  } else {
+    chips.innerHTML = '';
+  }
+
   const resultText = document.getElementById('wordsOutput');
   resultText.style.animation = 'none';
   setTimeout(() => {
     resultText.style.animation = 'textPop 0.4s ease forwards';
   }, 10);
-  
+
   showElement(wordsOutputCard);
+}
+
+function copyWords() {
+  const text = document.getElementById('wordsOutput').textContent;
+  const done = function () { showNotification('Copied to clipboard'); };
+  const fallback = function () {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) { showNotification('Copy failed'); }
+    document.body.removeChild(ta);
+  };
+  trackUserAction('words_copied');
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  } else { fallback(); }
 }
 
 function numberToWords(numberStr, currency) {
@@ -2152,12 +1741,21 @@ function exportResults() {
     content += `- LC OPEN DATE: ${document.getElementById('inputDate').value || 'Not set'}\n`;
     content += `- PERIOD OF PRESENTATION: ${document.getElementById('subDays').value || '0'}\n`;
     content += `- Number to Convert: ${document.getElementById('numberInput').value || 'Not set'}\n`;
-    content += `- Currency: ${document.getElementById('currencySelect').value}\n\n`;
+    content += `- Currency: ${document.getElementById('currencySelect').value}\n`;
+    const adv = [];
+    if (parseInt(document.getElementById('customDays').value) > 0) adv.push('Custom duration ' + getExpiryDays() + ' days');
+    if (document.getElementById('inclusiveCount').checked) adv.push('Open date counted as day 1');
+    const am = document.getElementById('adjustMode').value;
+    if (am !== 'none') adv.push((am === 'next' ? 'Next' : 'Previous') + ' banking day (' + document.getElementById('holidayRegion').selectedOptions[0].textContent.trim() + ')');
+    if (adv.length) content += `- Advanced options: ${adv.join('; ')}\n`;
+    content += '\n';
   }
   
   if (includeDate90 && !document.getElementById('date90Card').classList.contains('hidden')) {
-    const expiryDays = document.getElementById('expiryDays').value;
+    const expiryDays = getExpiryDays();
     content += `${expiryDays}-Day EXPIRY DATE: ${document.getElementById('date90').textContent}\n`;
+    const expNote = document.getElementById('expiryNote').textContent;
+    if (expNote) content += `  Note: ${expNote}\n`;
   }
   
   if (includeFinalDate && !document.getElementById('finalDateCard').classList.contains('hidden')) {
@@ -2193,174 +1791,382 @@ function exportResults() {
   hideExport();
 }
 
-// SHIP GAME Implementation (unchanged)
+// ===== PORT LOADER — ship & container game =====
+const GW = 360, GH = 520;           // logical canvas size
+const CH = 28;                      // container height
+const DECK_Y = GH - 110;            // ship deck (world y)
+const BASE_W = 132, MAX_W = 150, MIN_OVERLAP = 8;
+const CONTAINER_COLORS = [
+  ['#ff6b81', '#b3203a'], ['#22d3ee', '#0a7490'], ['#ffd166', '#b8860b'],
+  ['#9b7bff', '#5130c9'], ['#34d399', '#0d7a5a'], ['#ff9f43', '#b85a0a']
+];
+const STARS = Array.from({ length: 46 }, (_, i) => ({ x: (i * 97) % GW + ((i * 31) % 7), y: (i * 53) % 320, r: (i % 3) * 0.4 + 0.6, ph: i * 1.7 }));
+const QUAY = (function () {
+  let s = 7; const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const a = []; let x = -10;
+  while (x < GW) { const w = 24 + r() * 18; a.push({ x: x, w: w, n: 1 + Math.floor(r() * 3) }); x += w + 3; }
+  return a;
+})();
+
 let canvas, ctx;
-let Ship = [];
-let food = {};
-let gridSize = 20;
-let direction = 'right';
-let nextDirection = 'right';
-let score = 0;
-let highScore = 0;
-let gameInterval;
-let gameRunning = false;
-let gamePaused = false;
+let stack = [], moving = null, debris = [], floaters = [];
+let score = 0, loaded = 0, combo = 0, perfectFlash = 0;
+let highScore = loadHighScore();
+let cam = 0, bobT = 0, trolleyX = GW / 2, endTimer = 0;
+let gameRunning = false, gamePaused = false, gameEnding = false;
+let rafId = null, lastTs = 0, gameListenersBound = false;
+
+function loadHighScore() { try { return parseInt(localStorage.getItem('portLoaderHigh')) || 0; } catch (e) { return 0; } }
+function saveHighScore() { try { localStorage.setItem('portLoaderHigh', String(highScore)); } catch (e) {} }
 
 function showGame() {
   trackUserAction('game_opened');
   playSound('click');
-  const gameContainer = document.getElementById('gameContainer');
-  gameContainer.classList.add('show');
+  document.getElementById('gameContainer').classList.add('show');
   initializeGame();
 }
 
 function hideGame() {
   playSound('click');
-  const gameContainer = document.getElementById('gameContainer');
-  gameContainer.classList.remove('show');
+  document.getElementById('gameContainer').classList.remove('show');
   stopGame();
+}
+
+function setOverlay(show, title, msg, btn) {
+  const o = document.getElementById('gameOverlay');
+  o.style.display = show ? 'flex' : 'none';
+  if (title) document.getElementById('gameOverText').textContent = title;
+  if (msg) document.getElementById('gameOverMsg').textContent = msg;
+  if (btn) document.getElementById('startBtn').textContent = btn;
 }
 
 function initializeGame() {
   canvas = document.getElementById('gameCanvas');
   ctx = canvas.getContext('2d');
-  const gameOverlay = document.getElementById('gameOverlay');
-  gameOverlay.style.display = 'flex';
-  document.getElementById('gameOverText').textContent = 'SHIP GAME';
-  document.addEventListener('keydown', handleKeyPress);
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  canvas.width = GW * dpr; canvas.height = GH * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  if (!gameListenersBound) {
+    gameListenersBound = true;
+    document.addEventListener('keydown', handleKeyPress);
+    canvas.addEventListener('pointerdown', function (e) {
+      if (gameRunning && !gamePaused) { e.preventDefault(); dropContainer(); }
+    });
+  }
+  stopGame();
+  resetGameState();
+  setOverlay(true, 'PORT LOADER', 'Press SPACE or tap to drop each container onto the ship.', 'Start loading');
+  drawGame();
+}
+
+function resetGameState() {
+  stack = [{ x: (GW - BASE_W) / 2, w: BASE_W, c: CONTAINER_COLORS[0] }];
+  debris = []; floaters = []; moving = null;
+  score = 0; loaded = 0; combo = 0; perfectFlash = 0;
+  cam = 0; gameEnding = false; endTimer = 0;
+  updateScore();
+}
+
+function topY() { return DECK_Y - stack.length * CH; }
+function hoverY() { return topY() - CH - 120; }
+
+function spawnContainer() {
+  const top = stack[stack.length - 1];
+  const dir = Math.random() < 0.5 ? 1 : -1;
+  moving = {
+    x: dir === 1 ? 8 : GW - 8 - top.w, y: hoverY(), w: top.w,
+    c: CONTAINER_COLORS[stack.length % CONTAINER_COLORS.length],
+    dir: dir, vy: 0, state: 'swing'
+  };
 }
 
 function startGame() {
+  if (gameRunning && gamePaused) { pauseGame(); return; }   // overlay button doubles as RESUME
   trackUserAction('game_started');
   playSound('click');
-  const gameOverlay = document.getElementById('gameOverlay');
-  gameOverlay.style.display = 'none';
-  
-  Ship = [
-    {x: 5, y: 10},
-    {x: 4, y: 10},
-    {x: 3, y: 10}
-  ];
-  
-  direction = 'right';
-  nextDirection = 'right';
-  score = 0;
-  updateScore();
-  
-  generateFood();
-  gameRunning = true;
-  gamePaused = false;
-  
-  if (gameInterval) clearInterval(gameInterval);
-  gameInterval = setInterval(gameLoop, 150);
+  resetGameState();
+  spawnContainer();
+  setOverlay(false);
+  gameRunning = true; gamePaused = false;
+  lastTs = performance.now();
+  if (rafId) cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(gameLoop);
 }
 
 function pauseGame() {
   trackUserAction('game_paused', { paused: !gamePaused });
   playSound('click');
-  if (!gameRunning) return;
-  
+  if (!gameRunning || gameEnding) return;
   gamePaused = !gamePaused;
-  const gameOverlay = document.getElementById('gameOverlay');
-  if (gamePaused) {
-    gameOverlay.style.display = 'flex';
-    document.getElementById('gameOverText').textContent = 'GAME PAUSED';
-  } else {
-    gameOverlay.style.display = 'none';
-  }
+  if (gamePaused) setOverlay(true, 'PAUSED', 'The crane is on a coffee break.', 'Resume');
+  else { setOverlay(false); lastTs = performance.now(); }
 }
 
 function stopGame() {
-  gameRunning = false;
-  gamePaused = false;
-  if (gameInterval) {
-    clearInterval(gameInterval);
-    gameInterval = null;
+  gameRunning = false; gamePaused = false;
+  if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+}
+
+function gameLoop(ts) {
+  if (!gameRunning) return;
+  const dt = Math.min(0.05, (ts - lastTs) / 1000 || 0.016);
+  lastTs = ts;
+  if (!gamePaused) { updateGame(dt); drawGame(); }
+  rafId = requestAnimationFrame(gameLoop);
+}
+
+function updateGame(dt) {
+  bobT += dt;
+  const camTarget = Math.max(0, GH * 0.58 - topY());
+  cam += (camTarget - cam) * Math.min(1, dt * 4);
+  if (perfectFlash > 0) perfectFlash = Math.max(0, perfectFlash - dt * 2.2);
+
+  if (moving && !gameEnding) {
+    if (moving.state === 'swing') {
+      const speed = Math.min(130 + loaded * 10, 380);
+      moving.x += moving.dir * speed * dt;
+      if (moving.x <= 6) { moving.x = 6; moving.dir = 1; }
+      if (moving.x + moving.w >= GW - 6) { moving.x = GW - 6 - moving.w; moving.dir = -1; }
+      moving.y = hoverY();
+      trolleyX = moving.x + moving.w / 2;
+    } else {
+      moving.vy += 2200 * dt;
+      moving.y += moving.vy * dt;
+      const target = topY() - CH;
+      if (moving.y >= target) landContainer(target);
+    }
+  }
+
+  debris.forEach(function (d) { d.vy += 1500 * dt; d.y += d.vy * dt; d.x += d.vx * dt; d.rot += d.vr * dt; });
+  debris = debris.filter(function (d) { return d.y < DECK_Y + 400; });
+  floaters.forEach(function (f) { f.t += dt; f.y -= 42 * dt; });
+  floaters = floaters.filter(function (f) { return f.t < 1.1; });
+
+  if (gameEnding) {
+    endTimer -= dt;
+    if (endTimer <= 0) finishGame();
   }
 }
 
-function gameLoop() {
-  if (!gameRunning || gamePaused) return;
-  direction = nextDirection;
-  moveShip();
-  if (checkCollision()) { gameOver(); return; }
-  if (checkFoodCollision()) { eatFood(); generateFood(); }
-  drawGame();
+function dropContainer() {
+  if (!gameRunning || gamePaused || gameEnding || !moving || moving.state !== 'swing') return;
+  moving.state = 'drop';
+  moving.vy = 0;
+  playSound('click');
 }
 
-function moveShip() {
-  const head = {x: Ship[0].x, y: Ship[0].y};
-  switch (direction) {
-    case 'up': head.y--; break;
-    case 'down': head.y++; break;
-    case 'left': head.x--; break;
-    case 'right': head.x++; break;
+function landContainer(target) {
+  const top = stack[stack.length - 1];
+  const left = Math.max(moving.x, top.x);
+  const right = Math.min(moving.x + moving.w, top.x + top.w);
+  const overlap = right - left;
+
+  if (overlap < MIN_OVERLAP) {                       // missed the stack: container falls into the harbour
+    debris.push({ x: moving.x, y: target, w: moving.w, c: moving.c, vy: moving.vy * 0.3, vx: moving.dir * 40, rot: 0, vr: moving.dir * 1.8 });
+    moving = null;
+    gameEnding = true; endTimer = 1.0;
+    playSound('error');
+    return;
   }
-  Ship.unshift(head);
-  if (!food.eaten) Ship.pop();
-  else food.eaten = false;
-}
 
-function checkCollision() {
-  const head = Ship[0];
-  if (head.x < 0 || head.x >= canvas.width/gridSize || head.y < 0 || head.y >= canvas.height/gridSize) return true;
-  for (let i = 1; i < Ship.length; i++) if (head.x === Ship[i].x && head.y === Ship[i].y) return true;
-  return false;
-}
-
-function checkFoodCollision() { return Ship[0].x === food.x && Ship[0].y === food.y; }
-
-function eatFood() {
-  trackUserAction('game_food_eaten', { score: score + 10 });
-  playSound('success');
-  food.eaten = true;
-  score += 10;
+  const offset = Math.abs(moving.x - top.x);
+  let placed;
+  if (offset <= 5) {                                 // perfect stack
+    combo++;
+    let nw = top.w, nx = top.x;
+    if (combo % 3 === 0 && top.w < MAX_W) { nw = Math.min(MAX_W, top.w + 10); nx = top.x - (nw - top.w) / 2; }
+    placed = { x: nx, w: nw, c: moving.c };
+    score += 20; perfectFlash = 1;
+    floaters.push({ x: placed.x + placed.w / 2, y: target - 6, t: 0, text: combo > 1 ? 'PERFECT x' + combo : 'PERFECT', color: '#ffe066' });
+    playSound('success');
+  } else {                                           // trim the overhang
+    combo = 0;
+    let cutX, cutW;
+    if (moving.x < top.x) { cutX = moving.x; cutW = top.x - moving.x; }
+    else { cutX = top.x + top.w; cutW = (moving.x + moving.w) - (top.x + top.w); }
+    debris.push({ x: cutX, y: target, w: cutW, c: moving.c, vy: 0, vx: (moving.x < top.x ? -1 : 1) * 30, rot: 0, vr: (moving.x < top.x ? -1 : 1) * 1.6 });
+    placed = { x: left, w: overlap, c: moving.c };
+    score += 10;
+    floaters.push({ x: placed.x + placed.w / 2, y: target - 6, t: 0, text: '+10', color: '#eef3ff' });
+    playSound('click');
+  }
+  stack.push(placed);
+  loaded++;
   updateScore();
+  trackUserAction('game_container_placed', { loaded: loaded, score: score });
+  spawnContainer();
 }
 
-function generateFood() {
-  food = {
-    x: Math.floor(Math.random() * (canvas.width/gridSize)),
-    y: Math.floor(Math.random() * (canvas.height/gridSize)),
-    eaten: false
-  };
-  for (let segment of Ship) if (food.x === segment.x && food.y === segment.y) { generateFood(); break; }
-}
-
-function drawGame() {
-  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--input-bg');
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  Ship.forEach((segment, index) => {
-    ctx.fillStyle = index === 0 ? getComputedStyle(document.documentElement).getPropertyValue('--primary') : getComputedStyle(document.documentElement).getPropertyValue('--secondary');
-    ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 1, gridSize - 1);
-  });
-  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent');
-  ctx.beginPath();
-  ctx.arc(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2, gridSize/2 - 1, 0, Math.PI * 2);
-  ctx.fill();
+function finishGame() {
+  trackUserAction('game_over', { finalScore: score, containers: loaded, highScore: Math.max(score, highScore) });
+  stopGame();
+  let msg = 'You loaded ' + loaded + ' container' + (loaded === 1 ? '' : 's') + ' · score ' + score + '.';
+  if (score > highScore) { highScore = score; saveHighScore(); msg += ' New best!'; }
+  document.getElementById('highScoreValue').textContent = highScore;
+  setOverlay(true, 'CONTAINER LOST', msg, 'Load again');
 }
 
 function handleKeyPress(e) {
-  if (!gameRunning) return;
-  switch(e.key) {
-    case 'ArrowUp': if (direction !== 'down') nextDirection = 'up'; break;
-    case 'ArrowDown': if (direction !== 'up') nextDirection = 'down'; break;
-    case 'ArrowLeft': if (direction !== 'right') nextDirection = 'left'; break;
-    case 'ArrowRight': if (direction !== 'left') nextDirection = 'right'; break;
+  const box = document.getElementById('gameContainer');
+  if (!box.classList.contains('show')) return;
+  if (e.key === 'Escape') { hideGame(); return; }
+  if (e.code === 'Space' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (e.repeat) return;
+    dropContainer();
   }
 }
 
-function gameOver() {
-  trackUserAction('game_over', { finalScore: score, highScore: Math.max(score, highScore) });
-  playSound('error');
-  stopGame();
-  const gameOverlay = document.getElementById('gameOverlay');
-  gameOverlay.style.display = 'flex';
-  document.getElementById('gameOverText').textContent = 'GAME OVER';
-  if (score > highScore) { highScore = score; document.getElementById('highScoreValue').textContent = highScore; }
+function updateScore() {
+  document.getElementById('scoreValue').textContent = score;
+  document.getElementById('loadedValue').textContent = loaded;
 }
 
-function updateScore() { document.getElementById('scoreValue').textContent = score; }
+/* ---------- drawing ---------- */
+function rrect(x, y, w, h, r) {
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h);
+}
+
+function drawContainer(x, y, w, c) {
+  const g = ctx.createLinearGradient(0, y, 0, y + CH);
+  g.addColorStop(0, c[0]); g.addColorStop(1, c[1]);
+  ctx.fillStyle = g;
+  rrect(x, y, w, CH - 1, 3); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,.22)'; ctx.lineWidth = 1;
+  for (let rx = x + 7; rx < x + w - 4; rx += 7) { ctx.beginPath(); ctx.moveTo(rx, y + 4); ctx.lineTo(rx, y + CH - 5); ctx.stroke(); }
+  ctx.fillStyle = 'rgba(255,255,255,.3)'; ctx.fillRect(x + 1, y + 1, w - 2, 3);
+  ctx.strokeStyle = 'rgba(0,0,0,.38)'; rrect(x + .5, y + .5, w - 1, CH - 2, 3); ctx.stroke();
+  ctx.fillStyle = 'rgba(0,0,0,.45)';
+  ctx.fillRect(x, y, 4, 4); ctx.fillRect(x + w - 4, y, 4, 4); ctx.fillRect(x, y + CH - 5, 4, 4); ctx.fillRect(x + w - 4, y + CH - 5, 4, 4);
+}
+
+function drawCrane(beamY, t) {
+  const steel = '#ffb703', dark = '#6b4a00';
+  const bottom = DECK_Y + 70;
+  [8, GW - 22].forEach(function (tx) {
+    ctx.strokeStyle = steel; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(tx, beamY); ctx.lineTo(tx, bottom); ctx.moveTo(tx + 14, beamY); ctx.lineTo(tx + 14, bottom); ctx.stroke();
+    ctx.strokeStyle = dark; ctx.lineWidth = 1.5;
+    for (let y = beamY; y < bottom; y += 30) { ctx.beginPath(); ctx.moveTo(tx, y); ctx.lineTo(tx + 14, y + 30); ctx.moveTo(tx + 14, y); ctx.lineTo(tx, y + 30); ctx.stroke(); }
+  });
+  ctx.fillStyle = steel; ctx.fillRect(0, beamY - 6, GW, 10);
+  ctx.strokeStyle = dark; ctx.lineWidth = 1.2;
+  for (let x = 0; x < GW; x += 16) { ctx.beginPath(); ctx.moveTo(x, beamY - 6); ctx.lineTo(x + 8, beamY + 4); ctx.lineTo(x + 16, beamY - 6); ctx.stroke(); }
+  const on = Math.sin(t * 5) > 0;
+  ctx.fillStyle = on ? '#ff4d4d' : '#7a1f1f';
+  ctx.beginPath(); ctx.arc(15, beamY - 11, 3, 0, Math.PI * 2); ctx.arc(GW - 15, beamY - 11, 3, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#2b2b2b'; ctx.fillRect(trolleyX - 12, beamY - 4, 24, 12);
+}
+
+function drawGame() {
+  if (!ctx) return;
+  const t = bobT;
+
+  // sky
+  const sky = ctx.createLinearGradient(0, 0, 0, GH);
+  sky.addColorStop(0, '#0b1330'); sky.addColorStop(.55, '#1b2a5e'); sky.addColorStop(1, '#2d4590');
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, GW, GH);
+  STARS.forEach(function (s) {
+    ctx.globalAlpha = .35 + .45 * Math.abs(Math.sin(t * 1.3 + s.ph));
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(s.x, (s.y + cam * 0.08) % GH, s.r, 0, Math.PI * 2); ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+  const my = 70 + cam * 0.06;
+  const mg = ctx.createRadialGradient(290, my, 4, 290, my, 52);
+  mg.addColorStop(0, 'rgba(255,244,214,.55)'); mg.addColorStop(1, 'rgba(255,244,214,0)');
+  ctx.fillStyle = mg; ctx.fillRect(230, my - 60, 120, 120);
+  ctx.fillStyle = '#fff4d6'; ctx.beginPath(); ctx.arc(290, my, 15, 0, Math.PI * 2); ctx.fill();
+
+  // far quay (parallax)
+  const qy = DECK_Y + 22 + cam * 0.55;
+  QUAY.forEach(function (b) {
+    for (let k = 0; k < b.n; k++) { ctx.fillStyle = k % 2 ? '#1a2b62' : '#15244f'; ctx.fillRect(b.x, qy - (k + 1) * 15, b.w, 14); }
+  });
+  [70, 255].forEach(function (cx) {
+    ctx.strokeStyle = '#1f3270'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(cx, qy); ctx.lineTo(cx, qy - 62); ctx.lineTo(cx + 30, qy - 62); ctx.moveTo(cx + 12, qy); ctx.lineTo(cx + 12, qy - 62); ctx.stroke();
+    ctx.fillStyle = Math.sin(t * 3 + cx) > 0 ? '#ff6b6b' : '#6b2a2a'; ctx.beginPath(); ctx.arc(cx, qy - 64, 2.5, 0, Math.PI * 2); ctx.fill();
+  });
+  ctx.fillStyle = '#0f1a40'; ctx.fillRect(0, qy, GW, GH + 400);
+
+  ctx.save();
+  ctx.translate(0, cam);
+
+  // sea
+  const seaTop = DECK_Y + 30;
+  const sg = ctx.createLinearGradient(0, seaTop, 0, seaTop + 200);
+  sg.addColorStop(0, '#1c86ad'); sg.addColorStop(1, '#0a2a5a');
+  ctx.fillStyle = sg;
+  ctx.beginPath(); ctx.moveTo(0, seaTop);
+  for (let x = 0; x <= GW; x += 10) ctx.lineTo(x, seaTop + Math.sin(x * 0.04 + t * 1.8) * 2.5);
+  ctx.lineTo(GW, seaTop + 800); ctx.lineTo(0, seaTop + 800); ctx.closePath(); ctx.fill();
+
+  // crane
+  drawCrane(hoverY() - 34, t);
+
+  // ship + stack (gentle bob)
+  ctx.save();
+  ctx.translate(0, Math.sin(t * 1.6) * 1.6);
+  const hull = ctx.createLinearGradient(0, DECK_Y, 0, DECK_Y + 36);
+  hull.addColorStop(0, '#8a2336'); hull.addColorStop(1, '#3d0f18');
+  ctx.fillStyle = hull;
+  ctx.beginPath(); ctx.moveTo(24, DECK_Y); ctx.lineTo(344, DECK_Y); ctx.lineTo(320, DECK_Y + 36); ctx.lineTo(52, DECK_Y + 36); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.fillRect(34, DECK_Y + 10, 300, 3);
+  ctx.fillStyle = '#1b2a5e'; ctx.fillRect(296, DECK_Y - 52, 40, 52);               // bridge
+  ctx.fillStyle = '#e8eefc'; ctx.fillRect(300, DECK_Y - 46, 32, 6);
+  ctx.fillStyle = 'rgba(255,224,102,.9)'; for (let i = 0; i < 4; i++) ctx.fillRect(303 + i * 8, DECK_Y - 38, 5, 5);
+  ctx.fillStyle = '#ff9f43'; ctx.fillRect(310, DECK_Y - 66, 10, 14);                // funnel
+  ctx.fillStyle = '#d9a441'; ctx.fillRect(24, DECK_Y - 3, 320, 3);                  // deck rail
+  stack.forEach(function (b, i) { drawContainer(b.x, DECK_Y - (i + 1) * CH, b.w, b.c); });
+  ctx.restore();
+
+  // moving container + cables
+  if (moving) {
+    if (moving.state === 'swing') {
+      ctx.strokeStyle = 'rgba(40,40,40,.9)'; ctx.lineWidth = 1.5;
+      const beamY = hoverY() - 34;
+      ctx.beginPath();
+      ctx.moveTo(trolleyX - 8, beamY + 8); ctx.lineTo(moving.x + 6, moving.y);
+      ctx.moveTo(trolleyX + 8, beamY + 8); ctx.lineTo(moving.x + moving.w - 6, moving.y);
+      ctx.stroke();
+    }
+    drawContainer(moving.x, moving.y, moving.w, moving.c);
+  }
+
+  // cut-offs falling into the harbour
+  debris.forEach(function (d) {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, 1 - Math.max(0, d.y - DECK_Y) / 260);
+    ctx.translate(d.x + d.w / 2, d.y + CH / 2); ctx.rotate(d.rot);
+    drawContainer(-d.w / 2, -CH / 2, d.w, d.c);
+    ctx.restore();
+  });
+
+  // foreground wave in front of the hull
+  const fy = DECK_Y + 24;
+  const fg = ctx.createLinearGradient(0, fy, 0, fy + 120);
+  fg.addColorStop(0, 'rgba(60,170,215,.62)'); fg.addColorStop(1, 'rgba(10,42,90,.9)');
+  ctx.fillStyle = fg;
+  ctx.beginPath(); ctx.moveTo(0, fy);
+  for (let x = 0; x <= GW; x += 8) ctx.lineTo(x, fy + Math.sin(x * 0.05 - t * 2.4) * 3 + 3);
+  ctx.lineTo(GW, fy + 800); ctx.lineTo(0, fy + 800); ctx.closePath(); ctx.fill();
+
+  floaters.forEach(function (f) {
+    ctx.globalAlpha = Math.max(0, 1 - f.t / 1.1);
+    ctx.fillStyle = f.color; ctx.font = '700 15px "DM Sans", sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(f.text, f.x, f.y);
+  });
+  ctx.globalAlpha = 1;
+  ctx.restore();
+
+  if (perfectFlash > 0) { ctx.fillStyle = 'rgba(255,255,255,' + (perfectFlash * 0.16) + ')'; ctx.fillRect(0, 0, GW, GH); }
+  if (combo >= 2 && gameRunning) {
+    ctx.fillStyle = 'rgba(255,224,102,.95)'; ctx.font = '700 13px "DM Sans", sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('COMBO x' + combo, 38, 26);
+  }
+}
 
 // Initialize
 window.onload = function() {
@@ -2377,6 +2183,7 @@ window.onload = function() {
     document.getElementById('highScoreValue').textContent = highScore;
     
     showWelcomeMessage();
+    document.getElementById('todayChip').textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     calculateAll();
 };
 </script>
@@ -2718,6 +2525,7 @@ window.onload = function() {
     var t = new Date(); viewY = t.getFullYear(); viewM = t.getMonth(); renderCalendar();
   });
 
+  window.TFHolidayInfo = getInfo;   // used by the date calculator's banking-day option
   applyTheme(safeGet(KEY) || 'default', false);
 })();
 </script>
